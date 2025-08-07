@@ -151,7 +151,7 @@ def create_event(user_id):
         location = request.form.get("event-location")
         description = request.form.get("event-description")
         price = request.form.get("ticket-price") # <-- New: Retrieve price from form
-
+        user_prompt = request.form.get("ai-template-prompt")
         # Handle file uploads using your existing function
         img1_path = handle_file_upload("image-1").get("path")
         img2_path = handle_file_upload("image-2").get("path")
@@ -169,9 +169,10 @@ def create_event(user_id):
 
         # Insert data into the events table
         try:
+            url_key = generate_url_code()
             db.execute(
-                "INSERT INTO events (title, description, location, date, time, img1, img2, img3, video, created_by, price) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO events (title, description, location, date, time, img1, img2, img3, video, created_by, price, image_url) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 title,
                 description,
                 location,
@@ -182,27 +183,35 @@ def create_event(user_id):
                 img3_path,
                 video_path,
                 user_id,  # The creator ID is passed from the URL
-                price # <-- New: Add price to the values
+                price,
+                url_key
             )
-            return jsonify({"response": "Event created successfully", "url": f"/dashboard/{user_id}"})
             #template generation
+            event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key", user_id, url_key)
             # --- Main script execution ---
-            prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events. The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, the info to be added are as follows:"
+            prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events. The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, the info to be added are as follows:"
             prompt += f'''
                 event-title: {title},
                 event-description:{description},
                 event-time:{time},
                 event-date:{date},
                 event-price:{price},
-                ticket-purchase-link:{}
+                ticket-purchase-link:https://hhxsq4xb-1000.uks1.devtunnels.ms/{event[0]['id']},
+                img-1 path: {img1_path},
+                img-1 path: {img2_path},
+                img-1 path: {img3_path},
+                video-path: {video_path},
             '''
             # Generate the ticket template
             html_result = generate_ticket_template(prompt)
 
             if html_result:
                 # Print the generated HTML code
+                print("----PROMPT----")
+                print(prompt)
                 print("--- Generated HTML Template ---")
                 print(html_result)
+                return {"response":"successful"}
             else:
                 print("Could not generate HTML template.")
         except Exception as e:
