@@ -29,7 +29,7 @@ db.execute("""
         date DATE NOT NULL,
         time TIME NOT NULL,
         price INTEGER NOT NULL,
-        url VARCHAR UNIQUE,
+        url_key VARCHAR UNIQUE,
         html TEXT,
         img1 TEXT,
         img2 TEXT,
