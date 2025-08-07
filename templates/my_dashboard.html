@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas Ticketing App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+        }
+
+        .line-art-glow {
+            filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.5)) drop-shadow(0 0 10px rgba(100, 255, 218, 0.4));
+        }
+
+        .line-art-border {
+            border: 1px solid #4a5568;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .line-art-border:hover {
+            border-color: #6ee7b7;
+            box-shadow: 0 0 15px rgba(110, 231, 183, 0.3);
+        }
+
+        .sidebar-item-active {
+            background-color: #1f2937;
+            border-left: 3px solid #60a5fa;
+        }
+
+        .modal {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal.active {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Adjustments for line art buttons */
+        .line-art-btn {
+            background: transparent;
+            color: #6ee7b7;
+            border: 1px solid #6ee7b7;
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .line-art-btn:hover {
+            background: rgba(110, 231, 183, 0.1);
+            box-shadow: 0 0 10px rgba(110, 231, 183, 0.5);
+        }
+
+        /* Styles for handling view switching */
+        .hidden-view {
+            display: none;
+        }
+        .active-view {
+            display: block;
+        }
+
+        /* AI Powered Badge Styling */
+        .ai-badge {
+            background-color: #2CC299; /* A distinct green from the original palette */
+            color: #032221;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px; /* full rounded */
+            font-size: 0.75rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ai-badge:hover {
+            background-color: #00F891;
+            box-shadow: 0 0 10px rgba(0, 248, 145, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-white antialiased">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col p-4 space-y-8 overflow-y-auto transition-transform duration-300 ease-in-out transform -translate-x-full lg:static lg:translate-x-0 lg:flex">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between lg:pb-4 lg:border-b lg:border-zinc-800">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-cyan-400">
+                        <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 7L12 12L22 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 22V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="text-xl font-bold text-gray-50">ATLAS</span>
+                </div>
+                <!-- Close button for mobile sidebar -->
+                <button id="sidebar-close" class="text-zinc-400 hover:text-white lg:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Main Menu -->
+            <nav class="flex-grow space-y-2">
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-zinc-300 hover:bg-zinc-800 transition-colors sidebar-item sidebar-item-active" data-view="dashboard">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-zinc-400 hover:bg-zinc-800 transition-colors sidebar-item" data-view="my-events">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span>My Events</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-zinc-400 hover:bg-zinc-800 transition-colors sidebar-item" data-view="create-event">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    <span>Create Event</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-zinc-400 hover:bg-zinc-800 transition-colors sidebar-item" data-view="settings">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37-2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.962.613 2.072.484 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col p-4 sm:p-8 overflow-y-auto">
+            <!-- Top Bar with Mobile Menu Button -->
+            <header class="flex items-center justify-between pb-4 border-b border-zinc-800">
+                <div class="flex items-center space-x-4">
+                    <button id="sidebar-open" class="text-zinc-400 hover:text-white lg:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <!-- Logo and Title for Main Content Header -->
+                    <div class="flex items-center space-x-2 hidden lg:flex">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-cyan-400">
+                            <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 7L12 12L22 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 22V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h1 id="main-title" class="text-2xl font-bold text-white">Dashboard</h1>
+                    </div>
+                     <!-- Mobile-only title -->
+                    <h1 id="mobile-main-title" class="text-2xl font-bold text-white lg:hidden">Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <svg class="w-6 h-6 text-zinc-400 hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.035V10c0-2.224-1.468-4.136-3.5-4.717V5a3 3 0 00-6 0v.318C7.468 5.864 6 7.776 6 10v4.035a2.032 2.032 0 01-.595 1.405L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <svg class="w-6 h-6 text-zinc-400 hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+            </header>
+            
+            <!-- Main Content Display -->
+            <div id="content-area" class="flex-grow pt-4 sm:pt-8">
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="active-view">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">All Events</h2>
+                        <button id="create-event-btn-dashboard" class="line-art-btn flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            <span>Create New</span>
+                        </button>
+                    </div>
+
+                    <div id="events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Event cards for all events will be dynamically inserted here -->
+                    </div>
+                </div>
+                
+                <!-- My Events View -->
+                <div id="my-events-view" class="hidden-view">
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mb-6">My Events</h2>
+                    <div id="my-events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Event cards for the current user's events will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Create Event View -->
+                <div id="create-event-view" class="hidden-view">
+                    <h2 class="text-2xl font-bold text-white mb-6">Create New Event</h2>
+                    <form id="create-event-form" class="bg-zinc-900 p-8 rounded-xl line-art-border space-y-6">
+                        <div>
+                            <label for="event-title" class="block text-sm font-medium text-zinc-400">Event Title</label>
+                            <input type="text" id="event-title" name="event-title" class="mt-1 block w-full bg-zinc-800 rounded-md border-zinc-700 text-white p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="event-date" class="block text-sm font-medium text-zinc-400">Date</label>
+                                <input type="date" id="event-date" name="event-date" class="mt-1 block w-full bg-zinc-800 rounded-md border-zinc-700 text-white p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label for="event-time" class="block text-sm font-medium text-zinc-400">Time</label>
+                                <input type="time" id="event-time" name="event-time" class="mt-1 block w-full bg-zinc-800 rounded-md border-zinc-700 text-white p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="event-location" class="block text-sm font-medium text-zinc-400">Location</label>
+                            <input type="text" id="event-location" name="event-location" class="mt-1 block w-full bg-zinc-800 rounded-md border-zinc-700 text-white p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div>
+                            <label for="event-description" class="block text-sm font-medium text-zinc-400">Description</label>
+                            <textarea id="event-description" name="event-description" rows="3" class="mt-1 block w-full bg-zinc-800 rounded-md border-zinc-700 text-white p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <label for="ai-template-prompt" class="block text-sm font-medium text-zinc-400">AI Template Prompt</label>
+                                <button type="button" id="ai-info-btn" class="ai-badge">AI Powered</button>
+                            </div>
+                            <textarea id="ai-template-prompt" name="ai-template-prompt" rows="3" class="mt-1 block w-full bg-zinc-800 rounded-md border-zinc-700 text-white p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+                        </div>
+                        <div>
+                            <label for="ticket-price" class="block text-sm font-medium text-zinc-400">Ticket Price</label>
+                            <input type="number" id="ticket-price" name="ticket-price" step="0.01" class="mt-1 block w-full bg-zinc-800 rounded-md border-zinc-700 text-white p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        
+                        <!-- Inputs for images and video -->
+                        <h3 class="text-lg font-bold text-white pt-4">Event Media</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label for="image-1" class="block text-sm font-medium text-zinc-400">Image 1</label>
+                                <input type="file" id="image-1" name="image-1" accept="image/*" class="mt-1 block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-zinc-800 file:text-green-400 hover:file:bg-zinc-700 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label for="image-2" class="block text-sm font-medium text-zinc-400">Image 2</label>
+                                <input type="file" id="image-2" name="image-2" accept="image/*" class="mt-1 block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-zinc-800 file:text-green-400 hover:file:bg-zinc-700 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                            <div>
+                                <label for="image-3" class="block text-sm font-medium text-zinc-400">Image 3</label>
+                                <input type="file" id="image-3" name="image-3" accept="image/*" class="mt-1 block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-zinc-800 file:text-green-400 hover:file:bg-zinc-700 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="video" class="block text-sm font-medium text-zinc-400">Promotional Video</label>
+                            <input type="file" id="video" name="video" accept="video/*" class="mt-1 block w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-zinc-800 file:text-green-400 hover:file:bg-zinc-700 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        </div>
+
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" class="line-art-btn" onclick="switchView('dashboard')">Cancel</button>
+                            <button type="submit" class="line-art-btn bg-cyan-600 text-white border-cyan-600 hover:bg-cyan-700">Save Event</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Event Detail Modal (Hidden by default) -->
+    <div id="event-detail-modal" class="fixed inset-0 bg-zinc-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal">
+        <div class="relative w-full max-w-2xl bg-zinc-900 rounded-xl line-art-border overflow-hidden p-6 sm:p-8">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 id="modal-event-title" class="text-2xl sm:text-3xl font-bold text-white mb-4"></h2>
+            <div class="space-y-4 text-zinc-400">
+                <p><span class="font-semibold text-cyan-400">Status:</span> <span id="modal-event-status"></span></p>
+                <p><span class="font-semibold text-cyan-400">Date:</span> <span id="modal-event-date"></span></p>
+                <p><span class="font-semibold text-cyan-400">Time:</span> <span id="modal-event-time"></span></p>
+                <p><span class="font-semibold text-cyan-400">Location:</span> <span id="modal-event-location"></span></p>
+                <p><span class="font-semibold text-cyan-400">Description:</span> <span id="modal-event-description"></span></p>
+                <p><span class="font-semibold text-cyan-400">Ticket Price:</span> <span id="modal-event-price"></span></p>
+            </div>
+            <div class="mt-6 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <button class="line-art-btn w-full sm:w-auto">View Public Page</button>
+                <button class="line-art-btn w-full sm:w-auto">Manage Tickets</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Info Modal (Hidden by default) -->
+    <div id="ai-info-modal" class="fixed inset-0 bg-zinc-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal">
+        <div class="relative w-full max-w-sm bg-zinc-900 rounded-xl line-art-border overflow-hidden p-6">
+            <button id="close-ai-modal-btn" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-2">AI Powered Event Templates</h3>
+            <p class="text-zinc-400 text-sm">The text you enter in this box is used to generate a unique, engaging website template for your event. Describe the event's theme, target audience, and desired style, and our AI will create a compelling design for you.</p>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOpenButton = document.getElementById('sidebar-open');
+            const sidebarCloseButton = document.getElementById('sidebar-close');
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            const contentArea = document.getElementById('content-area');
+            const mainTitle = document.getElementById('main-title');
+            const mobileMainTitle = document.getElementById('mobile-main-title');
+
+            const createEventBtnDashboard = document.getElementById('create-event-btn-dashboard');
+            const eventsGrid = document.getElementById('events-grid');
+            const myEventsGrid = document.getElementById('my-events-grid');
+            const eventDetailModal = document.getElementById('event-detail-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const createEventForm = document.getElementById('create-event-form');
+            const aiInfoBtn = document.getElementById('ai-info-btn');
+            const aiInfoModal = document.getElementById('ai-info-modal');
+            const closeAiModalBtn = document.getElementById('close-ai-modal-btn');
+             
+            // Mock user ID to simulate a logged-in user
+            const userId = 'user-123';
+
+            // Mock data for events, including a creatorId for each event
+            let events = [
+                { id: 1, title: 'Future of AI Summit', date: '2025-06-21', time: '10:00', location: 'Tech Innovation Hub, San Francisco', description: 'A two-day summit bringing together the brightest minds in artificial intelligence.', price: 99.99, status: 'Active', creatorId: 'user-456' },
+                { id: 2, title: 'Quantum Computing Workshop', date: '2025-07-15', time: '09:00', location: 'Virtual Event', description: 'An intensive workshop on the fundamentals and future of quantum computing.', price: 149.50, status: 'Draft', creatorId: 'user-123' },
+                { id: 3, title: 'Space Exploration Expo', date: '2025-05-10', time: '14:00', location: 'Kennedy Space Center', description: 'Experience the latest in space technology and meet astronauts.', price: 50.00, status: 'Completed', creatorId: 'user-123' },
+                { id: 4, title: 'Cybersecurity Conference 2025', date: '2025-09-05', time: '09:00', location: 'The Convention Center, New York', description: 'Exploring the latest threats and defenses in cybersecurity.', price: 250.00, status: 'Active', creatorId: 'user-789' },
+            ];
+
+            // Function to switch main content views
+            const switchView = (viewId) => {
+                // First, hide all views
+                const views = contentArea.querySelectorAll('div[id$="-view"]');
+                views.forEach(view => {
+                    view.classList.add('hidden-view');
+                    view.classList.remove('active-view');
+                });
+
+                // Then, show the selected view
+                const selectedView = document.getElementById(viewId + '-view');
+                if (selectedView) {
+                    selectedView.classList.remove('hidden-view');
+                    selectedView.classList.add('active-view');
+                    const title = viewId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    mainTitle.textContent = title;
+                    mobileMainTitle.textContent = title;
+                }
+
+                // Update active state for sidebar items
+                sidebarItems.forEach(item => {
+                    item.classList.remove('sidebar-item-active');
+                    if (item.dataset.view === viewId) {
+                        item.classList.add('sidebar-item-active');
+                    }
+                });
+
+                // Render the correct set of events based on the view
+                if (viewId === 'dashboard') {
+                    renderEvents(eventsGrid, events);
+                } else if (viewId === 'my-events') {
+                    const myEvents = events.filter(event => event.creatorId === userId);
+                    renderEvents(myEventsGrid, myEvents);
+                }
+            };
+
+            // Function to render event cards into a specific grid container
+            const renderEvents = (gridElement, eventsToRender) => {
+                gridElement.innerHTML = '';
+                if (eventsToRender.length === 0) {
+                    gridElement.innerHTML = `<p class="text-zinc-500">No events found.</p>`;
+                    return;
+                }
+
+                eventsToRender.forEach(event => {
+                    const statusColor = event.status === 'Active' ? 'text-green-400 bg-green-900/50' : event.status === 'Draft' ? 'text-yellow-400 bg-yellow-900/50' : 'text-gray-400 bg-gray-900/50';
+                    const eventCard = `
+                        <div class="event-card group cursor-pointer line-art-border" data-id="${event.id}">
+                            <div class="p-6">
+                                <span class="text-xs font-semibold ${statusColor} rounded-full px-2 py-1">${event.status}</span>
+                                <h3 class="mt-4 text-lg font-bold text-white">${event.title}</h3>
+                                <p class="mt-1 text-sm text-zinc-400">${event.date} at ${event.time}</p>
+                                <p class="mt-2 text-sm text-zinc-500">${event.location}</p>
+                            </div>
+                        </div>
+                    `;
+                    gridElement.innerHTML += eventCard;
+                });
+            };
+
+            // Function to show event details modal
+            const showEventDetail = (eventId) => {
+                const event = events.find(e => e.id == eventId);
+                if (event) {
+                    document.getElementById('modal-event-title').textContent = event.title;
+                    document.getElementById('modal-event-status').textContent = event.status;
+                    document.getElementById('modal-event-date').textContent = event.date;
+                    document.getElementById('modal-event-time').textContent = event.time;
+                    document.getElementById('modal-event-location').textContent = event.location;
+                    document.getElementById('modal-event-description').textContent = event.description;
+                    document.getElementById('modal-event-price').textContent = `$${event.price.toFixed(2)}`;
+                    eventDetailModal.classList.add('active');
+                }
+            };
+
+            // Event listener for sidebar toggle
+            sidebarOpenButton.addEventListener('click', () => {
+                sidebar.classList.remove('-translate-x-full');
+            });
+            sidebarCloseButton.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+            });
+
+            // Event listeners for sidebar navigation
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchView(item.dataset.view);
+                    sidebar.classList.add('-translate-x-full'); // Close sidebar on mobile after clicking
+                });
+            });
+
+            // Event listeners for event actions
+            createEventBtnDashboard.addEventListener('click', () => switchView('create-event'));
+             
+            // Use event delegation for dynamically created event cards
+            document.querySelectorAll('.grid').forEach(grid => {
+                grid.addEventListener('click', (e) => {
+                    const card = e.target.closest('.event-card');
+                    if (card) {
+                        showEventDetail(card.dataset.id);
+                    }
+                });
+            });
+             
+            closeModalBtn.addEventListener('click', () => {
+                eventDetailModal.classList.remove('active');
+            });
+
+            // Event listeners for the new AI info modal
+            aiInfoBtn.addEventListener('click', () => {
+                aiInfoModal.classList.add('active');
+            });
+            closeAiModalBtn.addEventListener('click', () => {
+                aiInfoModal.classList.remove('active');
+            });
+
+            createEventForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // In a real app, you would handle file uploads and API calls here.
+                const newEvent = {
+                    id: events.length + 1,
+                    title: document.getElementById('event-title').value,
+                    date: document.getElementById('event-date').value,
+                    time: document.getElementById('event-time').value,
+                    location: document.getElementById('event-location').value,
+                    description: document.getElementById('event-description').value,
+                    aiTemplatePrompt: document.getElementById('ai-template-prompt').value,
+                    price: parseFloat(document.getElementById('ticket-price').value),
+                    // For the purpose of this mock-up, we just log the files to the console
+                    images: [
+                        document.getElementById('image-1').files[0],
+                        document.getElementById('image-2').files[0],
+                        document.getElementById('image-3').files[0]
+                    ],
+                    video: document.getElementById('video').files[0],
+                    status: 'Draft',
+                    creatorId: userId // Assign the new event to the current user
+                };
+                
+                // Log the new event with files and the new prompt
+                console.log('New Event Created:', newEvent);
+                
+                events.push(newEvent);
+                switchView('my-events'); // After creating, switch to My Events page
+                // Reset form
+                createEventForm.reset();
+            });
+
+            // Initial render
+            switchView('dashboard');
+        });
+    </script>
+</body>
+</html>

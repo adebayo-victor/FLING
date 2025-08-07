@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fling - Register</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define new custom properties based on the dashboard's color palette */
+        :root {
+            --rich-black: #000F0B;
+            --dark-green: #032221;
+            --bangladesh-green: #03624C;
+            --mountain-meadow: #2CC299; /* Used for higher contrast borders and accents */
+            --caribbean-green: #00F891;
+            --anti-flash-white: #F1F7F9;
+            --pine: #06562D;
+            --basil: #0B463A;
+            --forest: #095544;
+            --frog: #17B16D;
+            --mint: #2FA88C;
+            --stone: #707D70;
+            --pistachio: #AACBC4;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--rich-black); /* Main background */
+            color: var(--anti-flash-white); /* Primary text color */
+        }
+        
+        /* Custom gradient for a cool background effect */
+        .cool-gradient-background {
+            background-image: linear-gradient(135deg, var(--rich-black) 0%, var(--dark-green) 50%, var(--rich-black) 100%);
+        }
+
+        /* The main container for the label and input to enable positioning */
+        .input-container {
+            position: relative;
+        }
+        
+        /* Input styling with a consistent look and line-art label */
+        .fling-input {
+            /* Increased border-width for better visibility and added responsive padding */
+            /* Using a lighter green for higher contrast */
+            @apply block w-full bg-dark-green border-2 border-mountain-meadow rounded-md text-anti-flash-white p-3 sm:p-4 pt-5 focus:outline-none focus:ring-2 focus:ring-mountain-meadow transition-colors;
+        }
+
+        /* The embedded label styling */
+        .input-container label {
+            position: absolute;
+            top: -0.6rem; /* Adjust to move it out of the border */
+            left: 0.75rem; /* Match the left padding of the input */
+            /* Updated background color to match the form container */
+            background-color: var(--dark-green);
+            padding: 0 0.5rem;
+            color: var(--pistachio);
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 500; /* font-medium */
+            transition: all 0.2s ease-in-out;
+            pointer-events: none; /* Make label unclickable so it doesn't block input clicks */
+            z-index: 10;
+        }
+
+        /* The label's background color to "cut" the border line */
+        .input-container label::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            /* Updated background color to match the form container */
+            background-color: var(--dark-green);
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+
+        /* Button styling */
+        .fling-btn {
+            @apply w-full px-4 py-3 rounded-md font-semibold transition-colors;
+        }
+
+        .fling-btn-primary {
+            /* Kept original Caribbean Green for primary button, but changed hover to match new border */
+            @apply bg-caribbean-green text-rich-black hover:bg-mountain-meadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-caribbean-green;
+        }
+
+        /* Styling for the new image upload section - now a round button */
+        .image-upload-container {
+            /* Increased border-width for better visibility and responsive sizing */
+            /* Using a lighter green for higher contrast */
+            @apply flex flex-col items-center p-4 rounded-full border-2 border-dashed border-mountain-meadow hover:bg-bangladesh-green transition-colors cursor-pointer w-28 h-28 sm:w-32 sm:h-32 mx-auto;
+        }
+        
+        .profile-picture-preview {
+            @apply w-full h-full rounded-full object-cover;
+        }
+
+        /* Styles for the new confirmation modal */
+        .modal-overlay {
+            @apply fixed inset-0 bg-rich-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center p-4 z-50;
+        }
+
+        .modal-content {
+            @apply bg-dark-green rounded-lg shadow-xl p-6 w-full max-w-md border border-mountain-meadow;
+        }
+    </style>
+</head>
+<body class="cool-gradient-background flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+
+    <!-- Registration Form Container -->
+    <div class="w-full max-w-sm sm:max-w-md bg-dark-green rounded-2xl shadow-2xl p-6 sm:p-8 border-2 border-bangladesh-green">
+        
+        <div class="flex flex-col items-center mb-8">
+            <!-- Logo - Re-using the SVG from the dashboard -->
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-mountain-meadow mb-2">
+                <path d="M21 12.0001L19.5 10.5001L15 15.0001L16.5 16.5001L21 12.0001Z" fill="currentColor"/>
+                <path d="M12 3.0001L13.5 4.5001L9 9.0001L7.5 7.5001L12 3.0001Z" fill="currentColor"/>
+                <path d="M3 12.0001L4.5 10.5001L9 15.0001L7.5 16.5001L3 12.0001Z" fill="currentColor"/>
+                <path d="M12 21.0001L13.5 19.5001L9 15.0001L7.5 16.5001L12 21.0001Z" fill="currentColor"/>
+                <path d="M16.5 7.5001L15 9.0001L19.5 13.5001L21 12.0001L16.5 7.5001Z" fill="currentColor"/>
+                <path d="M7.5 7.5001L9 9.0001L4.5 13.5001L3 12.0001L7.5 7.5001Z" fill="currentColor"/>
+                <path d="M16.5 16.5001L15 15.0001L19.5 10.5001L21 12.0001L16.5 16.5001Z" fill="currentColor"/>
+                <path d="M7.5 16.5001L9 15.0001L4.5 10.5001L3 12.0001L7.5 16.5001Z" fill="currentColor"/>
+            </svg>
+            <h1 class="text-3xl font-bold text-anti-flash-white">Create an Account</h1>
+            <p class="text-sm text-mountain-meadow mt-2 slug">Join Fling and start creating amazing events.</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form id="registration-form" class="space-y-6">
+            <div class="input-container">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" class="fling-input" placeholder=" " required>
+            </div>
+
+            <div class="input-container">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="fling-input" placeholder=" " required>
+            </div>
+
+            <div class="input-container">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" class="fling-input" placeholder=" " required>
+            </div>
+
+            <div class="input-container">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="fling-input" placeholder=" " required>
+            </div>
+
+            <div class="input-container">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" class="fling-input" placeholder=" " required>
+            </div>
+
+            <!-- New Image Upload Section -->
+            <label for="profile-pic-input" class="image-upload-container">
+                <img id="profile-pic-preview" class="profile-picture-preview" src="https://placehold.co/96x96/032221/F1F7F9?text=Avatar" alt="Profile Picture Preview">
+                <input type="file" id="profile-pic-input" name="profile-picture" class="hidden" accept="image/*">
+            </label>
+
+            <button type="submit" class="fling-btn fling-btn-primary">
+                Register
+            </button>
+        </form>
+
+        <div class="mt-8 text-center text-sm text-stone">
+            Already have an account? 
+            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/register_login" class="text-mountain-meadow hover:underline font-semibold">Log In</a>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Confirm Your Details</h2>
+            <div id="modal-data" class="space-y-2 mb-6">
+                <!-- User data will be dynamically inserted here -->
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button id="cancel-btn" class="px-4 py-2 rounded-md font-semibold bg-stone text-anti-flash-white hover:bg-stone-500 transition-colors">
+                    Cancel
+                </button>
+                <button id="confirm-btn" class="px-4 py-2 rounded-md font-semibold bg-caribbean-green text-rich-black hover:bg-mountain-meadow transition-colors">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registration-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const profilePicFile = document.getElementById('profile-pic-input').files[0];
+
+            // Simple client-side validation
+            if (password !== confirmPassword) {
+                console.error("Passwords do not match!");
+                // In a real app, you would show a user-friendly error message on the page.
+                // For this example, we just log to the console.
+                return;
+            }
+            
+            // Collect user data to display in the modal
+            const userData = {
+                name: name,
+                email: email,
+                phone: phone,
+                profile_picture: profilePicFile ? profilePicFile.name : null,
+            };
+
+            // Display data in the modal
+            const modalData = document.getElementById('modal-data');
+            modalData.innerHTML = `
+                <p><strong>Name:</strong> ${userData.name}</p>
+                <p><strong>Email:</strong> ${userData.email}</p>
+                <p><strong>Phone:</strong> ${userData.phone}</p>
+            `;
+            
+            // Show the modal
+            document.getElementById('confirmation-modal').classList.remove('hidden');
+
+            document.getElementById('confirm-btn').onclick = async () => {
+                // Hide the modal
+                document.getElementById('confirmation-modal').classList.add('hidden');
+
+                // Create a FormData object from the form
+                const formData = new FormData(document.getElementById('registration-form'));
+
+                console.log("Sending data to server using FormData...");
+                
+                // Perform the fetch request
+                try {
+                    const response = await fetch('https://hhxsq4xb-1000.uks1.devtunnels.ms/register_signup', {
+                        method: 'POST',
+                        body: formData // The browser will automatically set the Content-Type header
+                    });
+
+                    if (response.ok || response.response == 'successful') {
+                        console.log("Registration successful!");
+                        document.querySelector('#slug').textContent = "Signup successful"
+                        window.location.href = response.url
+                    } else {
+                        console.error("Registration failed:", response.statusText);
+                        // Handle error, e.g., show an error message
+                    }
+                } catch (error) {
+                    console.error("Network error:", error);
+                    // Handle network errors
+                }
+            };
+            
+            document.getElementById('cancel-btn').onclick = () => {
+                // Hide the modal if the user cancels
+                document.getElementById('confirmation-modal').classList.add('hidden');
+            };
+        });
+
+        // Image preview logic
+        const profilePicInput = document.getElementById('profile-pic-input');
+        const profilePicPreview = document.getElementById('profile-pic-preview');
+
+        profilePicInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profilePicPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                profilePicPreview.src = "https://placehold.co/96x96/032221/F1F7F9?text=Avatar";
+            }
+        });
+    </script>
+</body>
+</html>
