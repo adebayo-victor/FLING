@@ -1,0 +1,467 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Fest - Unleash Your Inner Otaku!</title>
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /*
+        * Modern & Responsive Event Template CSS
+        * Designed for elegance, engagement, and mobile-friendliness.
+        * Uses CSS variables for easy customization.
+        */
+
+        /* CSS Variables for easy customization */
+        :root {
+            --primary-bg: #1a1a2e; /* Deep purple-blue */
+            --secondary-bg: #16213e; /* Slightly lighter shade for contrast */
+            --accent-color: #e94560; /* Vibrant pink/red for highlights and CTAs */
+            --text-color: #e0e0e0; /* Soft off-white for body text */
+            --heading-color: #ffffff; /* Pure white for headings */
+            --button-hover-color: #ff6a80; /* Brighter pink for button hover */
+            --footer-bg: #0d1222; /* Even darker shade for the footer */
+        }
+
+        /* Global Box-sizing for consistent layouts */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Smooth scroll for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Body Typography and Background */
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--primary-bg);
+            overflow-x: hidden; /* Prevents horizontal scroll */
+            font-size: 16px; /* Base font size */
+        }
+
+        /* Headings Typography */
+        h1, h2, h3 {
+            font-family: 'Oswald', sans-serif;
+            color: var(--heading-color);
+            margin-bottom: 0.5em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        h1 { font-size: 3.5em; } /* Hero title */
+        h2 { font-size: 2.5em; } /* Section titles */
+        h3 { font-size: 1.8em; } /* Sub-headings/detail titles */
+
+        p {
+            margin-bottom: 1em;
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+
+        /* Anchor Link Styling */
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--button-hover-color);
+        }
+
+        /* Reusable Container for Content Width */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 90%; /* Responsive width */
+        }
+
+        /* Call-to-Action Button Styling */
+        .button {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: var(--heading-color);
+            padding: 15px 30px;
+            border-radius: 50px; /* Pill shape */
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .button:hover {
+            background-color: var(--button-hover-color);
+            transform: translateY(-3px); /* Subtle lift effect */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Hero Section - Full-Screen Visual Impact */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            background-color: var(--secondary-bg); /* Fallback for video */
+        }
+
+        /* Video Background Styling */
+        .hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: 0; /* Behind content */
+            transform: translate(-50%, -50%); /* Centering trick */
+            object-fit: cover; /* Ensures video covers the area */
+        }
+
+        /* Overlay for Readability on Hero Video */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Dark semi-transparent overlay */
+            z-index: 1; /* Above video, below content */
+        }
+
+        /* Hero Content Styling */
+        .hero-content {
+            position: relative;
+            z-index: 2; /* Above overlay */
+            color: var(--heading-color);
+            max-width: 900px;
+            padding: 20px;
+            animation: fadeIn 1.5s ease-out; /* Fade-in animation */
+        }
+
+        .hero-content h1 {
+            font-size: 5.5em;
+            margin-bottom: 0.1em;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.6); /* Text shadow for depth */
+            line-height: 1.1;
+        }
+
+        .hero-content p {
+            font-size: 1.8em;
+            margin-bottom: 2em;
+            text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.5);
+            font-weight: 300;
+        }
+
+        /* General Section Styling */
+        section {
+            padding: 100px 0; /* Generous vertical padding */
+            text-align: center;
+            background-color: var(--primary-bg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Subtle separator */
+        }
+
+        section:nth-of-type(even) {
+            background-color: var(--secondary-bg); /* Alternating background for visual interest */
+        }
+
+        /* Section Title Styling with Underline Effect */
+        .section-title {
+            font-size: 3em;
+            margin-bottom: 60px;
+            color: var(--heading-color);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px; /* Short underline */
+            height: 5px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        /* About Section Content */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.15em;
+        }
+
+        /* Event Details Section - Flexbox Layout */
+        .event-details {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+            justify-content: center;
+            gap: 40px; /* Space between items */
+            margin-top: 40px;
+        }
+
+        /* Individual Detail Item Styling */
+        .detail-item {
+            background-color: rgba(0, 0, 0, 0.25); /* Semi-transparent dark background */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            flex: 1 1 280px; /* Flex-grow, flex-shrink, base-width */
+            max-width: 320px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-item:hover {
+            transform: translateY(-10px); /* Lift effect on hover */
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .detail-item h3 {
+            color: var(--accent-color);
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            text-transform: capitalize; /* Override uppercase from h3 general style */
+        }
+
+        .detail-item p {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0;
+        }
+
+        /* Dedicated Buy Tickets Section */
+        .buy-tickets-section {
+            background: linear-gradient(135deg, var(--secondary-bg) 0%, var(--primary-bg) 100%); /* Gradient background */
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .buy-tickets-section h2 {
+            margin-bottom: 40px;
+            font-size: 3.5em;
+            color: var(--accent-color);
+        }
+
+        /* Footer Styling */
+        .footer {
+            background-color: var(--footer-bg);
+            color: #888;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Adjustments - Mobile First Approach */
+
+        /* Tablets (768px and up) */
+        @media (max-width: 1024px) {
+            h1 { font-size: 3em; }
+            h2 { font-size: 2em; }
+            h3 { font-size: 1.6em; }
+            p { font-size: 1em; }
+
+            .hero-content h1 {
+                font-size: 4.5em;
+            }
+            .hero-content p {
+                font-size: 1.6em;
+            }
+            .section-title {
+                font-size: 2.5em;
+            }
+            .detail-item {
+                flex: 1 1 250px; /* Adjust item base width */
+            }
+            section {
+                padding: 80px 0;
+            }
+        }
+
+        /* Smaller Tablets & Large Phones (480px and up) */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            h2 { font-size: 1.8em; }
+            h3 { font-size: 1.4em; }
+            p { font-size: 0.95em; }
+
+            .hero {
+                height: 70vh; /* Shorter hero section on mobile */
+            }
+            .hero-content h1 {
+                font-size: 3.5em;
+            }
+            .hero-content p {
+                font-size: 1.3em;
+            }
+            .button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+            section {
+                padding: 60px 0;
+            }
+            .section-title {
+                font-size: 2em;
+                margin-bottom: 40px;
+            }
+            .event-details {
+                flex-direction: column; /* Stack details vertically */
+                align-items: center; /* Center stacked items */
+                gap: 25px;
+            }
+            .detail-item {
+                max-width: 90%; /* Take up more width */
+                width: 100%; /* Ensure responsiveness */
+            }
+            .buy-tickets-section h2 {
+                font-size: 2.8em;
+            }
+        }
+
+        /* Mobile Phones (up to 480px) */
+        @media (max-width: 480px) {
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.5em; }
+            h3 { font-size: 1.2em; }
+
+            .container {
+                padding: 15px;
+                width: 95%;
+            }
+
+            .hero-content h1 {
+                font-size: 2.8em;
+            }
+            .hero-content p {
+                font-size: 1em;
+                margin-bottom: 1.5em;
+            }
+            .button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+            section {
+                padding: 40px 0;
+            }
+            .section-title {
+                font-size: 1.8em;
+                margin-bottom: 30px;
+            }
+            .about-content {
+                font-size: 1em;
+            }
+            .footer {
+                padding: 20px 10px;
+            }
+            .buy-tickets-section h2 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <!-- Hero Section: Event Title, Date, Time, and CTA with Video Background -->
+        <section class="hero">
+            <video autoplay muted loop playsinline poster="{{ url_for('static', filename='images/anime_fest_hero_fallback.jpg') }}">
+                <source src="{{ url_for('static', filename='videos/anime_fest_hero_bg.mp4') }}" type="video/mp4">
+                <!-- Fallback image if video fails to load or is not supported -->
+                <img src="{{ url_for('static', filename='images/anime_fest_hero_fallback.jpg') }}" 
+                     alt="Anime Fest Hero Image - A vibrant crowd enjoying an anime convention under colorful lights, complemented by inspiring artwork from an external source: https://unsplash.com/photos/anime-convention-Yf8i23gG7zM" 
+                     style="width:100%; height:100%; object-fit:cover;">
+                <!-- Textual fallback for browsers that don't support video or image -->
+                Your browser does not support the video tag. Here's a vivid image of Anime Fest.
+            </video>
+            <div class="hero-content">
+                <h1>Anime Fest</h1>
+                <p>Date: August 30, 2025 &bull; Time: 19:31 PM</p>
+                <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/31" class="button">Get Your Tickets Now!</a>
+            </div>
+        </section>
+
+        <!-- About Section: Event Description -->
+        <section id="about">
+            <div class="container">
+                <h2 class="section-title">About Anime Fest</h2>
+                <div class="about-content">
+                    <p>Dive into the vibrant, exhilarating world of anime at Anime Fest 2025! Get ready for an unforgettable experience filled with amazing anime stuff, including exclusive screenings of upcoming titles, captivating character meet-and-greets, thrilling cosplay competitions, and extensive artist alleys showcasing incredible talent. Whether you're a seasoned otaku deeply immersed in the culture or new to the scene eager to explore, Anime Fest has something spectacular for everyone.</p>
+                    <p>Join thousands of passionate fans celebrating their shared love for Japanese animation and rich culture. Explore unique, limited-edition merchandise, participate in interactive panels with industry guests, and forge new friendships with fellow enthusiasts. This is your ultimate chance to immerse yourself fully in the magic of your favorite series and discover new ones that will steal your heart. Don't miss out on the biggest and most anticipated anime event of the year!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Details Section: Date, Time, Price -->
+        <section id="details">
+            <div class="container">
+                <h2 class="section-title">Event Highlights</h2>
+                <div class="event-details">
+                    <div class="detail-item">
+                        <h3>Event Date</h3>
+                        <p>August 30, 2025</p>
+                    </div>
+                    <div class="detail-item">
+                        <h3>Event Time</h3>
+                        <p>19:31 PM</p>
+                    </div>
+                    <div class="detail-item">
+                        <h3>Ticket Price</h3>
+                        <p>$500</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section: Buy Tickets -->
+        <section class="buy-tickets-section">
+            <div class="container">
+                <h2>Ready to Join the Fest?</h2>
+                <p style="font-size: 1.3em; margin-bottom: 30px; color: var(--text-color);">Secure your spot at Anime Fest today before tickets sell out!</p>
+                <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/31" class="button">Buy Tickets Now</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer: Copyright and Branding -->
+    <footer class="footer">
+        <p>&copy; 2024 Anime Fest. All rights reserved.</p>
+        <p>Powered by Techlite</p>
+    </footer>
+
+</body>
+</html>

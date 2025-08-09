@@ -91,6 +91,7 @@
     </style>
 </head>
 <body class="bg-zinc-950 text-white antialiased">
+    
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col p-4 space-y-8 overflow-y-auto transition-transform duration-300 ease-in-out transform -translate-x-full lg:static lg:translate-x-0 lg:flex">
@@ -318,9 +319,110 @@
             </form>
         </div>
     </div>
-
-
+    <!-- Event Link Modal (Hidden by default) -->
+    <div id="event-link-modal" class="fixed inset-0 bg-zinc-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 modal">
+        <div class="relative w-full max-w-md bg-zinc-900 rounded-xl line-art-border overflow-hidden p-6 sm:p-8">
+            <button id="close-event-link-modal-btn" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-2xl font-bold text-white mb-4 text-center">Event Created Successfully!</h3>
+            <p class="text-zinc-400 text-center mb-6">Your event has been created. Share this link:</p>
+            <div class="flex flex-col items-center space-y-4">
+                <a id="display-event-link" href="#" target="_blank" class="text-cyan-400 hover:underline text-lg break-all"></a>
+                <button id="copy-event-link-btn" class="line-art-btn flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m-4 3H9m10-4h2m-6 4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4a2 2 0 012-2h4a2 2 0 012 2v4z"></path></svg>
+                    <span>Copy Link</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--Success message-->
+    <div id="successOverlay" class="fixed inset-0 bg-black/60 flex items-center justify-center hidden z-50">
+        <div class="bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-md animate-fadeIn">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-500 font-bold">✓</div>
+            <div>
+              <p id="sm_title" class="text-lg font-semibold">Success</p>
+              <p id="sm_msg" class="text-sm text-gray-400">Your operation completed successfully.</p>
+            </div>
+          </div>
+          <div id="sm_linkBox" class="mt-4 flex gap-2 hidden">
+            <input type="text" readonly id="sm_link" class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm border border-gray-600" />
+            <button id="sm_copyBtn" class="px-3 py-2 bg-green-500 text-black rounded-lg text-sm font-semibold">Copy</button>
+            <button id="sm_openBtn" class="px-3 py-2 border border-gray-600 text-gray-400 rounded-lg text-sm">Open</button>
+          </div>
+          <p id="sm_hint" class="mt-2 text-xs text-gray-500"></p>
+        </div>
+      </div>
+    <script src="script.js"></script>
     <script>
+        (function(){
+            const overlay = document.getElementById('successOverlay');
+            const titleEl = document.getElementById('sm_title');
+            const msgEl = document.getElementById('sm_msg');
+            const linkBox = document.getElementById('sm_linkBox');
+            const linkInput = document.getElementById('sm_link');
+            const copyBtn = document.getElementById('sm_copyBtn');
+            const openBtn = document.getElementById('sm_openBtn');
+            const hint = document.getElementById('sm_hint');
+
+            window.showSuccess = function(message = 'Done', link = ''){
+                let title = 'Success';
+                let sub = '';
+                if(message.includes('|')){
+                const parts = message.split('|').map(s=>s.trim());
+                title = parts[0] || title;
+                sub = parts.slice(1).join(' - ');
+                } else {
+                title = message;
+                sub = '';
+                }
+
+                titleEl.textContent = title;
+                msgEl.textContent = sub || 'Operation completed successfully.';
+
+                if(link && typeof link === 'string'){
+                linkBox.classList.remove('hidden');
+                linkInput.value = link;
+                hint.textContent = 'Click copy to copy the link to your clipboard.';
+                } else {
+                linkBox.classList.add('hidden');
+                linkInput.value = '';
+                hint.textContent = '';
+                }
+
+                overlay.classList.remove('hidden');
+            };
+
+            copyBtn.addEventListener('click', async ()=>{
+                const text = linkInput.value;
+                if(!text) return;
+                try{
+                await navigator.clipboard.writeText(text);
+                copyBtn.textContent = 'Copied!';
+                setTimeout(()=> copyBtn.textContent = 'Copy', 1200);
+                }catch(e){
+                linkInput.select();
+                try{ document.execCommand('copy'); copyBtn.textContent = 'Copied!'; setTimeout(()=> copyBtn.textContent = 'Copy',1200);}catch(err){
+                    copyBtn.textContent = 'Failed';
+                }
+                }
+            });
+
+            openBtn.addEventListener('click', ()=>{
+                const u = linkInput.value;
+                if(!u) return;
+                const url = (/^https?:\/\//i.test(u)) ? u : ('https://' + u);
+                window.open(url, '_blank', 'noopener');
+            });
+
+            overlay.addEventListener('click', (e)=>{
+                if(e.target === overlay){
+                overlay.classList.add('hidden');
+                }
+            });
+            })();
+
         document.addEventListener('DOMContentLoaded', () => {
             const sidebar = document.getElementById('sidebar');
             const sidebarOpenButton = document.getElementById('sidebar-open');
@@ -492,8 +594,7 @@
             createEventForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                // Get a dynamic user ID from a hypothetical authentication system
-                const userId = 'user-123';
+
                 const form = e.target;
                 const formData = new FormData(form);
 
@@ -503,10 +604,10 @@
                         body: formData
                     });
 
-                    if (response.ok) {
+                    if (response.ok ) {
                         const result = await response.json();
                         console.log('Event created successfully:', result);
-                        
+                        showSuccess("Event created  | reload to see changes", result[0]['event_link']);
                         // Use a custom modal or a simple alert for feedback
                         alert('Event created successfully!');
 
@@ -520,13 +621,14 @@
                     }
                 } catch (error) {
                     console.error('An error occurred during form submission:', error);
-                    alert('An unexpected error occurred.');
+                    //alert('An unexpected error occurred.');
                 }
             });
 
             // Initial render
             switchView('dashboard');
         });
+
     </script>
 </body>
 </html>

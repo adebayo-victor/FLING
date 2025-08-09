@@ -1,0 +1,416 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Fest - Cyberpunk Tomorrow</title>
+    <!-- Google Fonts for modern, tech-inspired typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* Modern Reset & Base Styles */
+        :root {
+            --primary-bg: #1a1a2e; /* Deep Blue-Purple */
+            --secondary-bg: #0f0f1c; /* Even Deeper Blue */
+            --accent-cyan: #00f0ff; /* Electric Cyan */
+            --accent-magenta: #ff00f0; /* Vibrant Magenta */
+            --accent-green: #00ff00; /* Neon Green */
+            --text-light: #e0e0e0; /* Off-White for readability */
+            --text-dark: var(--primary-bg); /* Dark text on light elements */
+            --button-bg: var(--accent-cyan);
+            --button-text: var(--primary-bg);
+            --font-heading: 'Orbitron', sans-serif;
+            --font-body: 'Share Tech Mono', monospace;
+            --border-radius: 8px;
+            --spacing-unit: 20px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--primary-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            -webkit-font-smoothing: antialiased; /* Smoother fonts on WebKit */
+            -moz-osx-font-smoothing: grayscale; /* Smoother fonts on Firefox */
+        }
+
+        a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-magenta);
+            text-shadow: 0 0 8px var(--accent-magenta);
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5); /* Subtle glow */
+            margin-bottom: var(--spacing-unit);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 { font-size: 3.5em; }
+        h2 { font-size: 2.5em; }
+        h3 { font-size: 1.8em; }
+
+        section {
+            padding: calc(var(--spacing-unit) * 3) var(--spacing-unit);
+            text-align: center;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-unit);
+        }
+
+        /* Hero Section - The Grand Entrance */
+        .hero {
+            background-image: url("{{ url_for('static', filename='assets/img/Nue_Co_-_mangrove_exchange_DEX_defi_web3_Website_branding_green_illustrations_decentralized_SAVEE.jfif') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Parallax effect for depth */
+            min-height: 100vh; /* Full viewport height for impact */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden; /* Ensures glowing elements stay within bounds */
+            background-color: rgba(0,0,0,0.5); /* Fallback/overlay for image */
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(15, 15, 28, 0.9)); /* Dark overlay for text readability */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            padding: calc(var(--spacing-unit) * 2);
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(8px); /* Subtle frosted glass effect */
+            border: 1px solid rgba(0, 240, 255, 0.3); /* Thin neon border */
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.4), 0 0 60px rgba(255, 0, 240, 0.2); /* Dual color glow */
+            animation: fadeInScale 1s ease-out forwards; /* Entrance animation */
+        }
+
+        .hero h1 {
+            font-size: 5em; /* Large, impactful title */
+            margin-bottom: 0.1em;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-magenta);
+            animation: pulse-glow 2s infinite alternate ease-in-out; /* Pulsing neon glow */
+        }
+
+        .hero p {
+            font-size: 1.6em;
+            color: var(--text-light);
+            margin-bottom: calc(var(--spacing-unit) * 2.5);
+            opacity: 0.9;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Keyframes for animations */
+        @keyframes pulse-glow {
+            from { text-shadow: 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-magenta); }
+            to { text-shadow: 0 0 25px var(--accent-cyan), 0 0 50px var(--accent-magenta), 0 0 70px var(--accent-cyan); }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Event Info Section - Structured Data */
+        .event-info {
+            background-color: var(--secondary-bg);
+            border-top: 2px solid var(--accent-magenta);
+            border-bottom: 2px solid var(--accent-magenta);
+            position: relative;
+            padding: calc(var(--spacing-unit) * 3) var(--spacing-unit);
+            overflow: hidden;
+        }
+
+        .event-info::before, .event-info::after {
+            content: '';
+            position: absolute;
+            background: rgba(0, 255, 0, 0.1);
+            filter: blur(50px);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .event-info::before {
+            top: -50px; left: -50px; width: 200px; height: 200px;
+        }
+        .event-info::after {
+            bottom: -50px; right: -50px; width: 150px; height: 150px;
+        }
+
+
+        .info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: var(--spacing-unit);
+            margin-top: calc(var(--spacing-unit) * 2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-item {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            flex: 1 1 280px; /* Allows items to grow/shrink, minimum 280px wide */
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: left; /* Align text within item */
+        }
+
+        .info-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top left, rgba(0, 240, 255, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .info-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(0, 240, 255, 0.6);
+        }
+        .info-item:hover::before {
+            opacity: 1;
+        }
+
+        .info-item h3 {
+            color: var(--accent-green);
+            margin-top: 0;
+            font-size: 1.6em;
+            margin-bottom: 0.5em;
+            text-align: center;
+        }
+
+        .info-item p {
+            font-size: 1.3em;
+            margin: 0;
+            text-align: center;
+            font-weight: bold;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Description Section - Elaborate Details */
+        .description-section {
+            background-color: var(--primary-bg);
+            padding: calc(var(--spacing-unit) * 3) var(--spacing-unit);
+        }
+
+        .description-section h2 {
+            margin-bottom: var(--spacing-unit);
+        }
+
+        .description-section p {
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 1.15em;
+            color: var(--text-light);
+            opacity: 0.85;
+            text-align: left;
+            line-height: 1.8;
+            padding: var(--spacing-unit);
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            border: 1px dashed rgba(255, 0, 240, 0.1); /* Subtle cyber outline */
+        }
+
+        /* Call to Action Button - Buy Tickets */
+        .buy-ticket-btn {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            padding: 20px 45px;
+            border-radius: 50px; /* Pill shape for modern feel */
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 1.4em;
+            letter-spacing: 3px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth, punchy transition */
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.7), 0 0 50px rgba(255, 0, 240, 0.3); /* Multi-color glow */
+            will-change: transform, box-shadow; /* Optimize for animation */
+        }
+
+        .buy-ticket-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); /* Swipe effect */
+            transition: all 0.6s ease-out;
+            z-index: -1;
+        }
+
+        .buy-ticket-btn:hover {
+            background-color: var(--accent-magenta);
+            transform: translateY(-5px); /* Lift effect */
+            box-shadow: 0 5px 35px rgba(255, 0, 240, 0.9), 0 0 60px rgba(0, 240, 255, 0.5);
+            color: white; /* Contrast on hover */
+        }
+        .buy-ticket-btn:hover::before {
+            left: 100%; /* Complete swipe */
+        }
+
+        /* Footer - Brand Recognition */
+        footer {
+            background-color: var(--secondary-bg);
+            color: var(--text-light);
+            padding: var(--spacing-unit);
+            text-align: center;
+            font-size: 0.85em;
+            border-top: 1px solid var(--accent-green);
+            opacity: 0.6;
+            letter-spacing: 1px;
+        }
+
+        /* Responsiveness - Mobile-First Approach */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3.5em; /* Adjusted for smaller screens */
+            }
+
+            .hero p {
+                font-size: 1.3em;
+            }
+
+            h1 { font-size: 2.8em; }
+            h2 { font-size: 2em; }
+            h3 { font-size: 1.5em; }
+
+            .info-grid {
+                flex-direction: column; /* Stack info items vertically */
+            }
+
+            .info-item {
+                flex: 1 1 100%; /* Full width for items */
+            }
+
+            .buy-ticket-btn {
+                padding: 15px 30px;
+                font-size: 1.2em;
+            }
+
+            section {
+                padding: calc(var(--spacing-unit) * 2) var(--spacing-unit);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5em; /* Even smaller for very small devices */
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            h1 { font-size: 2.2em; }
+            h2 { font-size: 1.8em; }
+            h3 { font-size: 1.3em; }
+
+            .buy-ticket-btn {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+
+            section {
+                padding: var(--spacing-unit);
+            }
+
+            .info-item {
+                padding: var(--spacing-unit);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Tech Fest</h1>
+            <p>Tech expo to show your gizmo</p>
+            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/buy_ticket/39" class="buy-ticket-btn">Get Your Ticket Now</a>
+        </div>
+    </header>
+
+    <section class="event-info">
+        <div class="container">
+            <h2>Event Details</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <h3>Date</h3>
+                    <p>2025-08-30</p>
+                </div>
+                <div class="info-item">
+                    <h3>Time</h3>
+                    <p>21:11</p>
+                </div>
+                <div class="info-item">
+                    <h3>Price</h3>
+                    <p>5000 USD</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="description-section">
+        <div class="container">
+            <h2>About The Fest: Edge of Tomorrow</h2>
+            <p>
+                Step into a realm where innovation knows no bounds. Tech Fest is more than an expo; it's a journey into the cybernetic heart of the future. Witness dazzling displays of advanced robotics, immerse yourself in hyper-realistic virtual realities, and interact with the next generation of AI. From sustainable tech solutions to mind-bending bio-engineering, every corner holds a revelation. This is where bright minds converge, ideas ignite, and the blueprint for tomorrow is unveiled. Prepare to be inspired, challenged, and utterly amazed. Your future starts here.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>Powered by Techlite</p>
+    </footer>
+
+</body>
+</html>

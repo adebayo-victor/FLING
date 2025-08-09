@@ -1,0 +1,452 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Fest - Dive into the World of Anime!</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}" onerror="this.onerror=null;this.href='https://via.placeholder.com/32/FF69B4/FFFFFF?text=AF';">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Oxanium:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Modern CSS Reset & Base Styles */
+        :root {
+            --primary-color: #FF69B4; /* Hot Pink - Anime vibrant */
+            --secondary-color: #9370DB; /* Medium Purple */
+            --accent-color: #6A5ACD; /* Slate Blue */
+            --text-color: #E0E0E0; /* Light Grey */
+            --dark-background: #1A1A2E; /* Dark Blue-Purple */
+            --light-background: #2E2E50; /* Slightly lighter dark */
+            --button-text-color: #FFFFFF;
+            --font-main: 'Poppins', sans-serif;
+            --font-heading: 'Oxanium', sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-color);
+            background-color: var(--dark-background);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            color: var(--button-text-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        h1 { font-size: 3.5rem; }
+        h2 { font-size: 2.5rem; }
+        p { font-size: 1.1rem; margin-bottom: 1rem; }
+
+        /* Header & Hero Section */
+        header {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video, .hero-fallback-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            filter: brightness(0.6); /* Darken for text readability */
+        }
+
+        .hero-fallback-image {
+            display: none; /* Hidden by default, shown if video fails */
+        }
+
+        .hero-video {
+            display: block;
+        }
+
+        /* Fallback for browsers that don't support video, or if video fails to load */
+        .hero-video:not([src]) + .hero-fallback-image,
+        .hero-video[src=""] + .hero-fallback-image,
+        .hero-video[src$="videos/anime_fest_bg.mp4"][onerror] + .hero-fallback-image {
+             display: block; /* Show fallback image if video source is empty, malformed, or errors out */
+             z-index: -1; /* Place above video if video is just not playing */
+        }
+
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 900px;
+            background: rgba(0, 0, 0, 0.4); /* Semi-transparent overlay for content */
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        }
+
+        .event-tagline {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 300;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .event-datetime {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+        }
+
+        .buy-tickets-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--button-text-color);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+            cursor: pointer;
+            border: none;
+        }
+
+        .buy-tickets-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(147, 112, 219, 0.6);
+        }
+
+        /* Main Content Sections */
+        main {
+            padding: 2rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 4rem 2rem;
+            margin-bottom: 2rem;
+            background-color: var(--light-background);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section:nth-child(even) {
+            background-color: var(--dark-background);
+        }
+
+        .section h2 {
+            margin-bottom: 2rem;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--primary-color);
+        }
+
+        .section p {
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--text-color);
+        }
+
+        /* About Section */
+        #about .description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        /* Gallery Section */
+        #gallery .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        #gallery .gallery-grid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--secondary-color);
+        }
+
+        #gallery .gallery-grid img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            border-color: var(--primary-color);
+        }
+
+        /* Tickets Section */
+        #tickets .ticket-card {
+            background-color: var(--dark-background);
+            padding: 2.5rem;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 2rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--primary-color);
+        }
+
+        #tickets .ticket-card .ticket-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        #tickets .ticket-card .price-value {
+            font-size: 3.5rem;
+            color: var(--button-text-color);
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        #tickets .ticket-card .ticket-note {
+            font-size: 1rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        #tickets .buy-tickets-button {
+            font-size: 1.1rem;
+            padding: 0.9rem 2.2rem;
+        }
+
+        /* Location Section */
+        #location .map-placeholder {
+            background-color: rgba(0, 0, 0, 0.3);
+            height: 300px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px dashed var(--secondary-color);
+        }
+
+        /* Contact Section */
+        #contact p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--light-background);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            h2 { font-size: 2rem; }
+            p { font-size: 1rem; }
+
+            .hero-content {
+                padding: 1.5rem;
+            }
+
+            .hero-content h1 {
+                font-size: clamp(2rem, 10vw, 4rem);
+            }
+
+            .event-tagline {
+                font-size: clamp(1rem, 4vw, 1.5rem);
+            }
+
+            .event-datetime {
+                font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+            }
+
+            .buy-tickets-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+
+            .section {
+                padding: 3rem 1.5rem;
+            }
+
+            #gallery .gallery-grid {
+                grid-template-columns: 1fr; /* Stack images on small screens */
+            }
+
+            #tickets .ticket-card .ticket-price {
+                font-size: 2rem;
+            }
+            #tickets .ticket-card .price-value {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content {
+                padding: 1rem;
+                border-radius: 10px;
+            }
+
+            .hero-content h1 {
+                font-size: clamp(1.8rem, 12vw, 3rem);
+            }
+
+            .event-tagline {
+                font-size: clamp(0.9rem, 5vw, 1.2rem);
+            }
+
+            .event-datetime {
+                font-size: clamp(0.8rem, 4vw, 1rem);
+            }
+
+            .buy-tickets-button {
+                padding: 0.7rem 1.8rem;
+                font-size: 0.9rem;
+            }
+
+            .section {
+                padding: 2.5rem 1rem;
+            }
+
+            .section h2 {
+                font-size: clamp(1.8rem, 6vw, 2.5rem);
+            }
+
+            #tickets .ticket-card {
+                padding: 2rem;
+            }
+            #tickets .ticket-card .ticket-price {
+                font-size: 1.8rem;
+            }
+            #tickets .ticket-card .price-value {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="hero-content">
+            <h1>Anime Fest</h1>
+            <p class="event-tagline">Dive into the World of Anime!</p>
+            <p class="event-datetime">
+                <time datetime="2025-08-30T19:31">August 30, 2025 at 19:31</time>
+            </p>
+            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/32" class="buy-tickets-button">Get Your Tickets Now!</a>
+        </div>
+        <!-- Video background for hero section -->
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="{{ url_for('static', filename='videos/anime_fest_bg.mp4') }}" type="video/mp4" onerror="this.onerror=null;this.closest('header').querySelector('.hero-fallback-image').style.display='block';this.style.display='none';">
+            Your browser does not support the video tag.
+        </video>
+        <!-- Fallback image if video is not supported or fails to load -->
+        <img class="hero-fallback-image" src="{{ url_for('static', filename='images/anime_fest_hero.jpg') }}" alt="Vibrant Anime Festival Background. If image fails, see https://source.unsplash.com/1920x1080/?anime,japanese" onerror="this.onerror=null;this.src='https://via.placeholder.com/1920x1080/4B0082/FFFFFF?text=Anime+Fest+Image+Fallback';">
+    </header>
+
+    <main>
+        <section id="about" class="section">
+            <h2>About Anime Fest</h2>
+            <p class="description">Prepare for an immersive journey into the vibrant world of anime! Anime Fest is your ultimate destination for all things anime, featuring exclusive screenings, talented cosplayers, insightful panels, and a bustling marketplace full of unique merchandise. Discover new series, meet fellow fans, and celebrate your passion. It's more than just an event – it's a community gathering for anime enthusiasts!</p>
+        </section>
+
+        <section id="gallery" class="section">
+            <h2>Event Highlights</h2>
+            <div class="gallery-grid">
+                <img src="{{ url_for('static', filename='images/anime_cosplay_1.jpg') }}" alt="Cosplayers posing in intricate anime costumes at Anime Fest. If image fails, see https://source.unsplash.com/800x600/?cosplay,anime" onerror="this.onerror=null;this.src='https://via.placeholder.com/800x600/6A5ACD/FFFFFF?text=Cosplay+Image+Fallback';">
+                <img src="{{ url_for('static', filename='images/anime_merch_2.jpg') }}" alt="Colorful anime merchandise booth with figures and posters. If image fails, see https://source.unsplash.com/800x600/?anime,merchandise" onerror="this.onerror=null;this.src='https://via.placeholder.com/800x600/9370DB/FFFFFF?text=Merch+Image+Fallback';">
+                <img src="{{ url_for('static', filename='images/anime_panel_3.jpg') }}" alt="Audience enjoying an engaging anime panel discussion. If image fails, see https://source.unsplash.com/800x600/?anime,panel" onerror="this.onerror=null;this.src='https://via.placeholder.com/800x600/FF69B4/FFFFFF?text=Panel+Image+Fallback';">
+            </div>
+        </section>
+
+        <section id="tickets" class="section">
+            <h2>Tickets & Pricing</h2>
+            <p class="price-info">Secure your spot at Anime Fest for an unforgettable experience!</p>
+            <div class="ticket-card">
+                <span class="ticket-price">Only <span class="price-value">500</span></span>
+                <p class="ticket-note">Per person for full event access.</p>
+                <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/32" class="buy-tickets-button call-to-action">Buy Your Ticket Now!</a>
+            </div>
+        </section>
+
+        <section id="location" class="section">
+            <h2>Location & Directions</h2>
+            <p>The event will be held at a fantastic venue! Specific details will be announced closer to the event date to ensure the best experience for all attendees.</p>
+            <div class="map-placeholder">
+                <p>[Detailed Venue Information & Map Coming Soon!]</p>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <h2>Contact Us</h2>
+            <p>Have questions about Anime Fest? We're here to help!</p>
+            <p><strong>Email:</strong> info@animefest.com</p>
+            <p><strong>Follow us:</strong> @AnimeFestOfficial (on your favorite social media platforms)</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by Techlite</p>
+    </footer>
+</body>
+</html>

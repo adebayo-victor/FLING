@@ -1,0 +1,535 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Party - Anime Themed Fest</title>
+    <!-- Favicon placeholder if needed -->
+    <!-- <link rel="icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" type="image/x-icon"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /*
+        * Modern & Mobile-Friendly Event Template - Panda Party
+        * Designed by Techlite (UX/UI & Front-End Dev)
+        * Prioritizing elegance, responsiveness, and engagement.
+        *
+        * This embedded CSS is structured for easy customization.
+        * Adjust the :root variables for quick theme changes.
+        */
+
+        :root {
+            --primary-color: #FF69B4; /* Hot Pink - A vibrant, playful choice */
+            --secondary-color: #8A2BE2; /* Blue Violet - Deep, complementary */
+            --accent-color: #00FFFF; /* Aqua - Bright pop of color */
+            --text-color-dark: #333;
+            --text-color-light: #f9f9f9;
+            --background-dark: #2c2c2c; /* For sections like gallery */
+            --background-light: #f0f0f0; /* Default background */
+            --card-background: #ffffff;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s ease;
+        }
+
+        /* --- Global Styles & Reset --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color-dark);
+            background-color: var(--background-light);
+            overflow-x: hidden; /* Prevents horizontal scroll */
+            -webkit-font-smoothing: antialiased; /* Smoother fonts */
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- Typography --- */
+        h1, h2, h3 {
+            font-family: 'Press Start 2P', cursive; /* A pixel-art inspired font for an anime/game vibe */
+            color: var(--secondary-color);
+            margin-bottom: 0.8em;
+            line-height: 1.2;
+            text-align: center; /* Default for section headings */
+        }
+
+        h1 {
+            font-size: clamp(2.8em, 7vw, 5.5em); /* Responsive font size */
+            color: var(--primary-color);
+            text-shadow: 4px 4px 0px var(--secondary-color), 8px 8px 0px rgba(0,0,0,0.1); /* Layered shadow for depth */
+            margin-bottom: 0.5em;
+        }
+
+        h2 {
+            font-size: clamp(2em, 5vw, 3.5em);
+            margin-bottom: 1em;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-size: clamp(1.5em, 4vw, 2.5em);
+            margin-bottom: 0.6em;
+        }
+
+        p {
+            margin-bottom: 1em;
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2em;
+            transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(138, 43, 226, 0.5);
+        }
+
+        /* --- Header / Hero Section --- */
+        .hero {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: var(--text-color-light);
+            text-align: center;
+            padding: 100px 20px;
+            min-height: 85vh; /* Ensure it takes up most of the viewport */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        /* Background pattern for hero */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;charset=UTF-8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><g fill="%23FFFFFF" fill-opacity="0.1" fill-rule="evenodd"><circle cx="3" cy="3" r="3"/><circle cx="13" cy="13" r="3"/></g></svg>') repeat;
+            opacity: 0.15;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2; /* Ensures content is above pattern */
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .hero p.tagline {
+            font-size: clamp(1.2em, 2.8vw, 2em);
+            margin-bottom: 30px;
+            font-weight: 300;
+            opacity: 0.95;
+            max-width: 600px;
+        }
+
+        .event-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+
+        .info-card {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border-radius: var(--border-radius);
+            padding: 25px 35px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--text-color-light);
+            flex: 1 1 220px; /* Flexible width for responsiveness */
+            max-width: 300px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            transition: transform var(--transition-speed), background-color var(--transition-speed);
+        }
+
+        .info-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .info-card span {
+            display: block;
+            font-size: 0.85em;
+            font-weight: 300;
+            margin-top: 10px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- Section Styling --- */
+        section {
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        section:nth-of-type(even) { /* Apply different background to alternating sections */
+            background-color: var(--background-dark);
+            color: var(--text-color-light);
+        }
+
+        section:nth-of-type(even) h2,
+        section:nth-of-type(even) h3 {
+            color: var(--accent-color);
+        }
+
+        /* --- About Section --- */
+        .about-section {
+            background-color: var(--background-light);
+            text-align: center;
+        }
+
+        .about-section p {
+            max-width: 900px;
+            margin: 30px auto 0;
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: var(--text-color-dark);
+        }
+
+        /* --- Gallery Section --- */
+        .gallery-section {
+            background-color: var(--background-dark);
+            color: var(--text-color-light);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Flexible grid columns */
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .gallery-item {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 300px; /* Fixed height for consistent look */
+            object-fit: cover; /* Ensures images fill space without distortion */
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08); /* Subtle zoom on hover */
+        }
+
+        .gallery-item figcaption {
+            padding: 25px;
+            color: var(--text-color-dark);
+            font-weight: 600;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        /* --- Call to Action (Ticket) Section --- */
+        .cta-section {
+            background: linear-gradient(45deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            color: var(--text-color-light);
+            text-align: center;
+            padding: 100px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            position: relative;
+            z-index: 0;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;charset=UTF-8,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><g fill="%23FFFFFF" fill-opacity="0.1" fill-rule="evenodd"><circle cx="20" cy="20" r="10"/></g></svg>') repeat;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .cta-section h2 {
+            color: var(--text-color-light);
+            font-size: clamp(2.5em, 6vw, 4.5em);
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            margin-bottom: 0.5em;
+        }
+
+        .cta-price {
+            font-size: clamp(3em, 8vw, 5em);
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .cta-price small {
+            font-size: 0.4em;
+            opacity: 0.9;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            background-color: #1a1a1a;
+            color: #ccc;
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 0.9em;
+            border-top: 3px solid var(--primary-color);
+        }
+
+        .footer p {
+            margin: 0.5em 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #bbb;
+        }
+
+        /* --- Responsive Design (Mobile-First approach with adjustments) --- */
+        @media (max-width: 992px) {
+            .hero {
+                padding: 80px 20px;
+                min-height: 70vh;
+            }
+
+            .event-info {
+                gap: 20px;
+            }
+
+            .info-card {
+                flex: 1 1 180px;
+                padding: 20px 30px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            section {
+                padding: 80px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: clamp(2.2em, 8vw, 3.5em); }
+            h2 { font-size: clamp(1.8em, 6vw, 2.5em); }
+            h3 { font-size: clamp(1.3em, 5vw, 2em); }
+            p { font-size: 1em; }
+
+            .hero {
+                padding: 60px 15px;
+                min-height: 60vh;
+            }
+
+            .hero-content {
+                gap: 20px;
+            }
+
+            .hero p.tagline {
+                font-size: 1.1em;
+                margin-bottom: 25px;
+            }
+
+            .event-info {
+                flex-direction: column; /* Stack cards vertically on small screens */
+                gap: 15px;
+                margin-top: 30px;
+                margin-bottom: 40px;
+            }
+
+            .info-card {
+                max-width: 90%; /* Take more width on very small screens */
+                margin: 0 auto;
+                font-size: 1.2em;
+            }
+
+            .btn {
+                padding: 15px 30px;
+                font-size: 1.1em;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .about-section p {
+                font-size: 1em;
+                margin: 20px auto 0;
+            }
+
+            .gallery-item img {
+                height: 220px; /* Adjust image height for smaller screens */
+            }
+
+            .cta-section {
+                padding: 80px 15px;
+            }
+
+            .cta-price {
+                font-size: clamp(2.5em, 7vw, 3.5em);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .info-card {
+                padding: 18px 25px;
+                font-size: 1.1em;
+            }
+            .info-card span {
+                font-size: 0.8em;
+            }
+
+            .btn {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+
+            .gallery-item img {
+                height: 180px;
+            }
+
+            .gallery-item figcaption {
+                padding: 15px;
+                font-size: 1em;
+            }
+
+            .footer {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Panda Party</h1>
+            <p class="tagline">An Enchanting Anime Themed Fest for Fans of All Ages!</p>
+
+            <div class="event-info">
+                <div class="info-card">
+                    2025-08-30
+                    <span>Event Date</span>
+                </div>
+                <div class="info-card">
+                    20:04
+                    <span>Event Time</span>
+                </div>
+                <div class="info-card">
+                    Virtual Realm, Global
+                    <span>Location</span>
+                </div>
+            </div>
+
+            <a href="{{ ticket_purchase_link }}" class="btn">Get Your Tickets Now!</a>
+        </div>
+    </header>
+
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>About the Fest</h2>
+            <p>
+                Dive into a vibrant world where the charm of adorable pandas meets the captivating essence of anime! <strong>Panda Party</strong> is an immersive festival meticulously designed for fans of all ages, celebrating everything from beloved animated characters to the rich, dynamic culture of Japanese pop art. Get ready for a day filled with delightful activities, exclusive merchandise, interactive experiences, and unforgettable moments that will leave you smiling. Whether you're a seasoned otaku, a casual viewer, or just starting your anime journey, this fest promises an experience like no other – a perfect blend of cute, cool, and captivating!
+            </p>
+        </div>
+    </section>
+
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2>Visual Treats</h2>
+            <div class="gallery-grid">
+                <figure class="gallery-item">
+                    <img src="{{ url_for('static', filename='assets/img/download_3.jfif') }}" alt="Cute anime panda character celebrating with confetti. A link to an external image source for fallback or more info if needed: https://www.pexels.com/search/anime%20panda/">
+                    <figcaption>Joyful Panda Celebration</figcaption>
+                </figure>
+                <figure class="gallery-item">
+                    <img src="{{ url_for('static', filename='assets/img/Gemini_Generated_Image_1gug1i1gug1i1gug_1.png') }}" alt="Animated panda character in a futuristic city setting at night, with neon lights. A link to an external image source for fallback or more info if needed: https://pixabay.com/images/search/anime%20panda/">
+                    <figcaption>Panda in the Neon City</figcaption>
+                </figure>
+                <!-- If more images or a video path were provided, they would be placed here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="tickets" class="cta-section">
+        <div class="container">
+            <h2>Join the Panda Party!</h2>
+            <p class="cta-price">
+                <small>Price:</small> <span>$5000</span>
+            </p>
+            <a href="{{ ticket_purchase_link }}" class="btn">Secure Your Spot Now!</a>
+            <p>Limited tickets available. Don't miss out on this unique experience!</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2024 Panda Party. All rights reserved.</p>
+        <p>Powered by Techlite</p>
+    </footer>
+
+</body>
+</html>

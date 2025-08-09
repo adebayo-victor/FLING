@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst (The premier)</title>
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for easy customization */
+        :root {
+            --primary-gold: #FFD700; /* Gold for accents */
+            --secondary-red: #B22222; /* Deep red for CTA */
+            --dark-bg: #1a1a1a; /* Dark background */
+            --light-text: #f0f0f0; /* Light text color */
+            --medium-gray: #888; /* Secondary text color */
+            --font-heading: 'Playfair Display', serif; /* Elegant heading font */
+            --font-body: 'Montserrat', sans-serif; /* Clean body font */
+            --border-radius-card: 8px;
+            --box-shadow-light: 0 5px 20px rgba(0, 0, 0, 0.3);
+            --box-shadow-heavy: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Basic Reset & Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased; /* Smoother fonts on WebKit */
+            -moz-osx-font-smoothing: grayscale; /* Smoother fonts on Firefox */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
+        }
+
+        .event-container {
+            max-width: 960px; /* Optimal width for content */
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Hero Section - The Grand Entrance */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 60px 0 40px;
+            position: relative;
+        }
+
+        .hero-content {
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        .event-title {
+            font-family: var(--font-heading);
+            font-size: 4em; /* Large, impactful title */
+            color: var(--primary-gold);
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7); /* Cinematic glow */
+            line-height: 1.1;
+        }
+
+        .event-description {
+            font-size: 1.4em;
+            color: var(--light-text);
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+            line-height: 1.5;
+        }
+
+        .hero-image-wrapper {
+            width: 100%;
+            margin-top: 40px;
+            border-radius: var(--border-radius-card);
+            overflow: hidden;
+            box-shadow: var(--box-shadow-heavy);
+        }
+
+        .event-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            max-height: 500px; /* Max height for aesthetic balance */
+            filter: brightness(0.9); /* Slightly dim for dramatic effect */
+            transition: filter 0.3s ease;
+        }
+
+        .event-image:hover {
+            filter: brightness(1);
+        }
+
+        /* Details Section - Key Information */
+        .details-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            padding: 50px 20px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: var(--border-radius-card);
+            margin-top: 50px;
+            box-shadow: var(--box-shadow-light);
+        }
+
+        .detail-item {
+            background-color: #2b2b2b;
+            padding: 25px 35px;
+            border-radius: 6px;
+            text-align: center;
+            flex: 1 1 280px; /* Flexible items, min width 280px */
+            max-width: 320px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border-bottom: 4px solid var(--secondary-red); /* Accent line */
+            transition: transform 0.2s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .detail-icon {
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .detail-label {
+            font-size: 1em;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: var(--primary-gold);
+        }
+
+        /* Call to Action Section - The Main Event */
+        .cta-section {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .buy-ticket-button {
+            display: inline-block;
+            background-color: var(--secondary-red);
+            color: var(--light-text);
+            padding: 20px 45px;
+            border-radius: 50px; /* Pill shape */
+            text-decoration: none;
+            font-size: 1.6em;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--secondary-red);
+            text-transform: uppercase;
+        }
+
+        .buy-ticket-button:hover {
+            background-color: #CD5C5C; /* Lighter red on hover */
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .buy-ticket-button:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Footer - Brand Recognition */
+        .site-footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            color: var(--medium-gray);
+            font-size: 0.9em;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .event-title {
+                font-size: 3em;
+            }
+
+            .event-description {
+                font-size: 1.2em;
+            }
+
+            .details-section {
+                flex-direction: column; /* Stack items vertically */
+                align-items: center;
+                padding: 30px 20px;
+            }
+
+            .detail-item {
+                width: 100%;
+                max-width: 450px; /* Max width for consistency */
+                flex: none; /* Disable flex shrinking/growing */
+            }
+
+            .buy-ticket-button {
+                padding: 18px 35px;
+                font-size: 1.4em;
+                width: 90%; /* Near full width button */
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .event-container {
+                padding: 15px;
+            }
+
+            .hero-section {
+                padding: 40px 0 20px;
+            }
+
+            .event-title {
+                font-size: 2.5em;
+            }
+
+            .event-description {
+                font-size: 1em;
+            }
+
+            .hero-image-wrapper {
+                margin-top: 20px;
+            }
+
+            .details-section {
+                padding: 20px 15px;
+                margin-top: 30px;
+            }
+
+            .detail-icon {
+                font-size: 1.8em;
+            }
+
+            .detail-value {
+                font-size: 1.2em;
+            }
+
+            .cta-section {
+                padding: 40px 15px;
+            }
+
+            .site-footer {
+                padding: 25px 15px;
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="event-container">
+        <header class="hero-section">
+            <div class="hero-content">
+                <h1 class="event-title">Catalyst (The premier)</h1>
+                <p class="event-description">Get a front row seat to the premier at the oke-ilewo theater</p>
+            </div>
+            <div class="hero-image-wrapper">
+                <img src="{{ url_for('static', filename='assets/img/download_2.jfif') }}"
+                     alt="A grand cinema event premier with a red carpet and elegant lighting. External source for similar imagery: https://unsplash.com/photos/a-red-carpet-is-rolled-out-in-front-of-a-building-L200D1P3V7I"
+                     onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1574375936306-4444005b63b2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';"
+                     class="event-image">
+            </div>
+        </header>
+
+        <section class="details-section">
+            <div class="detail-item">
+                <span class="detail-icon">📅</span>
+                <p class="detail-label">Date</p>
+                <p class="detail-value">2025-09-06</p>
+            </div>
+            <div class="detail-item">
+                <span class="detail-icon">⏰</span>
+                <p class="detail-label">Time</p>
+                <p class="detail-value">20:16</p>
+            </div>
+            <div class="detail-item">
+                <span class="detail-icon">💵</span>
+                <p class="detail-label">Price</p>
+                <p class="detail-value">₦5000</p>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/37" class="buy-ticket-button">
+                Buy Ticket Now - ₦{{ 5000 }}
+            </a>
+        </section>
+
+        <footer class="site-footer">
+            <p>Powered by Techlite</p>
+        </footer>
+    </div>
+</body>
+</html>

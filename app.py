@@ -13,6 +13,31 @@ import string
 import io
 import xlsxwriter
 from dotenv import load_dotenv
+#HTML file saving function, ahahahahahahahah, hell yeah
+def save_html(html_content: str, file_name: str, folder_path: str):
+    """
+    Saves HTML content to a file.
+    
+    Args:
+        html_content (str): The HTML content as a string.
+        file_name (str): The file name (e.g., "index.html").
+        folder_path (str): The folder path to save into.
+    """
+    try:
+        # Ensure folder exists
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Full file path
+        file_path = os.path.join(folder_path, file_name)
+
+        # Write the HTML content
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(html_content)
+
+        print(f"✅ HTML file saved: {file_path}")
+
+    except Exception as e:
+        print(f"❌ Error saving HTML: {e}")
 
 #loading virtual environment
 load_dotenv()
@@ -144,82 +169,93 @@ def create_event(user_id):
     This route expects a POST request with form data and file uploads.
     """
     if request.method == "POST":
-        # Retrieve form data
-        title = request.form.get("event-title")
-        date = request.form.get("event-date")
-        time = request.form.get("event-time")
-        location = request.form.get("event-location")
-        description = request.form.get("event-description")
-        price = request.form.get("ticket-price") # <-- New: Retrieve price from form
-        user_prompt = request.form.get("ai-template-prompt")
-        # Handle file uploads using your existing function
-        img1_path = handle_file_upload("image-1").get("path")
-        img2_path = handle_file_upload("image-2").get("path")
-        img3_path = handle_file_upload("image-3").get("path")
-        video_path = handle_file_upload("video").get("path")
-
-        # Note: The `aiTemplatePrompt` and `status` keys from your description
-        # are not being stored in the `events` table because your provided schema
-        # does not include columns for them.
-
-        # Ensure required fields are not empty
-        if not all([title, date, time, location, description]):
-            # You might want to handle this with a flash message and a redirect
-            return jsonify({"error": "Please fill out all required fields"}), 400
-
-        # Insert data into the events table
         try:
-            url_key = generate_url_code()
-            db.execute(
-                "INSERT INTO events (title, description, location, date, time, img1, img2, img3, video, created_by, price, url_key) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                title,
-                description,
-                location,
-                date,
-                time,
-                img1_path,
-                img2_path,
-                img3_path,
-                video_path,
-                user_id,  # The creator ID is passed from the URL
-                price,
-                url_key
-            )
-            #template generation
-            event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key = ?", user_id, url_key)
-            # --- Main script execution ---
-            prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events. The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only , hard code the rest the info to be added are as follows:"
-            prompt += f'''{user_prompt}
-                event-title: {title},
-                event-description:{description},
-                event-time:{time},
-                event-date:{date},
-                event-price:{price},
-                ticket-purchase-link:https://hhxsq4xb-1000.uks1.devtunnels.ms/{event[0]['id']},
-                img-1 path: {img1_path},
-                img-1 path: {img2_path},
-                img-1 path: {img3_path},
-                video-path: {video_path},
-            '''
-            # Generate the ticket template
-            html_result = generate_ticket_template(prompt)
+            # Retrieve form data
+            title = request.form.get("event-title")
+            date = request.form.get("event-date")
+            time = request.form.get("event-time")
+            location = request.form.get("event-location")
+            description = request.form.get("event-description")
+            price = request.form.get("ticket-price") # <-- New: Retrieve price from form
+            user_prompt = request.form.get("ai-template-prompt")
+            # Handle file uploads using your existing function
+            img1_path = handle_file_upload("image-1").get("path")
+            img2_path = handle_file_upload("image-2").get("path")
+            img3_path = handle_file_upload("image-3").get("path")
+            video_path = handle_file_upload("video").get("path")
 
-            if html_result:
-                # Print the generated HTML code
-                print("----PROMPT----")
-                print(prompt)
-                print("--- Generated HTML Template ---")
-                print(html_result)
-                return {"response":"successful"}
-            else:
-                print("Could not generate HTML template.")
+            # Note: The `aiTemplatePrompt` and `status` keys from your description
+            # are not being stored in the `events` table because your provided schema
+            # does not include columns for them.
+
+            # Ensure required fields are not empty
+            if not all([title, date, time, location, description]):
+                # You might want to handle this with a flash message and a redirect
+                return jsonify({"error": "Please fill out all required fields"}), 400
+
+            # Insert data into the events table
+            try:
+                url_key = generate_url_code()
+                db.execute(
+                    "INSERT INTO events (title, description, location, date, time, img1, img2, img3, video, created_by, price, url_key) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    title,
+                    description,
+                    location,
+                    date,
+                    time,
+                    img1_path,
+                    img2_path,
+                    img3_path,
+                    video_path,
+                    user_id,  # The creator ID is passed from the URL
+                    price,
+                    url_key
+                )
+                #template generation
+                event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key = ?", user_id, url_key)
+                # --- Main script execution ---
+                prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events. The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
+                prompt += f'''{user_prompt}
+                    event-title: {title},
+                    event-description:{description},
+                    event-time:{time},
+                    event-date:{date},
+                    event-price:{price},
+                    ticket-purchase-link:https://hhxsq4xb-1000.uks1.devtunnels.ms/buy_ticket/{event[0]['id']},
+                    img-1 path: {img1_path},
+                    img-1 path: {img2_path},
+                    img-1 path: {img3_path},
+                    video-path: {video_path},
+                '''
+                # Generate the ticket template
+                html_result = generate_ticket_template(prompt)
+
+                if html_result:
+                    # Print the generated HTML code
+                    print("----PROMPT----")
+                    print(prompt)
+                    print("--- Generated HTML Template ---")
+                    print(html_result)
+                    print("--- Just HTML Template ---")
+                    html_result=html_result.replace('```', '')
+                    print(html_result)
+                    save_html(html_result,f"{event[0]['title']}{event[0]['url_key']}.html",  'templates')
+                    db.execute("UPDATE events SET html = ? wHERE id = ?", f"{event[0]['title']}{event[0]['url_key']}.html", f"{event[0]['id']}")
+                    return jsonify([{"response":"successful", "event_link":f"https://hhxsq4xb-1000.uks1.devtunnels.ms/view_event/{event[0]['url_key']}"}])
+                else:
+                    print("Could not generate HTML template.")
+            except Exception as e:
+                # Consider more robust error handling and logging
+                return jsonify({"error": f"An error occurred: {e}"}), 500
         except Exception as e:
-            # Consider more robust error handling and logging
-            return jsonify({"error": f"An error occurred: {e}"}), 500
-
+            return {'response':f"{e}"}
     # If GET request, you might want to return the form page
     return redirect(url_for("dashboard", user_id=user_id))
-
+@app.route("/view_event/<url_key>")
+def view_event(url_key):
+    event = db.execute("SELECT * FROM events WHERE url_key = ?", url_key)
+    if event:
+        return render_template(event[0]['html'])
 if __name__=="__main__":
     app.run(debug=True, port=1000 )

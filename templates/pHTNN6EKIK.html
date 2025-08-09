@@ -1,0 +1,470 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Paradise Party</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        /* Modern Reset & Base Styles */
+        :root {
+            --color-black: #1a1a1a;
+            --color-white: #ffffff;
+            --color-panda-accent-pink: #FF69B4; /* Hot Pink */
+            --color-panda-accent-blue: #00BFFF; /* Deep Sky Blue */
+            --color-panda-accent-gold: #FFD700; /* Gold */
+            --gradient-multicolor: linear-gradient(135deg, var(--color-panda-accent-pink) 0%, var(--color-panda-accent-blue) 50%, var(--color-panda-accent-gold) 100%);
+            --font-primary: 'Poppins', sans-serif;
+            --font-display: 'Bebas Neue', cursive;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.6;
+            color: var(--color-black);
+            background-color: var(--color-white);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-display);
+            line-height: 1.2;
+            margin-bottom: 0.5em;
+            color: var(--color-black);
+            text-transform: uppercase;
+        }
+
+        h1 { font-size: clamp(2.5rem, 8vw, 6rem); }
+        h2 { font-size: clamp(2rem, 6vw, 4rem); }
+        h3 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+        p {
+            font-size: clamp(1rem, 2vw, 1.125rem);
+            margin-bottom: 1em;
+        }
+
+        /* Layout & Reusables */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        section {
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden; /* For background patterns/elements */
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-family: var(--font-primary);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-multicolor);
+            color: var(--color-white);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0.9;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-black); /* Base black for panda theme */
+            color: var(--color-white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://via.placeholder.com/1920x1080/000000/FFFFFF?text=Subtle+Panda+Pattern') no-repeat center center/cover; /* Subtle panda pattern or abstract */
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero-content h1 {
+            color: var(--color-white);
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero-content p {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero-date-time {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            color: var(--color-panda-accent-gold);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* About Section */
+        .about-section {
+            background-color: var(--color-white);
+            color: var(--color-black);
+            padding-top: 100px;
+            padding-bottom: 100px;
+            position: relative;
+        }
+
+        .about-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 105, 180, 0.05) 0%, rgba(0, 191, 255, 0.05) 100%);
+            z-index: 0;
+        }
+        .about-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+        .about-text {
+            max-width: 800px;
+            text-align: center;
+        }
+        .about-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .detail-card {
+            background-color: var(--color-black);
+            color: var(--color-white);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .detail-card h3 {
+            color: var(--color-panda-accent-pink);
+            margin-bottom: 10px;
+        }
+
+        .detail-card p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--color-white);
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            background-color: var(--color-black);
+            padding-top: 100px;
+            padding-bottom: 100px;
+            color: var(--color-white);
+        }
+
+        .gallery-section h2 {
+            color: var(--color-white);
+            margin-bottom: 50px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 300px; /* Fixed height for consistency */
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-item-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+        }
+
+        .gallery-item-overlay p {
+            color: var(--color-white);
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Call to Action Section */
+        .cta-section {
+            background: var(--gradient-multicolor);
+            padding: 80px 0;
+            text-align: center;
+            color: var(--color-white);
+        }
+
+        .cta-section h2 {
+            color: var(--color-white);
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: clamp(1.125rem, 2.5vw, 1.4rem);
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--color-black);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--color-panda-accent-gold);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--color-white);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .hero {
+                min-height: 80vh;
+            }
+
+            .detail-card h3 {
+                font-size: 1.8rem;
+            }
+            .detail-card p {
+                font-size: 1rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr; /* Stack images on small screens */
+            }
+
+            .gallery-item img {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: clamp(2rem, 10vw, 4rem);
+            }
+            .hero-date-time {
+                font-size: clamp(1.2rem, 6vw, 2.5rem);
+            }
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            .detail-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Panda Paradise Party</h1>
+            <p>Join us for an unforgettable experience! A panda theme for everyone, full of fun, music, and vibrant colors.</p>
+            <div class="hero-date-time">
+                2025-08-30 | 19:56
+            </div>
+            <a href="{{ ticket_purchase_link }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                Get Your Tickets Now!
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container about-content">
+            <div class="text-center about-text">
+                <h2>About the Event</h2>
+                <p>Dive into a whimsical world where black and white meets a riot of colors! The Panda Paradise Party is an inclusive event designed for everyone who loves good vibes, unique themes, and memorable moments. Prepare for stunning visuals, energetic performances, and a community of fellow enthusiasts.</p>
+            </div>
+            <div class="about-details-grid">
+                <div class="detail-card">
+                    <h3>Date</h3>
+                    <p>Saturday, August 30, 2025</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Time</h3>
+                    <p>19:56 PM (GMT)</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Price</h3>
+                    <p>Only $5000</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section" id="gallery">
+        <div class="container text-center">
+            <h2>Moments from Panda Paradise</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='assets/img/download_3.jfif') }}"
+                         alt="A joyful gathering at a vibrant event with colorful lights. If this image doesn't load, you can view a similar image at https://via.placeholder.com/1200x600/000000/FFFFFF?text=Panda+Event+Image."
+                         onerror="this.onerror=null;this.src='https://via.placeholder.com/1200x600/000000/FFFFFF?text=Image+Unavailable';">
+                    <div class="gallery-item-overlay">
+                        <p>Vibrant Event Atmosphere</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='assets/img/Gemini_Generated_Image_1gug1i1gug1i1gug_1.png') }}"
+                         alt="An artistic rendering of a panda with abstract colorful elements. If this image doesn't load, you can view a similar image at https://via.placeholder.com/1200x600/000000/FFFFFF?text=Panda+Art+Image."
+                         onerror="this.onerror=null;this.src='https://via.placeholder.com/1200x600/000000/FFFFFF?text=Image+Unavailable';">
+                    <div class="gallery-item-overlay">
+                        <p>Artistic Panda Vibe</p>
+                    </div>
+                </div>
+                <!-- Adding a third placeholder image for better layout demo -->
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/1200x600/FFD700/1a1a1a?text=More+Panda+Fun"
+                         alt="A festive scene with people enjoying the panda-themed party."
+                         onerror="this.onerror=null;this.src='https://via.placeholder.com/1200x600/000000/FFFFFF?text=Image+Unavailable';">
+                    <div class="gallery-item-overlay">
+                        <p>Party Highlights</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Don't Miss Out!</h2>
+            <p>Spaces are limited, and the panda party waits for no one! Secure your spot today for an experience like no other.</p>
+            <a href="{{ ticket_purchase_link }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                Grab Your Tickets Now!
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Panda Paradise Party. All rights reserved.</p>
+        <p>Powered by Techlite</p>
+    </footer>
+
+</body>
+</html>
