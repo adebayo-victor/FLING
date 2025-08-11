@@ -449,16 +449,11 @@
             const profileCancelBtn = document.getElementById('profile-cancel-btn');
              
             // Mock user ID to simulate a logged-in user
-            const userId = 'user-123';
+            //server contents
 
-            // Mock data for events, including a creatorId for each event
-            let events = [
-                { id: 1, title: 'Future of AI Summit', date: '2025-06-21', time: '10:00', location: 'Tech Innovation Hub, San Francisco', description: 'A two-day summit bringing together the brightest minds in artificial intelligence.', price: 99.99, status: 'Active', creatorId: 'user-456' },
-                { id: 2, title: 'Quantum Computing Workshop', date: '2025-07-15', time: '09:00', location: 'Virtual Event', description: 'An intensive workshop on the fundamentals and future of quantum computing.', price: 149.50, status: 'Draft', creatorId: 'user-123' },
-                { id: 3, title: 'Space Exploration Expo', date: '2025-05-10', time: '14:00', location: 'Kennedy Space Center', description: 'Experience the latest in space technology and meet astronauts.', price: 50.00, status: 'Completed', creatorId: 'user-123' },
-                { id: 4, title: 'Cybersecurity Conference 2025', date: '2025-09-05', time: '09:00', location: 'The Convention Center, New York', description: 'Exploring the latest threats and defenses in cybersecurity.', price: 250.00, status: 'Active', creatorId: 'user-789' },
-            ];
 
+                       
+            
             // Function to switch main content views
             const switchView = (viewId) => {
                 // First, hide all views
@@ -494,6 +489,7 @@
                     renderEvents(myEventsGrid, myEvents);
                 }
             };
+ 
 
             // Function to render event cards into a specific grid container
             const renderEvents = (gridElement, eventsToRender) => {
@@ -502,7 +498,6 @@
                     gridElement.innerHTML = `<p class="text-zinc-500">No events found.</p>`;
                     return;
                 }
-
                 eventsToRender.forEach(event => {
                     const statusColor = event.status === 'Active' ? 'text-green-400 bg-green-900/50' : event.status === 'Draft' ? 'text-yellow-400 bg-yellow-900/50' : 'text-gray-400 bg-gray-900/50';
                     const eventCard = `
@@ -512,16 +507,31 @@
                                 <h3 class="mt-4 text-lg font-bold text-white">${event.title}</h3>
                                 <p class="mt-1 text-sm text-zinc-400">${event.date} at ${event.time}</p>
                                 <p class="mt-2 text-sm text-zinc-500">${event.location}</p>
+                                <a href=https://hhxsq4xb-1000.uks1.devtunnels.ms/view_event/${event.url_key}>Vist website</a>
                             </div>
                         </div>
                     `;
                     gridElement.innerHTML += eventCard;
                 });
             };
-
-            // Function to show event details modal
-            const showEventDetail = (eventId) => {
-                const event = events.find(e => e.id == eventId);
+            fetch('https://hhxsq4xb-1000.uks1.devtunnels.ms/get_user_events/' + document.getElementById("profile-id").value, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json()
+            })
+            .then(data =>{
+                console.log(data)
+                renderEvents(eventsGrid, data)
+                const showEventDetail = (eventId) => {
+                const event = data.find(e => e.id == eventId);
                 if (event) {
                     document.getElementById('modal-event-title').textContent = event.title;
                     document.getElementById('modal-event-status').textContent = event.status;
@@ -532,7 +542,22 @@
                     document.getElementById('modal-event-price').textContent = `$${event.price.toFixed(2)}`;
                     eventDetailModal.classList.add('active');
                 }
+                document.querySelectorAll('.grid').forEach(grid => {
+                grid.addEventListener('click', (e) => {
+                    const card = e.target.closest('.event-card');
+                    if (card) {
+                        showEventDetail(card.dataset.id);
+                    }
+                });
+            });
             };
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                return [];
+            });
+            // Function to show event details modal
+            
 
             // Function to show the new profile modal
             const showProfileModal = () => {
@@ -560,14 +585,7 @@
             createEventBtnDashboard.addEventListener('click', () => switchView('create-event'));
              
             // Use event delegation for dynamically created event cards
-            document.querySelectorAll('.grid').forEach(grid => {
-                grid.addEventListener('click', (e) => {
-                    const card = e.target.closest('.event-card');
-                    if (card) {
-                        showEventDetail(card.dataset.id);
-                    }
-                });
-            });
+            
              
             closeModalBtn.addEventListener('click', () => {
                 eventDetailModal.classList.remove('active');

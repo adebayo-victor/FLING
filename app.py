@@ -159,8 +159,9 @@ def register_login():
 @app.route("/dashboard/<int:user_id>")
 def dashboard(user_id):
     user = db.execute("SELECT * FROM users WHERE id =?", user_id)[0]
+    events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
     if user:
-        return render_template("my_dashboard.html", user=user)
+        return render_template("my_dashboard.html", user=user, events=events)
 # --- New Route for Event Creation ---
 @app.route("/create_event/<int:user_id>", methods=["POST"])
 def create_event(user_id):
@@ -257,5 +258,10 @@ def view_event(url_key):
     event = db.execute("SELECT * FROM events WHERE url_key = ?", url_key)
     if event:
         return render_template(event[0]['html'])
+@app.route("/get_user_events/<int:id>")
+def get_user_events(id):
+    events = db.execute("SELECT * FROM events WHERE created_by = ?", id)
+    if events:
+        return jsonify(events)
 if __name__=="__main__":
     app.run(debug=True, port=1000 )
