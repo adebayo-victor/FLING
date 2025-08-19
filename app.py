@@ -360,6 +360,9 @@ def ask_ai():
             return jsonify({"response": f"{result}"})
         else:
             return jsonify({"response": f"An error occured with the model, contact manufacturer"})
-
+@app.route("/buy_ticket/id")
+def buy_ticket(id):
+    event = db.execute("SELECT * FROM events WHERE id = ?", id)
+    return render_template("buy_ticket.html", event=event)
 if __name__=="__main__":
     app.run(debug=True, port=1000 )
