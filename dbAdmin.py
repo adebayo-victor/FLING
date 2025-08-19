@@ -5,5 +5,7 @@ from datetime import datetime
 db = SQL("sqlite:///info.db")
 
 # --- TABLE CREATION ---
-
-print(db.execute("SELECT * FROM events"))
+format_string = "%Y-%m-%d %H:%M:%S"
+date = db.execute("SELECT * FROM events")[0]['created_at']
+datetime_object = datetime.strptime(date, format_string)
+print(datetime_object)

@@ -130,6 +130,12 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37-2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.962.613 2.072.484 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     <span>Settings</span>
                 </a>
+                <a class="flex items-center space-x-3 p-3 rounded-lg text-zinc-400 hover:bg-zinc-800 transition-colors sidebar-item" id="track-events-link">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-2.31-.47-4.14-2.3-4.6-4.6H13v4.6zm-1-16.86c-4.43 0-8 3.58-8 8s3.57 8 8 8 8-3.58 8-8-3.57-8-8-8zm4.74 3.74l-2.73 2.73-1.41-1.41-2.73 2.73 1.41 1.41 2.73-2.73 1.41 1.41-2.73 2.73 1.41 1.41 2.73-2.73 2.73 2.73 1.41-1.41z"></path>
+                    </svg>
+                    <span class="tracking-wide">Events Tracking</span>
+                </a>
             </nav>
         </aside>
 
@@ -353,9 +359,93 @@
           </div>
           <p id="sm_hint" class="mt-2 text-xs text-gray-500"></p>
         </div>
-      </div>
-    <script src="script.js"></script>
+    </div>
+    <!-- Overlay -->
+    <div  class="fixed-one inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 hidden">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-5xl h-[85vh] flex flex-col">
+        <!-- Title -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold">Event Sales & Insights</h2>
+            <button class="text-gray-400 hover:text-white">✕</button>
+        </div>
+    
+        <!-- Top row: Chart + AI responses -->
+        <div class="flex gap-4 flex-shrink-0 mb-4 h-[40%]">
+            <!-- Chart placeholder -->
+            <div class="bg-gray-700 rounded-lg flex-1 flex items-center justify-center">
+            <canvas id="salesChart" class="w-full h-full"></canvas>
+            </div>
+            <!-- AI responses -->
+            <div id="aiResponseBox" class="bg-gray-700 rounded-lg flex-1 p-4 overflow-y-auto">
+            <p class="text-gray-400">AI responses will appear here...</p>
+            </div>
+        </div>
+    
+        <!-- Attendee Search -->
+        <input
+            type="text"
+            id="attendeeSearch"
+            placeholder="Search attendees..."
+            class="mb-2 p-2 rounded bg-gray-700 text-white w-full"
+        />
+    
+        <!-- Attendee list -->
+        <div id="attendeeList" class="flex-1 overflow-y-auto bg-gray-700 rounded-lg p-4 space-y-2">
+            <!-- Example attendees -->
+            <div class="p-2 bg-gray-600 rounded">Event 1 - John Doe</div>
+            <div class="p-2 bg-gray-600 rounded">Event 1 - Jane Smith</div>
+            <div class="p-2 bg-gray-600 rounded">Event 2 - Alice Johnson</div>
+            <div class="p-2 bg-gray-600 rounded">Event 2 - Bob Brown</div>
+            <div class="p-2 bg-gray-600 rounded">Event 2 - Charlie Adams</div>
+        </div>
+    
+        <!-- AI Prompt -->
+        <div class="mt-4 flex gap-2">
+            <input
+            type="text"
+            id="aiPrompt"
+            placeholder="Ask AI about events..."
+            class="flex-1 p-2 rounded bg-gray-700 text-white"
+            />
+            <button
+            onclick="sendAIPrompt()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white"
+            >
+            Send
+            </button>
+        </div>
+        </div>
+    </div>
+    
+    <div id="track-events-modal" class="track-events-container">
+        <div class="bg-zinc-900 p-8 rounded-xl line-art-border relative max-w-lg w-full">
+            <h3 class="text-2xl font-bold mb-4">Track Events</h3>
+            <div class="space-y-4">
+                <input type="text" id="event-link-input" placeholder="Paste event link here" class="block w-full bg-zinc-800 rounded-md border-zinc-700 text-white p-3 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                <button id="track-btn" class="w-full line-art-btn flex items-center justify-center space-x-2">
+                    <span>Track Event</span>
+                </button>
+            </div>
+            <button id="close-track-events-modal" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
+    <!--script src="script.js"></script-->
     <script>
+        // Events Tracking Modal
+        const trackEventsLink = document.getElementById('track-events-link');
+            const trackEventsModal = document.getElementById('track-events-modal');
+            const closeTrackEventsModal = document.getElementById('close-track-events-modal');
+            if (trackEventsLink && trackEventsModal && closeTrackEventsModal) {
+                trackEventsLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    trackEventsModal.style.display = 'flex';
+                });
+                closeTrackEventsModal.addEventListener('click', () => {
+                    trackEventsModal.style.display = 'none';
+                });
+            }
         (function(){
             const overlay = document.getElementById('successOverlay');
             const titleEl = document.getElementById('sm_title');
@@ -447,7 +537,8 @@
             const profileModal = document.getElementById('profile-modal');
             const closeProfileModalBtn = document.getElementById('close-profile-modal-btn');
             const profileCancelBtn = document.getElementById('profile-cancel-btn');
-             
+            const trackOverlay = document.querySelector('.fixed')
+            
             // Mock user ID to simulate a logged-in user
             //server contents
 
@@ -501,15 +592,31 @@
                 eventsToRender.forEach(event => {
                     const statusColor = event.status === 'Active' ? 'text-green-400 bg-green-900/50' : event.status === 'Draft' ? 'text-yellow-400 bg-yellow-900/50' : 'text-gray-400 bg-gray-900/50';
                     const eventCard = `
-                        <div class="event-card group cursor-pointer line-art-border" data-id="${event.id}">
-                            <div class="p-6">
-                                <span class="text-xs font-semibold ${statusColor} rounded-full px-2 py-1">${event.status}</span>
-                                <h3 class="mt-4 text-lg font-bold text-white">${event.title}</h3>
-                                <p class="mt-1 text-sm text-zinc-400">${event.date} at ${event.time}</p>
-                                <p class="mt-2 text-sm text-zinc-500">${event.location}</p>
-                                <a href=https://hhxsq4xb-1000.uks1.devtunnels.ms/view_event/${event.url_key}>Vist website</a>
+                        <div class="event-card group cursor-pointer border border-zinc-700 rounded-xl bg-zinc-900 hover:bg-zinc-800 transition-colors duration-200 shadow-md hover:shadow-lg" data-id="${event.id}">
+                            <div class="p-6 space-y-2">
+                                <!-- Status Badge -->
+                                <span class="text-xs font-semibold ${statusColor} bg-zinc-800 border border-zinc-700 rounded-full px-2 py-1 shadow-sm">
+                                    ${event.status}
+                                </span>
+
+                                <!-- Event Title -->
+                                <h3 class="mt-2 text-lg font-bold text-white group-hover:text-green-400 transition-colors">
+                                    ${event.title}
+                                </h3>
+
+                                <!-- Date & Time -->
+                                <p class="text-sm text-zinc-400">${event.date} at ${event.time}</p>
+
+                                <!-- Location -->
+                                <p class="text-sm text-zinc-500">${event.location}</p>
+                                <a class="text-green-500 hover:text-green-300 underline" 
+                                    href="https://hhxsq4xb-1000.uks1.devtunnels.ms/view_event/${event.url_key}">
+                                    Visit website
+                                </a>
+                                <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/track_events/${event.url_key}" class="text-green-300 cursor-pointer hover:text-green-100" id="track-event">Track events</a>
                             </div>
                         </div>
+
                     `;
                     gridElement.innerHTML += eventCard;
                 });
@@ -642,11 +749,10 @@
                     //alert('An unexpected error occurred.');
                 }
             });
-
             // Initial render
             switchView('dashboard');
+            
         });
-
     </script>
 </body>
 </html>

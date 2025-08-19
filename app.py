@@ -53,7 +53,7 @@ if not API_KEY:
     exit()
 
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent"
-
+#this function can also be used to generate other based on the prompt
 def generate_ticket_template(prompt):
     """
     Sends a prompt to the Gemini API to request a full HTML template.
@@ -217,7 +217,7 @@ def create_event(user_id):
                 event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key = ?", user_id, url_key)
                 # --- Main script execution ---
                 prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events. The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
-                prompt += f'''{user_prompt}
+                prompt += (f'''{user_prompt}
                     event-title: {title},
                     event-description:{description},
                     event-time:{time},
@@ -227,8 +227,7 @@ def create_event(user_id):
                     img-1 path: {img1_path},
                     img-1 path: {img2_path},
                     img-1 path: {img3_path},
-                    video-path: {video_path},
-                '''
+                    video-path: {video_path}''')
                 # Generate the ticket template
                 html_result = generate_ticket_template(prompt)
 
@@ -263,5 +262,104 @@ def get_user_events(id):
     events = db.execute("SELECT * FROM events WHERE created_by = ?", id)
     if events:
         return jsonify(events)
+@app.route("/track_events/<key>")
+def track_events(key):
+    tickets = db.execute("SELECT * FROM users JOIN events ON users.id = events.created_by JOIN tickets ON users.id=tickets.user_id WHERE url_key =?", key)
+    return render_template("track_events.html", tickets=tickets)
+
+@app.route("/sales_data/<id>")
+def sales_data(id):
+    try:
+        chart_data = {"x": [], "y": []}
+        today = datetime.now()
+        format_string = "%Y-%m-%d %H:%M:%S"
+
+        # Get event creation date
+        event_created_date = db.execute(
+            """SELECT events.created_at 
+            FROM tickets 
+            JOIN events ON events.id = tickets.event_id 
+            JOIN users ON users.id = tickets.user_id 
+            WHERE events.id = ?""", id
+        )[0]['created_at']
+        datetime_object = datetime.strptime(event_created_date, format_string)
+
+        # Get tickets
+        tickets = db.execute(
+            """SELECT events.created_at 
+            FROM tickets 
+            JOIN events ON events.id = tickets.event_id 
+            JOIN users ON users.id = tickets.user_id 
+            WHERE events.id = ?""",
+        )
+
+        # Build daily sales counts
+        day_diff = (today - datetime_object).days
+        for i in range(day_diff + 1):  # include today
+            day = (datetime_object + timedelta(days=i)).date()
+            chart_data["x"].append(day.strftime("%Y-%m-%d"))
+
+            # Count tickets created on this day
+            sales_count = sum(
+                1 for ticket in tickets
+                if datetime.strptime(ticket['created_at'], format_string).date() == day
+            )
+            chart_data["y"].append(sales_count)
+        print(chart_data)
+        return []
+    except IndexError:
+        return {"x": [], "y": []}
+
+
+@app.route("/search_attendees", methods=["POST"])
+def search_attendees():
+    data = request.get_json()
+    query = data.get("query", "").lower()
+
+    filtered = []
+    attendees = db.execute("SELECT users.name, users.email, events.price \
+                            FROM tickets JOIN users ON users.id = tickets.user_id \
+                            JOIN events ON events.id = tickets.event_id")
+
+    for attendee in attendees:
+        if (query in attendee["name"].lower() 
+            or query in attendee["email"].lower() 
+            or query in str(attendee["price"]).lower()):
+            filtered.append({
+                "name": attendee["name"],
+                "email": attendee["email"],
+                "price": attendee["price"]
+            })
+
+    return jsonify({"attendees": filtered})
+@app.route("/ask_ai", methods=["POST"])
+def ask_ai():
+    if request.method == "POST":
+        data = request.get_json()
+        user_prompt = data.get("prompt")
+        event_id = data.get("event_id")
+        BASE_PROMPT = """
+        You are an event sales assistant. you engage the user provide advice and insight based on the event data and talk about other things 
+        Answer ONLY based on the provided database data. 
+        Do not invent data. 
+        Be concise, clear, and numeric where possible.
+        
+        """
+        #event data
+        data = db.execute("SELECT * FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id = users.id")
+        info = ""
+        for row in data:
+            info+=(f"{row['name']}-{row['email']}-{row['price']}")
+        # Combine with base instructions
+        full_prompt = BASE_PROMPT + "\nprompt: " + user_prompt + "\nevent purchase data/ticket sales: " + info
+        #full_prompt = full_prompt.join(info)
+        #sending and receiving AI response
+        result = generate_ticket_template(full_prompt)
+        if result:
+            print("prompt", full_prompt)
+            return jsonify({"response": f"{result}"})
+        else:
+            return jsonify({"response": f"An error occured with the model, contact manufacturer"})
+
 if __name__=="__main__":
     app.run(debug=True, port=1000 )

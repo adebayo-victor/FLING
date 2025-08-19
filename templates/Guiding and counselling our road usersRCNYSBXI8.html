@@ -1,0 +1,671 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guiding and Counselling Our Road Users - Seminar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for easy customization */
+        :root {
+            --primary-yellow: #FFD700; /* Vibrant Gold/Warning Yellow */
+            --secondary-red: #DC143C; /* Bold Crimson/Stop Red */
+            --dark-gray: #2C3E50; /* Deep Blue-Gray, almost black */
+            --light-gray: #ECF0F1; /* Soft off-white */
+            --white: #FFFFFF;
+            --text-color: #34495E; /* Darker Blue-Gray for body text */
+            --accent-blue: #3498DB; /* Bright Blue for informational elements */
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        /* Header - Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url("https://images.unsplash.com/photo-1579547610447-e17f42d2a4a7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") no-repeat center center/cover;
+            color: var(--white);
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh; /* Make it engagingly tall */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .hero-section::before { /* Subtle road line pattern */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: repeating-linear-gradient(to right, var(--primary-yellow), var(--primary-yellow) 50px, transparent 50px, transparent 100px);
+            opacity: 0.3;
+            animation: moveRoadLine 30s linear infinite;
+        }
+
+        @keyframes moveRoadLine {
+            from { background-position: 0 0; }
+            to { background-position: -2000px 0; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeInScale 1s ease-out forwards;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hero-content h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.8em;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.8);
+            line-height: 1.1;
+        }
+
+        .hero-content p {
+            font-size: 1.4em;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 300;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-yellow);
+            color: var(--dark-gray);
+            padding: 16px 35px;
+            border-radius: 50px; /* Pill shape */
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn::before { /* Shine effect on hover */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: all 0.7s ease;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            background-color: var(--dark-gray);
+            color: var(--primary-yellow);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Event Details Section */
+        .event-details-section {
+            background-color: var(--white);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--light-gray);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        .event-details-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.8em;
+            color: var(--dark-gray);
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+        .event-details-section h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -10px;
+            width: 80px;
+            height: 5px;
+            background-color: var(--primary-yellow);
+            border-radius: 2px;
+        }
+
+        .details-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .detail-item {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            flex: 1 1 280px; /* Responsive item sizing */
+            max-width: 350px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detail-item::before { /* Top border indicator */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: var(--primary-yellow);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease-out;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border-color: var(--primary-yellow);
+        }
+        .detail-item:hover::before {
+            transform: translateX(0);
+        }
+
+        .detail-item .icon {
+            font-size: 3em;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            line-height: 1; /* Fix vertical alignment for emojis */
+            display: block; /* Ensures margin works */
+        }
+
+        .detail-item h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+            font-size: 1.6em;
+            letter-spacing: -0.5px;
+        }
+
+        .detail-item p {
+            font-size: 1.1em;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 70px 20px;
+            background-color: var(--light-gray);
+        }
+
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .about-text {
+            flex: 1 1 50%;
+            min-width: 300px;
+        }
+
+        .about-text h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.8em;
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+            position: relative;
+            line-height: 1.2;
+        }
+        .about-text h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 90px;
+            height: 5px;
+            background-color: var(--secondary-red); /* Different accent for About */
+            border-radius: 2px;
+        }
+
+        .about-text p {
+            font-size: 1.15em;
+            line-height: 1.8;
+            color: var(--text-color);
+            margin-bottom: 25px;
+        }
+
+        .about-image {
+            flex: 1 1 40%;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .about-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.2);
+            transition: transform 0.4s ease;
+            border: 5px solid var(--white); /* White border for emphasis */
+            object-fit: cover; /* Ensures image covers area without distortion */
+            aspect-ratio: 16/9; /* Maintain aspect ratio */
+        }
+        .about-image img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 55px rgba(0,0,0,0.3);
+        }
+
+        /* Road Signs & Dynamic Elements Section */
+        .road-sign-section {
+            background-color: var(--dark-gray);
+            color: var(--white);
+            padding: 70px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .road-sign-section::before { /* Diagonal accent line */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,215,0,0.05) 25%, transparent 25%, transparent 50%, rgba(255,215,0,0.05) 50%, rgba(255,215,0,0.05) 75%, transparent 75%, transparent);
+            background-size: 80px 80px;
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        .road-sign-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3em;
+            color: var(--primary-yellow);
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        .road-sign-section h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -15px;
+            width: 120px;
+            height: 6px;
+            background-color: var(--primary-yellow);
+            border-radius: 3px;
+        }
+
+        .road-sign-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        .sign-item {
+            background-color: var(--text-color); /* Darker background for signs */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+            border: 3px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px; /* Ensure consistent height */
+        }
+        .sign-item:hover {
+            transform: translateY(-12px);
+            background-color: var(--dark-gray);
+            border-color: var(--primary-yellow);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.6);
+        }
+
+        .sign-item .icon-shape {
+            margin-bottom: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8em; /* Base size for icons */
+            width: 1.8em; /* Base width for shapes */
+            height: 1.8em; /* Base height for shapes */
+            font-weight: bold;
+        }
+        /* Specific Road Sign Styles (using pseudo-elements for shapes and actual content inside) */
+        .sign-item.warning .icon-shape {
+            transform: rotate(45deg); /* Diamond shape */
+            background-color: var(--primary-yellow);
+            border: 0.1em solid var(--dark-gray);
+            color: var(--dark-gray);
+        }
+        .sign-item.warning .icon-shape::before {
+            content: '!'; /* Warning sign content */
+            transform: rotate(-45deg); /* Counter-rotate content */
+            font-size: 1.5em; /* Adjust icon size within shape */
+            line-height: 1;
+        }
+        .sign-item.prohibitory .icon-shape {
+            border-radius: 50%; /* Circle shape */
+            background-color: var(--white);
+            border: 0.2em solid var(--secondary-red);
+            color: var(--secondary-red);
+        }
+        .sign-item.prohibitory .icon-shape::before {
+            content: '🚫'; /* No Entry/Prohibitory content */
+            font-size: 1.3em;
+            line-height: 1;
+        }
+        .sign-item.info .icon-shape {
+            background-color: var(--accent-blue);
+            border: 0.1em solid var(--white);
+            border-radius: 8px; /* Rounded rectangle */
+            color: var(--white);
+        }
+        .sign-item.info .icon-shape::before {
+            content: 'ⓘ'; /* Info content */
+            font-size: 1.5em;
+            line-height: 1;
+        }
+
+        .sign-item h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.9em;
+            color: var(--white);
+            margin-bottom: 12px;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+        }
+        .sign-item p {
+            font-size: 1.1em;
+            color: var(--light-gray);
+            opacity: 0.9;
+            max-width: 90%;
+            margin: 0 auto;
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--dark-gray);
+            color: var(--light-gray);
+            text-align: center;
+            padding: 35px 20px;
+            font-size: 0.95em;
+            border-top: 6px solid var(--primary-yellow);
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+        }
+
+        .site-footer p {
+            margin: 5px 0;
+            font-weight: 300;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 3em;
+            }
+            .hero-content p {
+                font-size: 1.2em;
+            }
+            .about-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .about-text, .about-image {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+            .about-image {
+                order: -1; /* Image first on smaller screens for better visual flow */
+            }
+            .about-image img {
+                max-height: 400px; /* Constrain height on smaller screens */
+            }
+            .road-sign-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 15px;
+                min-height: 50vh;
+            }
+            .hero-content h1 {
+                font-size: 2.5em;
+            }
+            .hero-content p {
+                font-size: 1.1em;
+            }
+            .btn {
+                padding: 14px 30px;
+                font-size: 1.05em;
+            }
+            .event-details-section h2, .about-text h2, .road-sign-section h2 {
+                font-size: 2.3em;
+            }
+            .details-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .detail-item {
+                max-width: 90%; /* Take more width on small screens */
+            }
+            .about-text p {
+                font-size: 1.05em;
+            }
+            .sign-item h3 {
+                font-size: 1.6em;
+            }
+            .sign-item p {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            .hero-section {
+                padding: 40px 10px;
+                min-height: 45vh;
+            }
+            .hero-content h1 {
+                font-size: 2em;
+                letter-spacing: -1px;
+            }
+            .hero-content p {
+                font-size: 0.95em;
+                margin-bottom: 30px;
+            }
+            .btn {
+                padding: 12px 25px;
+                font-size: 0.95em;
+            }
+            .event-details-section h2, .about-text h2, .road-sign-section h2 {
+                font-size: 1.9em;
+            }
+            .detail-item {
+                padding: 25px;
+            }
+            .detail-item .icon {
+                font-size: 2.5em;
+            }
+            .detail-item h3 {
+                font-size: 1.4em;
+            }
+            .detail-item p {
+                font-size: 0.95em;
+            }
+            .about-text p {
+                font-size: 0.95em;
+            }
+            .sign-item {
+                padding: 25px;
+                min-height: 240px;
+            }
+            .sign-item .icon-shape {
+                font-size: 2.2em;
+            }
+            .sign-item h3 {
+                font-size: 1.4em;
+            }
+            .sign-item p {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero-section">
+        <div class="hero-content">
+            <h1>Guiding and Counselling Our Road Users</h1>
+            <p>A crucial seminar to enlighten road users on safety, regulations, and responsible behavior in motor parks.</p>
+            <a href="{{ 'https://hhxsq4xb-1000.uks1.devtunnels.ms/buy_ticket/40' }}" class="btn">Secure Your Spot Now!</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="event-details-section">
+            <div class="container">
+                <h2>Event Details</h2>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="icon">🗓️</span>
+                        <h3>Event Date</h3>
+                        <p>August 30, 2025</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="icon">⏰</span>
+                        <h3>Event Time</h3>
+                        <p>14:00 (2:00 PM)</p>
+                    </div>
+                    <div class="detail-item">
+                        <span class="icon">💰</span>
+                        <h3>Ticket Price</h3>
+                        <p>₦1000</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <div class="container about-content">
+                <div class="about-text">
+                    <h2>About the Seminar</h2>
+                    <p>Road safety is a shared responsibility. This seminar is specifically designed for motor park users – drivers, conductors, passengers, and park officials – to foster a deeper understanding of road regulations, defensive driving techniques, and the importance of vehicle maintenance.</p>
+                    <p>Our expert speakers will cover topics ranging from traffic laws and sign interpretations to first aid and conflict resolution within public transport settings. Join us to contribute to safer roads and more organized motor parks for everyone.</p>
+                </div>
+                <div class="about-image">
+                    <img src="{{ url_for('static', filename='assets/img/download.jfif') }}" 
+                         alt="A diverse group of people actively participating in a road safety seminar, engaged in learning and discussion.">
+                    <!-- UX Note on 'alt argument link': The 'alt' attribute is strictly for descriptive text for screen readers or when an image fails to load. It does not load an image from a URL.
+                         If a visual fallback from an external source is desired when 'src' fails,
+                         it typically requires JavaScript (e.g., using 'onerror' to swap the 'src' or CSS 'background-image' fallbacks).
+                         Example JavaScript for a basic visual fallback (needs external JS file or script tag):
+                         <img src="..." onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400/CCCCCC/FFFFFF?text=Image+Unavailable';">
+                    -->
+                </div>
+            </div>
+        </section>
+
+        <section class="road-sign-section">
+            <div class="container">
+                <h2>Key Topics & What You'll Learn</h2>
+                <div class="road-sign-grid">
+                    <div class="sign-item warning">
+                        <div class="icon-shape"></div>
+                        <h3>Understanding Warning Signs</h3>
+                        <p>Learn to identify and react to crucial warning signs, anticipating hazards and navigating safely.</p>
+                    </div>
+                    <div class="sign-item prohibitory">
+                        <div class="icon-shape"></div>
+                        <h3>Adhering to Prohibitory Rules</h3>
+                        <p>Master the importance of 'No Entry', 'Stop', and other prohibitory signs for safe and compliant movement.</p>
+                    </div>
+                    <div class="sign-item info">
+                        <div class="icon-shape"></div>
+                        <h3>Interpreting Informational Signs</h3>
+                        <p>Navigate unfamiliar routes with ease by understanding directional and informational signage for efficient travel.</p>
+                    </div>
+                    <div class="sign-item info">
+                        <div class="icon-shape" style="font-size: 2.8em; background-color: var(--secondary-red); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--white);"><span style="transform: rotate(0); font-weight: bold; font-size: 1.2em;">❤️</span></div>
+                        <h3>First Aid & Emergency Response</h3>
+                        <p>Gain essential skills for immediate and effective response in case of road accidents or medical emergencies.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 Guiding Road Users Seminar. All rights reserved.</p>
+        <p>Powered by Techlite</p>
+    </footer>
+
+</body>
+</html>

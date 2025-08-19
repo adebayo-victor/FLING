@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Sales Overlay</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-gray-100">
+  <!-- Overlay -->
+  <div class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+    <div class="bg-gray-900 shadow-2xl rounded-2xl p-6 w-full max-w-5xl h-[85vh] flex flex-col border border-gray-800">
+      
+      <!-- Title -->
+      <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-3">
+        <h2 class="text-2xl font-bold text-green-400 tracking-wide">Event Sales & Insights</h2>
+        <button class="text-gray-500 hover:text-green-400 transition" onclick="closeOverlay()">✕</button>
+      </div>
+
+      <!-- Top row: Chart + AI responses -->
+      <div class="flex gap-4 flex-shrink-0 mb-6 h-[40%]">
+        <!-- Chart placeholder -->
+        <div class="bg-gray-800/60 rounded-xl flex-1 flex items-center justify-center border border-gray-700">
+          <canvas id="salesChart" class="w-full h-full"></canvas>
+        </div>
+        <!-- AI responses -->
+        <div id="aiResponseBox" class="bg-gray-800/60 rounded-xl flex-1 p-4 overflow-y-auto border border-gray-700">
+          <p class="text-gray-400 italic">🤖 Zach is ready to answer your event questions...</p>
+        </div>
+      </div>
+
+      <!-- Attendee Search -->
+      <input
+        type="text"
+        id="attendeeSearch"
+        placeholder="🔍 Search attendees..."
+        class="mb-3 p-3 rounded-lg bg-gray-800/60 text-gray-100 w-full border border-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400"
+      />
+      <input type="hidden" value="" class="event-id">
+
+      <!-- Attendee list -->
+      <div id="attendeeList" class="flex-1 overflow-y-auto bg-gray-800/60 rounded-xl p-4 space-y-3 border border-gray-700">
+        {% if tickets %}
+            {% for ticket in tickets %}
+            <div class="p-3 bg-gray-700/60 rounded-lg shadow-sm border border-gray-600 hover:bg-gray-600/60 transition">
+              {{ticket.name}} - {{ticket.email}} - ${{ticket.price}}
+            </div>
+            {% endfor %}
+        {% else %}
+            <h3 class="text-gray-500">No tickets found yet</h3>
+        {% endif %}
+      </div>
+
+      <!-- AI Prompt -->
+      <div class="mt-5 flex gap-3">
+        <input
+          type="text"
+          id="aiPrompt"
+          placeholder="💬 Ask Zach about events..."
+          class="flex-1 p-3 rounded-lg bg-gray-800/60 text-gray-100 border border-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <button
+          onclick="sendAIPrompt()"
+          class="px-6 py-3 bg-green-500 hover:bg-green-400 rounded-lg text-gray-900 font-semibold shadow-md transition"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+    // NORMAL SEARCH (fetch from backend)
+    document.getElementById("attendeeSearch").addEventListener("input", async function () {
+      let query = this.value.trim();
+      const attendeeList = document.getElementById("attendeeList");
+
+      try {
+        const response = await fetch("/search_attendees", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query })
+        });
+
+        const data = await response.json(); // { attendees: [...] }
+
+        attendeeList.innerHTML = ""; // clear old results
+        if (data.attendees && data.attendees.length > 0) {
+          data.attendees.forEach(a => {
+            attendeeList.innerHTML += `
+              <div class="p-2 bg-gray-600 rounded">
+                ${a.name} - ${a.email} - ${a.price}
+              </div>`;
+          });
+        } else {
+          attendeeList.innerHTML = `<p class="text-gray-400">No attendees found</p>`;
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+        attendeeList.innerHTML = `<p class="text-red-400">Error fetching attendees</p>`;
+      }
+    });
+
+    // AI SEARCH (fetch from backend)
+    async function sendAIPrompt() {
+      const promptInput = document.getElementById("aiPrompt");
+      const prompt = promptInput.value.trim();
+      const aiBox = document.getElementById("aiResponseBox");
+
+      if (!prompt) return;
+
+      aiBox.innerHTML += `<p class="text-blue-400">You: ${prompt}</p>`;
+      const loadingEl = document.createElement("p");
+      loadingEl.className = "text-gray-400 italic";
+      loadingEl.innerText = "🤖 Zach is thinking...";
+      aiBox.appendChild(loadingEl);
+
+      promptInput.value = "";
+      let event_id = 1;
+
+      try {
+        const response = await fetch("/ask_ai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt, event_id })
+        });
+
+        const data = await response.json(); // { response: "..." }
+
+        loadingEl.remove();
+        aiBox.innerHTML += `<p class="text-green-400">AI: ${data.response}</p>`;
+        aiBox.scrollTop = aiBox.scrollHeight;
+      } catch (err) {
+        console.error("AI fetch error:", err);
+        loadingEl.innerText = "⚠️ Error fetching AI response";
+        loadingEl.classList.replace("text-gray-400", "text-red-400");
+      }
+    }
+
+    // Press ENTER to send AI prompt
+    document.getElementById("aiPrompt").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendAIPrompt();
+      }
+    });
+
+    //////////////////////////////////////////////////////////////////////////
+    // SALES CHART RENDERING
+    let salesChartInstance = null;
+
+    async function renderLineChart(eventId) {
+      try {
+        const response = await fetch(`/sales_data/${eventId}`);
+        const data = await response.json(); // {x: [...], y: [...]}
+
+        const ctx = document.getElementById('salesChart').getContext('2d');
+
+        if (salesChartInstance) salesChartInstance.destroy(); // clear old chart
+
+        salesChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.x,
+            datasets: [{
+              label: 'Tickets Sold',
+              data: data.y,
+              borderColor: 'rgba(59, 130, 246, 1)',
+              backgroundColor: 'rgba(59, 130, 246, 0.2)',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 4,
+              pointHoverRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: { color: '#fff' }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Date', color: '#fff' },
+                ticks: { color: '#ccc' }
+              },
+              y: {
+                title: { display: true, text: 'Tickets Sold', color: '#fff' },
+                ticks: { color: '#ccc' }
+              }
+            }
+          }
+        });
+      } catch (err) {
+        console.error('Error fetching chart data:', err);
+      }
+    }
+
+    // Initial render for event 1
+    renderLineChart(1);
+
+</script>
+
+</body>
+</html>

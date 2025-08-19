@@ -1,449 +1,86 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Fest 2025</title>
-    <!-- Google Fonts: Poppins for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Modern CSS Reset & Variables for Easy Customization */
-        :root {
-            --primary-color: #6a0dad; /* A vibrant, deep purple */
-            --secondary-color: #ff6f61; /* A contrasting, energetic coral */
-            --text-dark: #333;
-            --text-light: #f4f4f4;
-            --bg-light: #f9f9f9;
-            --bg-dark: #222;
-            --border-radius: 8px;
-            --transition-speed: 0.3s ease;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background-color: var(--bg-light);
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            scroll-behavior: smooth; /* Smooth scroll for anchor links */
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        h1, h2, h3 {
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        p {
-            margin-bottom: 1rem;
-        }
-
-        a {
-            text-decoration: none;
-            color: var(--primary-color);
-            transition: color var(--transition-speed);
-        }
-
-        a:hover {
-            color: var(--secondary-color);
-        }
-
-        /* Hero Section Styling - Engaging full-bleed design */
-        .hero {
-            position: relative;
-            width: 100%;
-            height: 100vh; /* Full viewport height for an impactful first impression */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--text-light);
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* Subtle shadow for depth */
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)); /* Dark overlay for text readability */
-            z-index: 1;
-        }
-
-        .hero-bg-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Ensures image covers the area without distortion */
-            z-index: 0;
-        }
-
-        /* Video background specific styles */
-        .hero-bg-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: 0;
-            transform: translate(-50%, -50%);
-            /* Background size cover is fallback for older browsers that don't fully support video styling */
-            background-size: cover;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2; /* Ensures content is above overlay */
-            max-width: 800px;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.4); /* Semi-transparent background for text */
-            border-radius: var(--border-radius);
-            backdrop-filter: blur(5px); /* Modern blur effect */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .hero-content h1 {
-            font-size: 3.8rem;
-            margin-bottom: 0.8rem;
-            color: #fff; /* White text for contrast */
-            text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
-            line-height: 1.1;
-        }
-
-        .hero-content p {
-            font-size: 1.4rem;
-            margin-bottom: 2rem;
-            color: #ccc;
-        }
-
-        .hero-date-time {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 2.5rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-
-        /* Call-to-Action Button Styling */
-        .btn {
-            display: inline-block;
-            background-color: var(--secondary-color);
-            color: var(--text-light);
-            padding: 18px 40px;
-            border-radius: 50px; /* Pill shape */
-            font-size: 1.2rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        .btn:hover {
-            background-color: var(--primary-color);
-            transform: translateY(-5px); /* Lift effect on hover */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        /* Section General Styles */
-        section {
-            padding: 100px 0; /* Ample vertical padding */
-        }
-
-        section:nth-child(even) {
-            background-color: var(--bg-light); /* Subtle background for alternate sections */
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.8rem;
-            margin-bottom: 60px;
-            position: relative;
-            display: block; /* Ensures pseudo-element centers correctly */
-            color: var(--primary-color);
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 5px;
-            background-color: var(--secondary-color);
-            margin: 15px auto 0;
-            border-radius: 3px;
-        }
-
-        /* About Event Section - Flexbox Layout */
-        .about-content {
-            display: flex;
-            flex-wrap: wrap; /* Allows items to wrap on smaller screens */
-            align-items: center;
-            gap: 60px; /* Space between text and image */
-        }
-
-        .about-text {
-            flex: 2; /* Takes more space */
-            min-width: 300px;
-        }
-
-        .about-image {
-            flex: 1; /* Takes less space */
-            min-width: 300px;
-            max-width: 550px;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15); /* Prominent shadow */
-            transform: rotate(2deg); /* A slight playful tilt */
-            transition: transform var(--transition-speed);
-        }
-        .about-image:hover {
-            transform: rotate(0deg) scale(1.02); /* Straighten and slight enlarge on hover */
-        }
-
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* Ticket Section - Focused Call to Action */
-        .ticket-section {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            text-align: center;
-            padding: 80px 0;
-            border-radius: var(--border-radius);
-            margin: 60px auto; /* Centered with vertical margin */
-            max-width: 900px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        .ticket-section .section-title {
-            color: var(--text-light); /* White title for contrast */
-        }
-        .ticket-section .section-title::after {
-            background-color: var(--text-light); /* White underline */
-        }
-
-        .ticket-price {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 25px;
-            color: var(--secondary-color); /* Highlight the price */
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
-        }
-
-        .ticket-price span {
-            font-size: 1.8rem;
-            vertical-align: super;
-            margin-left: 8px;
-            font-weight: 400;
-        }
-
-        /* Footer - Simple & Clean */
-        .footer {
-            background-color: var(--bg-dark);
-            color: #888;
-            text-align: center;
-            padding: 40px 20px;
-            font-size: 0.95rem;
-        }
-
-        /* Responsive Adjustments (Mobile-First approach with max-width) */
-        @media (max-width: 992px) {
-            .hero {
-                height: 90vh;
-            }
-            .hero-content {
-                padding: 30px;
-            }
-            .hero-content h1 {
-                font-size: 3rem;
-            }
-            .hero-content p {
-                font-size: 1.2rem;
-            }
-            .hero-date-time {
-                font-size: 1.4rem;
-            }
-            .section-title {
-                font-size: 2.5rem;
-            }
-            .about-content {
-                flex-direction: column; /* Stack elements vertically */
-                text-align: center;
-                gap: 30px;
-            }
-            .about-image {
-                order: -1; /* Place image above text on mobile */
-                max-width: 100%;
-                transform: none; /* Remove tilt on smaller screens */
-            }
-            .about-image:hover {
-                transform: none;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero {
-                height: 80vh;
-            }
-            .hero-content {
-                padding: 25px;
-            }
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-            .hero-content p {
-                font-size: 1.1rem;
-            }
-            .hero-date-time {
-                font-size: 1.2rem;
-            }
-            .btn {
-                padding: 15px 30px;
-                font-size: 1rem;
-            }
-            section {
-                padding: 80px 0;
-            }
-            .section-title {
-                font-size: 2.2rem;
-            }
-            .ticket-section {
-                margin: 40px auto;
-                padding: 60px 0;
-            }
-            .ticket-price {
-                font-size: 3rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero {
-                height: 70vh;
-            }
-            .hero-content {
-                padding: 20px;
-            }
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-            .hero-content p {
-                font-size: 0.95rem;
-            }
-            .hero-date-time {
-                font-size: 1rem;
-                margin-bottom: 2rem;
-            }
-            .btn {
-                padding: 12px 25px;
-                font-size: 0.9rem;
-            }
-            section {
-                padding: 60px 0;
-            }
-            .section-title {
-                font-size: 1.8rem;
-                margin-bottom: 40px;
-            }
-            .ticket-price {
-                font-size: 2.5rem;
-            }
-            .ticket-price span {
-                font-size: 1.4rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Sales Overlay</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-900 text-white">
 
-    <!-- Hero Section: Dynamic background, clear call to action -->
-    <header class="hero">
-        {# If video_path is provided, use video background. Otherwise, use image. #}
-        {% if video_path %}
-        <video class="hero-bg-video" autoplay loop muted playsinline poster="{{ url_for('static', filename='images/anime-fest-video-poster.jpg') }}" 
-               onerror="this.src='https://via.placeholder.com/1920x1080?text=Video+Not+Available'; this.poster='https://via.placeholder.com/1920x1080?text=Video+Poster+Fallback';">
-            <source src="{{ url_for('static', filename=video_path) }}" type="video/mp4">
-            {# Fallback content if browser doesn't support video #}
-            Your browser does not support the video tag. Here's an <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" alt="External link to a YouTube video of anime event">external link to a YouTube video</a>.
-        </video>
-        {% else %}
-        <img src="{{ url_for('static', filename='images/anime-fest-hero.jpg') }}" 
-             alt="Vibrant illustration of a classic anime festival with characters and cherry blossoms. For more visual inspiration, search for 'anime festival' on Pexels: https://www.pexels.com/search/anime-festival/" 
-             class="hero-bg-image" 
-             onerror="this.src='https://via.placeholder.com/1920x1080?text=Anime+Fest+Hero+Image+Failed+to+Load. Check+Your+Connection';">
-        {% endif %}
-        <div class="hero-content">
-            <h1>Anime Fest</h1>
-            <p>classic anime style, le classic</p>
-            <div class="hero-date-time">
-                <span>Date: 2025-08-30</span> | <span>Time: 19:50</span>
-            </div>
-            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/33" target="_blank" class="btn">Get Your Tickets Now!</a>
-        </div>
-    </header>
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 ">
+  <div class="bg-gray-800 rounded-lg p-6 w-full max-w-5xl h-[85vh] flex flex-col">
+    <!-- Title -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold">Event Sales & Insights</h2>
+      <button class="text-gray-400 hover:text-white" onclick="closeOverlay()">✕</button>
+    </div>
 
-    <!-- About Event Section: Engaging narrative with visual complement -->
-    <section id="about" class="container">
-        <h2 class="section-title">About Anime Fest</h2>
-        <div class="about-content">
-            <div class="about-text">
-                <h3>Immerse Yourself in the World of Anime!</h3>
-                <p>Anime Fest 2025 is your ultimate destination for celebrating the timeless charm of classic anime. Step into a vibrant world where beloved characters come to life, iconic scenes are revisited, and the spirit of Japanese animation thrives.</p>
-                <p>From captivating art exhibitions and exclusive merchandise to thrilling cosplay contests and interactive workshops, there's something for every anime enthusiast. Relive your favorite moments and discover new ones in a community that shares your passion.</p>
-                <p>Join us for a day filled with nostalgia, creativity, and unforgettable experiences. Whether you're a long-time fan or new to the magic of anime, Anime Fest promises an adventure like no other!</p>
-            </div>
-            <div class="about-image">
-                <img src="{{ url_for('static', filename='images/anime-characters.jpg') }}" 
-                     alt="Group of diverse anime characters from various classic series, brightly illustrated. Find similar character art at sites like ArtStation: https://www.artstation.com/"
-                     onerror="this.src='https://via.placeholder.com/500x350?text=Anime+Characters+Image+Fallback. Try+another+browser.';">
-            </div>
-        </div>
-    </section>
+    <!-- Top row: Chart + AI responses -->
+    <div class="flex gap-4 flex-shrink-0 mb-4 h-[40%]">
+      <!-- Chart placeholder -->
+      <div class="bg-gray-700 rounded-lg flex-1 flex items-center justify-center">
+        <canvas id="salesChart" class="w-full h-full"></canvas>
+      </div>
+      <!-- AI responses -->
+      <div id="aiResponseBox" class="bg-gray-700 rounded-lg flex-1 p-4 overflow-y-auto">
+        <p class="text-gray-400">AI responses will appear here...</p>
+      </div>
+    </div>
 
-    <!-- Ticket Purchase Section: Prominent pricing and call to action -->
-    <section id="tickets" class="ticket-section">
-        <div class="container">
-            <h2 class="section-title">Ticket Information</h2>
-            <p>Don't miss out on the ultimate anime celebration!</p>
-            <div class="ticket-price">
-                5000 <span>INR</span>
-            </div>
-            <p>Secure your spot now and join us for an unforgettable experience.</p>
-            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/33" target="_blank" class="btn">Buy Your Ticket Today!</a>
-        </div>
-    </section>
+    <!-- Attendee Search -->
+    <input
+      type="text"
+      id="attendeeSearch"
+      placeholder="Search attendees..."
+      class="mb-2 p-2 rounded bg-gray-700 text-white w-full"
+    />
 
-    <!-- Footer: Essential info and branding -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Anime Fest. All rights reserved.</p>
-            <p>Powered by Techlite</p>
-        </div>
-    </footer>
+    <!-- Attendee list -->
+    <div id="attendeeList" class="flex-1 overflow-y-auto bg-gray-700 rounded-lg p-4 space-y-2">
+      <!-- Example attendees -->
+      <div class="p-2 bg-gray-600 rounded">Event 1 - John Doe</div>
+      <div class="p-2 bg-gray-600 rounded">Event 1 - Jane Smith</div>
+      <div class="p-2 bg-gray-600 rounded">Event 2 - Alice Johnson</div>
+      <div class="p-2 bg-gray-600 rounded">Event 2 - Bob Brown</div>
+      <div class="p-2 bg-gray-600 rounded">Event 2 - Charlie Adams</div>
+    </div>
+
+    <!-- AI Prompt -->
+    <div class="mt-4 flex gap-2">
+      <input
+        type="text"
+        id="aiPrompt"
+        placeholder="Ask AI about events..."
+        class="flex-1 p-2 rounded bg-gray-700 text-white"
+      />
+      <button
+        onclick="sendAIPrompt()"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white"
+      >
+        Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+    //fetch all user input from backend
+    function closeOverlay() {
+        document.querySelector('.fixed').classList.add("hidden");
+    }
+
+    function sendAIPrompt() {
+        const prompt = document.getElementById('aiPrompt').value.trim();
+        if (!prompt) return;
+
+        const aiBox = document.getElementById('aiResponseBox');
+        aiBox.innerHTML = `<p class="text-blue-400">You: ${prompt}</p><p class="text-gray-400 mt-2">Fetching AI response...</p>`;
+
+        // TODO: Fetch AI response from backend here
+    }
+</script>
 
 </body>
 </html>
