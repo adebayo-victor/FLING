@@ -380,7 +380,9 @@ def create_event(user_id):
                 event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key = ?", user_id, url_key)
                 # --- Main script execution ---
                 prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events.Use the uploaded pic for design like background and stuff,not directly in the template The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
-                prompt += (f'''{user_prompt}
+                prompt += (f'''
+                    Current time(u need the current year for the footer):{datetime.now()}
+                    {user_prompt}
                     event-title: {title},
                     event-description:{description},
                     event-time:{time},
