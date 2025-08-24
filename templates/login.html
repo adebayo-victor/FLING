@@ -135,7 +135,7 @@
         </div>
         <div class="mt-8 text-center text-sm text-stone">
             Forgot password?
-            <a href="https://wa.me/08136390030" class="text-caribbean-green hover:underline font-semibold">Send a message</a>whatsapp
+            <a href="https://wa.me/08136390030" class="text-caribbean-green hover:underline font-semibold">Send a message</a> via whatsapp
         </div>
     </div>
 
@@ -171,6 +171,8 @@
                 const result = await response.json();
                 if (response.ok && result.response === 'successful') {
                     console.log("Login successful!");
+                    document.querySelector('.alert-text').style.color = "green"
+                    document.querySelector('.alert-text').textContent = "Login successful"
                     messageTitle.textContent = "Login Successful!";
                     messageText.textContent = "Redirecting to your dashboard...";
                     messageModal.classList.add('hidden');
