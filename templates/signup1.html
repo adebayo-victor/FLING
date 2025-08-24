@@ -196,10 +196,10 @@
         const result = await res.json();
         if (res.ok || res.message === "successful") {
           document.querySelector('.alert-text').style.color = "lightgreen";
-          document.querySelector('.alert-text').textContent = "✅ Signup successful!, You may login";
+          document.querySelector('.alert-text').textContent = "✅ Signup successful! Redirecting...";
         } else {
           document.querySelector('.alert-text').style.color = "red";
-          document.querySelector('.alert-text').textContent = "❌Existing credentials, you may login";
+          document.querySelector('.alert-text').textContent = "❌ Invalid credentials";
         }
       } catch (err) {
         console.error("Network error:", err);

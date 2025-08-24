@@ -100,7 +100,10 @@ def generate_url_code(length=9):
     characters = string.ascii_uppercase + string.digits
     random_part = ''.join(secrets.choice(characters) for _ in range(length))
     return f"{random_part}"
-
+def generate_code(length=6):
+    characters = string.digits
+    random_part = ''.join(secrets.choice(characters) for _ in range(length))
+    return f"{random_part}"
 #file upload functions
 UPLOAD_FOLDER = 'static/assets/img'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'docx', 'txt', 'jfif'}
@@ -126,6 +129,150 @@ def handle_file_upload(file_key='file'):
         return {'path': save_path}
 
     return {'error': 'Invalid file type'}
+#emailjs credentials
+EMAILJS_SERVICE_ID = os.environ.get("EMAILJS_SERVICE_ID")
+EMAILJS_TEMPLATE_ID = os.environ.get("EMAILJS_TEMPLATE_ID")
+EMAILJS_USER_ID = os.environ.get("EMAILJS_USER_ID")
+otps = {}
+#email function
+def send_otp_email_via_emailjs(to_email, otp_code):
+    """
+    Sends an email with the OTP to the specified email address using the Email.js API.
+    
+    Args:
+        to_email (str): The recipient's email address.
+        otp_code (str): The one-time password to send.
+
+    Returns:
+        bool: True if the email was sent successfully, False otherwise.
+    """
+    url = "https://api.emailjs.com/api/v1.0/email/send"
+    
+    payload = {
+        "service_id": EMAILJS_SERVICE_ID,
+        "template_id": EMAILJS_TEMPLATE_ID,
+        "user_id": EMAILJS_USER_ID,
+        "template_params": {
+            "email": to_email,
+            "passcode": otp_code
+        }
+    }
+    print(payload)
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        print("Email sent successfully via Email.js")
+        return True
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending email via Email.js: {e}")
+        return False
+#bank list route
+@app.route("/banks", methods=["GET"])
+def get_banks():
+    url = "https://api.paystack.co/bank"
+    headers = {
+        "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}"
+    }
+    try:
+        res = requests.get(url, headers=headers, timeout=10)
+        res.raise_for_status()
+        data = res.json()
+
+        # return only needed fields
+        banks = [{"name": b["name"], "code": b["code"]} for b in data.get("data", [])]
+        return jsonify(banks)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+#new sign up
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "GET":
+        return render_template("signup1.html")
+
+    # POST (JSON)
+    data = request.get_json(silent=True) or {}
+    print(data)
+    name = data.get("name")
+    email = data.get("email")
+    phone = data.get("phone")
+    password = data.get("password")
+    bank_code = data.get("bank_code")
+    account_number = data.get("account_number")
+
+    # Basic validations
+    missing = [k for k, v in {
+        "name": name, "email": email, "phone": phone,
+        "password": password, "bank_code": bank_code,
+        "account_number": account_number
+    }.items() if not v]
+    if missing:
+        return jsonify({"message": f"Missing fields: {', '.join(missing)}"}), 400
+
+    if not account_number.isdigit() or len(account_number) != 10:
+        return jsonify({"message": "account_number must be 10 digits"}), 400
+
+    # 1) Resolve account (Paystack)
+    verify_url = "https://api.paystack.co/bank/resolve"
+    headers = {"Authorization": f"Bearer {PAYSTACK_SECRET_KEY}"}
+    try:
+        verify_res = requests.get(
+            verify_url,
+            params={"account_number": account_number, "bank_code": bank_code},
+            headers=headers,
+            timeout=15
+        ).json()
+    except Exception as e:
+        return jsonify({"message": "Bank resolve failed", "error": str(e)}), 502
+
+    if not verify_res.get("status"):
+        return jsonify({"message": "Invalid bank details", "paystack": verify_res}), 400
+
+    account_name = (verify_res.get("data") or {}).get("account_name")
+
+    # 2) Create subaccount (5% platform cut)
+    sub_payload = {
+        "business_name": name,
+        "settlement_bank": bank_code,
+        "account_number": account_number,
+        "percentage_charge": 5,              # your platform cut (5%)
+        "primary_contact_name": name,
+        "primary_contact_email": email,
+        "primary_contact_phone": phone,
+        "settlement_schedule": "auto"
+    }
+    try:
+        sub_res = requests.post(
+            "https://api.paystack.co/subaccount",
+            json=sub_payload,
+            headers={**headers, "Content-Type": "application/json"},
+            timeout=15
+        ).json()
+    except Exception as e:
+        return jsonify({"message": "Subaccount creation failed", "error": str(e)}), 502
+
+    if not sub_res.get("status"):
+        return jsonify({"message": "Could not create subaccount", "paystack": sub_res}), 400
+
+    subaccount_code = sub_res["data"]["subaccount_code"]
+    bank_name = sub_res["data"]["settlement_bank"]  # nice human-readable name
+
+    # 3) Save to DB
+    try:
+        db.execute("""
+            INSERT INTO users 
+            (name, email, phone, password, bank_name, bank_code, account_number, account_name, subaccount_code)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, name, email, phone, password, bank_name, bank_code, account_number, account_name, subaccount_code)
+        return {'message':"successful"}
+    except Exception as e:
+        return jsonify({"message": "DB insert failed", "error": str(e)}), 500
+
+
+#signup
 @app.route("/register_signup", methods=["GET","POST"])
 def register_signup():
     if request.method == "POST":
@@ -141,7 +288,8 @@ def register_signup():
         if user:
             print("signup successful")
             return {"response":"successful", "url":f"https://hhxsq4xb-1000.uks1.devtunnels.ms/{user[0]['id']}"}
-    return render_template("signup.html")
+    return render_template("signup1.html")
+# Login / Register
 @app.route("/register_login", methods=["GET","POST"])
 def register_login():
     if request.method =="POST":
@@ -149,19 +297,30 @@ def register_login():
         email = data.get('email')
         password = data.get('password')
         user = db.execute("SELECT * FROM users WHERE email = ? AND password = ?", email, password)
+
         if user:
-            print("signup successful")
-            return {"response":"successful", "url":f"https://hhxsq4xb-1000.uks1.devtunnels.ms/dashboard/{user[0]['id']}"}
+            print("login successful")
+            # Store in session
+            session["user_id"] = user[0]["id"]
+            return {"response": "successful", "url": "https://hhxsq4xb-1000.uks1.devtunnels.ms/dashboard"}
         else:
-            return {"response":"unsuccessful"}
+            return {"response": "unsuccessful"}
+
     return render_template("login.html")
 #dashboard
-@app.route("/dashboard/<int:user_id>")
-def dashboard(user_id):
-    user = db.execute("SELECT * FROM users WHERE id =?", user_id)[0]
+@app.route("/dashboard/")
+def dashboard():
+    if "user_id" not in session:
+        return redirect("/register_login")
+
+    user_id = session["user_id"]
+    user = db.execute("SELECT * FROM users WHERE id = ?", user_id)[0]
     events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
-    if user:
-        return render_template("my_dashboard.html", user=user, events=events)
+    tickets = db.execute(
+        "SELECT * FROM tickets JOIN events ON events.id = tickets.event_id WHERE user_id = ?", 
+        user_id
+    )
+    return render_template("my_dashboard.html", user=user, events=events, tickets=tickets)
 # --- New Route for Event Creation ---
 @app.route("/create_event/<int:user_id>", methods=["POST"])
 def create_event(user_id):
@@ -216,14 +375,14 @@ def create_event(user_id):
                 #template generation
                 event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key = ?", user_id, url_key)
                 # --- Main script execution ---
-                prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events. The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
+                prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events.Use the uploaded pic for design like background and stuff,not directly in the template The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
                 prompt += (f'''{user_prompt}
                     event-title: {title},
                     event-description:{description},
                     event-time:{time},
                     event-date:{date},
                     event-price:{price},
-                    ticket-purchase-link:https://hhxsq4xb-1000.uks1.devtunnels.ms/buy_ticket/{event[0]['id']},
+                    ticket-purchase-link:https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/{event[0]['id']},
                     img-1 path: {img1_path},
                     img-1 path: {img2_path},
                     img-1 path: {img3_path},
@@ -262,10 +421,13 @@ def get_user_events(id):
     events = db.execute("SELECT * FROM events WHERE created_by = ?", id)
     if events:
         return jsonify(events)
+    else:
+        return jsonify([])
 @app.route("/track_events/<key>")
 def track_events(key):
+    event = db.execute("SELECT * FROM events JOIN users ON events.created_by = users.id WHERE url_key = ?", key)[0]
     tickets = db.execute("SELECT * FROM users JOIN events ON users.id = events.created_by JOIN tickets ON users.id=tickets.user_id WHERE url_key =?", key)
-    return render_template("track_events.html", tickets=tickets)
+    return render_template("track_events.html", tickets=tickets, event=event)
 
 @app.route("/sales_data/<id>")
 def sales_data(id):
@@ -291,7 +453,7 @@ def sales_data(id):
             JOIN events ON events.id = tickets.event_id 
             JOIN users ON users.id = tickets.user_id 
             WHERE events.id = ?""",
-        )
+        id)
 
         # Build daily sales counts
         day_diff = (today - datetime_object).days
@@ -306,7 +468,7 @@ def sales_data(id):
             )
             chart_data["y"].append(sales_count)
         print(chart_data)
-        return []
+        return chart_data
     except IndexError:
         return {"x": [], "y": []}
 
@@ -336,6 +498,7 @@ def search_attendees():
 def ask_ai():
     if request.method == "POST":
         data = request.get_json()
+        print(data)
         user_prompt = data.get("prompt")
         event_id = data.get("event_id")
         BASE_PROMPT = """
@@ -345,11 +508,13 @@ def ask_ai():
         Be concise, clear, and numeric where possible.
         
         """
-        #event data
-        data = db.execute("SELECT * FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id = users.id")
+
+        #tickets
+        data = db.execute("SELECT users.name, users.email, events.price, tickets.created_at  FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id = users.id WHERE events.id = ?", event_id)
+        print(data)
         info = ""
         for row in data:
-            info+=(f"{row['name']}-{row['email']}-{row['price']}")
+            info+=(f"{row['name']}-{row['email']}-{row['price']}-{row['created_at']}")
         # Combine with base instructions
         full_prompt = BASE_PROMPT + "\nprompt: " + user_prompt + "\nevent purchase data/ticket sales: " + info
         #full_prompt = full_prompt.join(info)
@@ -360,9 +525,207 @@ def ask_ai():
             return jsonify({"response": f"{result}"})
         else:
             return jsonify({"response": f"An error occured with the model, contact manufacturer"})
-@app.route("/buy_ticket/id")
+@app.route("/buy_ticket/<int:id>")
 def buy_ticket(id):
-    event = db.execute("SELECT * FROM events WHERE id = ?", id)
+    return render_template("")
+@app.route("/ticket_login/<int:id>", methods=["GET","POST"])
+def ticket_login(id):
+    if request.method =="POST":
+        data = request.get_json()
+        print(data)
+        email = data.get('email')
+        password = data.get('password')
+        user = db.execute("SELECT * FROM users WHERE email = ? AND password = ?", email, password)
+        if user:
+            print("login successful",user)
+            return {"response":"successful", "user_id":f"{user[0]['id']}", "event_id":f"{id}", "user_email":f"{email}"}
+        else:
+            print("unsuccessful")
+            return {"response":"unsuccessful"}
+    event = db.execute("SELECT * FROM events WHERE id = ?", id)[0]
+    print(event)
     return render_template("buy_ticket.html", event=event)
+PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY')
+PAYSTACK_INITIALIZE_URL = 'https://api.paystack.co/transaction/initialize'
+# 🔥 Step 1: Post session and initialize Paystack payment
+@app.route('/paystack_init', methods=['POST'])
+def post_session():
+    try:
+        data = request.form
+        print(data)
+        event_id = data.get("event_id")
+        user_id = data.get("user_id")
+        email = data.get("user_email")
+        price = data.get("event_price")
+        subaccount = db.execute("SELECT subaccount_code FROM users WHERE id = ? ", user_id)
+        metadata = {
+            "event_id":event_id,
+            "user_id":user_id
+        }
+
+        headers = {
+            "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}",
+            "Content-Type": "application/json"
+        }
+
+        payload = {
+            "email": email,
+            "amount": int(float(price) * 100),  # Paystack wants kobo
+            "metadata": metadata,
+            "callback_url": "https://hhxsq4xb-1000.uks1.devtunnels.ms/callback",
+
+            # 👇 Revenue sharing
+            "subaccount": subaccount[0]['subaccount_code'],  # seller's subaccount
+            "bearer": "subaccount",  # who bears Paystack fees (main or subaccount)
+            "transaction_charge": int(float(price) * 100 * 0.05)  # 5% cut for you
+        }
+
+
+        response = requests.post(PAYSTACK_INITIALIZE_URL, json=payload, headers=headers)
+        print(response)
+        res_data = response.json()
+        if res_data.get("status"):
+            print(res_data) # This print is already there, you can keep it or remove it
+            return redirect(res_data['data']['authorization_url'])
+
+        else:
+            print({"error": res_data})
+            return {"error": res_data}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# 🔁 Step 2: Payment verification callback
+@app.route('/callback')
+def callback():
+    reference = request.args.get('reference')
+
+    headers = {
+        "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}"
+    }
+
+    res = requests.get(f"https://api.paystack.co/transaction/verify/{reference}", headers=headers)
+    response_data = res.json()
+
+    if not response_data.get('status'):
+        return {"error": "Payment verification failed"}
+
+    payment_data = response_data['data']
+    metadata = payment_data['metadata']
+
+    try:
+        code = generate_code()
+        if db.execute("INSERT INTO tickets(user_id, event_id, ticket_code) VALUES(?,?,?)",metadata["user_id"], metadata["event_id"], code):
+            return render_template('success.html', home=f"https://hhxsq4xb-1000.uks1.devtunnels.ms/dashboard")  # or return a JSON response
+    except IndexError as e:
+        return {"error": str(e)}
+@app.route("/validation/<key>", methods=["GET", "POST"])
+def validation(key):
+    if request.method == "POST":
+        data = request.get_json()
+        print(data)
+        code = data['code']
+        key = data['key']
+        event = db.execute("SELECT * FROM events WHERE url_key = ?", key)
+        print(code)
+        valid = db.execute("SELECT * FROM tickets WHERE ticket_code = ? AND event_id = ?", code, event[0]['id'])
+        print(valid)
+        if valid:
+            if valid[0]['status'] == "valid":
+                print("yip")
+                db.execute("UPDATE tickets SET status = ? WHERE ticket_code = ? AND event_id = ?", "used", code, event[0]['id'])
+                return {"response":"valid"}
+            else:
+                return {"response":"used"}
+        else:
+            return {"response":"invalid"}
+    event = db.execute("SELECT * FROM events WHERE url_key = ?", key)[0]
+    return render_template("validity.html", event = event)
+@app.route("/request_otp", methods=["POST"])
+def request_otp():
+    """
+    Generates an OTP and sends it to the user's email via Email.js.
+    """
+    try:
+        data = request.get_json()
+        email = data.get("email")
+
+        if not email:
+            return jsonify({"response": "error", "message": "Email is required"}), 400
+
+        # Generate a 6-digit OTP
+        otp_code = str(random.randint(100000, 999999))
+        
+        # Store the OTP with the email
+        otps[email] = otp_code
+
+        # Send the email with the OTP
+        if send_otp_email_via_emailjs(email, otp_code):
+            return jsonify({"response": "sent", "message": "OTP sent successfully"}), 200
+        else:
+            return jsonify({"response": "error", "message": "Failed to send OTP"}), 500
+
+    except Exception as e:
+        return jsonify({"response": "error", "message": str(e)}), 500
+@app.route("/verify_otp", methods=["POST"])
+def verify_otp():
+    """
+    Verifies the OTP sent by the user.
+    """
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        otp = data.get("otp")
+        exist = db.execute("SELECT * FROM users WHERE email = ?", email)
+        # Check if the OTP matches the one stored in our temporary "database"
+        if exist:
+            if email in otps and otps[email] == otp:
+                del otps[email] # Delete the OTP after successful verification
+                # Store in session
+                session["user_id"] = user[0]["id"]
+                return jsonify({"response": "verified", "url": "/dashboard"}), 200
+            else:
+                return jsonify({"response": "error", "message": "Invalid OTP"}), 401
+        else:
+            return jsonify({"response": "error", "message": "Unknown email"}), 401
+
+    except Exception as e:
+        return jsonify({"response": "error", "message": str(e)}), 500
+@app.route("/update_profile", methods=["POST"])
+def update_profile():
+    try:
+        data = request.get_json()
+
+        # Extract form fields
+        user_id = data.get("id") or session.get("user_id")  # fallback to session
+        name = data.get("name")
+        email = data.get("email")
+        password = data.get("password")
+        phone = data.get("phone")
+        bank_code = data.get("bank_code")
+        account_number = data.get("account_number")
+        account_name = data.get("account_name")
+
+        # Check required fields
+        if not all([user_id, name, email, password, phone, bank_code, account_number]):
+            return jsonify({"status": "error", "message": "Missing required fields"}), 400
+
+        # Update DB
+        db.execute("""
+            UPDATE users
+            SET name = ?, email = ?, password = ?, phone = ?, 
+                bank_code = ?, account_number = ?, account_name = ?
+            WHERE id = ?
+        """, name, email, password, phone, bank_code, account_number, account_name, user_id)
+
+        return jsonify({"status": "success", "message": "Profile updated successfully!"})
+
+    except Exception as e:
+        print("❌ Error updating profile:", e)
+        return jsonify({"status": "error", "message": "Server error"}), 500
+
+@app.route("/retrieval")
+def retrieval():
+    return render_template("retrieval.html")
 if __name__=="__main__":
     app.run(debug=True, port=1000 )

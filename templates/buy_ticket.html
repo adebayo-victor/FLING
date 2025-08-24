@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Buy Ticket</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-gray-100 flex items-center justify-center min-h-screen p-4">
+  <input type="hidden" value="{{event.id}}" class="event-id">
+  <div class="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8">
+    <h2 class="text-2xl font-bold text-green-400 text-center mb-6 alert-text">Login to Buy Ticket</h2>
+    <h3 class="text-1xl font-bold text-green-400 text-center mb-6">lack credentials?<a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/register" class="text-blue-400 underline"> Signup</a></h3>
+
+    <!-- Login fields -->
+    <div class="space-y-4 mb-6">
+      <div>
+        <label for="email" class="block text-gray-400 mb-1">Email</label>
+        <input type="email" id="email" required
+          class="w-full p-3 rounded-lg bg-gray-800/60 text-gray-100 border border-gray-700"/>
+      </div>
+
+      <div>
+        <label for="password" class="block text-gray-400 mb-1">Password</label>
+        <input type="password" id="password" required
+          class="w-full p-3 rounded-lg bg-gray-800/60 text-gray-100 border border-gray-700"/>
+      </div>
+    </div>
+
+    <!-- Login Button -->
+    <button onclick="handleLogin()" 
+      id="loginBtn"
+      class="w-full py-3 bg-green-500 hover:bg-green-400 rounded-lg text-gray-900 font-semibold shadow-md transition">
+      Login
+    </button>
+    <!--Alert-->
+    <div>
+      <h2 class="text-xl font-bold text-green-400 mb-2 red-alert">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||</h2>
+      <h2 class="text-xl font-bold text-green-400 mb-2 red-alert">/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/</h2>
+      <h2 class="text-xl font-bold text-blue-400 mb-2 green-alert">|||||||||||||||||||||||||||||||||||||||||||||||||||||||||</h2>
+    </div>
+    <!-- Event Info -->
+    <div class="mt-8 bg-gray-800/60 border border-gray-700 rounded-xl p-6 shadow-md">
+      <h3 class="text-xl font-bold text-green-400 mb-2">{{ event.title }}</h3>
+      <p class="text-gray-300 mb-2">{{ event.description }}</p>
+      <p class="text-gray-400 mb-1"><span class="font-semibold">📍 Location:</span> {{ event.location }}</p>
+      <p class="text-gray-400 mb-1"><span class="font-semibold">📅 Date:</span> {{ event.date }}</p>
+      <p class="text-gray-400 mb-1"><span class="font-semibold">⏰ Time:</span> {{ event.time }}</p>
+      <p class="text-gray-400 mb-4"><span class="font-semibold">💵 Price:</span> ₦{{ event.price }}</p>
+
+      <!-- Ticket Form -->
+      <form method="POST" action="/paystack_init" class="space-y-3">
+        <input type="hidden" name="user_id" id="userIdInput">
+        <input type="hidden" name="event_id" id="eventIdInput">
+        <input type="hidden" name="event_price" id="eventIdprice" value="{{event.price}}">
+        <input type="hidden" name="user_email" id="userEmail">
+        <button type="submit" 
+          id="buyBtn"
+          class="w-full py-3 bg-green-500 hover:bg-green-400 rounded-lg text-gray-900 font-semibold shadow-md transition hidden">
+          🎟 Buy Ticket
+        </button>
+      </form>
+    </div>
+  </div>
+
+<script>
+  async function handleLogin() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const eventId = document.querySelector(".event-id").value.trim()
+    if (!email || !password) {
+      alert("Please enter email and password first!");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/"+ eventId, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (data.response === "successful") {
+        document.querySelector('.alert-text').style.color = "green"
+        document.querySelector('.alert-text').textContent = "Login successful!"
+        document.getElementById("userIdInput").value = data.user_id;
+        document.getElementById("eventIdInput").value = data.event_id;
+        document.getElementById("userEmail").value = data.user_email;
+        // hide login button, show buy ticket
+        //document.getElementById(".green-alert").textContent = "Login Successful"
+        document.getElementById("loginBtn").classList.add("hidden");
+        document.getElementById("buyBtn").classList.remove("hidden");
+
+      } else {
+        //document.getElementById(".red-alert").textContent = "Invalid email or password!"
+        document.querySelector('.alert-text').classList.remove("text-anti-flash-white")
+        document.querySelector('.alert-text').style.color = "red"
+        document.querySelector('.alert-text').textContent = "Invalid credentials"
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      //alert("Server error, please try again.");
+    }
+  }
+</script>
+
+</body>
+</html>

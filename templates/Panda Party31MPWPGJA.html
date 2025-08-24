@@ -1,0 +1,413 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Party - An Epic Event</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* General Resets & Base Styles */
+        :root {
+            --color-black: #1A1A1A;
+            --color-white: #FFFFFF;
+            --color-grey-light: #F0F0F0;
+            --color-grey-dark: #333333;
+            --color-bamboo-green: #5e8d4e;
+            --color-bamboo-brown: #c5a67a;
+            --color-text: var(--color-black);
+            --color-bg: var(--color-white);
+            --font-primary: 'Poppins', sans-serif;
+            --font-secondary: 'Playfair Display', serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-secondary);
+            margin-bottom: 0.8em;
+            color: var(--color-black);
+        }
+
+        h1 { font-size: 3em; }
+        h2 { font-size: 2.5em; }
+        h3 { font-size: 1.8em; }
+
+        p {
+            margin-bottom: 1em;
+            font-size: 1.1em;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--color-bamboo-green);
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--color-bamboo-brown);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--color-black);
+            color: var(--color-white);
+            padding: 30px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh; /* Make header a bit taller for hero feel */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 1%, rgba(0, 0, 0, 0.8) 100%);
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            max-width: 800px;
+        }
+
+        .header h1 {
+            font-size: 4.5em;
+            color: var(--color-white);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            font-size: 1.4em;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: var(--color-grey-light);
+        }
+
+        .event-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .detail-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            font-size: 1.2em;
+            color: var(--color-white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .detail-item strong {
+            font-weight: 600;
+        }
+
+        /* Utility classes for icons (simulated) */
+        .icon-calendar::before { content: "📅"; margin-right: 5px; }
+        .icon-time::before { content: "⏰"; margin-right: 5px; }
+        .icon-ticket::before { content: "🎟️"; margin-right: 5px; }
+
+        /* Call to Action Button */
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--color-bamboo-green);
+            color: var(--color-white);
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 30px;
+            box-shadow: 0 8px 20px rgba(94, 141, 78, 0.4);
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-bamboo-brown);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(197, 166, 122, 0.4);
+        }
+
+        /* Main Content Sections */
+        .section {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .section:nth-of-type(even) {
+            background-color: var(--color-grey-light);
+        }
+
+        .section h2 {
+            margin-bottom: 40px;
+            font-size: 3em;
+            color: var(--color-bamboo-green);
+        }
+
+        /* Alternating Layout for Details */
+        .content-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            margin-bottom: 80px;
+            text-align: left;
+        }
+
+        .content-block:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .content-block.left-aligned .text-content {
+            order: 2;
+        }
+
+        .content-block.left-aligned .image-content {
+            order: 1;
+        }
+
+        .text-content, .image-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 600px; /* Limit width for readability */
+        }
+
+        .image-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease-in-out;
+            object-fit: cover; /* Ensure image covers space without distortion */
+            aspect-ratio: 16/9; /* Maintain aspect ratio */
+        }
+
+        .image-content img:hover {
+            transform: scale(1.02);
+        }
+
+        .text-content h3 {
+            color: var(--color-bamboo-brown);
+            font-size: 2.2em;
+            margin-bottom: 0.5em;
+        }
+
+        .text-content p {
+            color: var(--color-grey-dark);
+            font-size: 1.15em;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--color-black);
+            color: var(--color-grey-light);
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.9em;
+            border-top: 5px solid var(--color-bamboo-green);
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .content-block {
+                flex-direction: row;
+                text-align: left;
+            }
+
+            .content-block.left-aligned .text-content {
+                order: 1;
+            }
+
+            .content-block.left-aligned .image-content {
+                order: 2;
+            }
+
+            .header h1 {
+                font-size: 5.5em;
+            }
+
+            .header p {
+                font-size: 1.6em;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .header h1 {
+                font-size: 3em;
+            }
+            .header p {
+                font-size: 1.1em;
+            }
+            .event-details {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .detail-item {
+                font-size: 1em;
+                justify-content: center;
+            }
+            .btn-primary {
+                padding: 12px 25px;
+                font-size: 1.1em;
+            }
+            .section {
+                padding: 60px 0;
+            }
+            .section h2 {
+                font-size: 2.2em;
+            }
+            .text-content h3 {
+                font-size: 1.8em;
+            }
+            .text-content p {
+                font-size: 1em;
+            }
+            .content-block {
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content container">
+            <h1>Panda Party</h1>
+            <p>Join us for an unforgettable Panda Themed party! Experience a night filled with fun, music, and adorable panda vibes.</p>
+
+            <div class="event-details">
+                <div class="detail-item icon-calendar">
+                    <strong>Date:</strong> 2025-08-30
+                </div>
+                <div class="detail-item icon-time">
+                    <strong>Time:</strong> 18:11
+                </div>
+                <div class="detail-item icon-ticket">
+                    <strong>Price:</strong> 5000
+                </div>
+            </div>
+
+            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/1" target="_blank" class="btn-primary">
+                Buy Your Ticket Now!
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="section">
+            <div class="container">
+                <h2>About the Panda Party</h2>
+                <div class="content-block">
+                    <div class="text-content">
+                        <h3>A Night of Black, White & Fun!</h3>
+                        <p>Immerse yourself in a whimsical world inspired by the majestic panda. This exclusive event promises delightful surprises, engaging activities, and an atmosphere that's both elegant and playful. Get ready to dance, mingle, and make memories under the panda-themed sky!</p>
+                        <p>We've curated a special experience for all our guests, ensuring every detail reflects the charm and uniqueness of our beloved pandas. From the decor to the music, every element is designed to transport you to an extraordinary realm.</p>
+                    </div>
+                    <div class="image-content">
+                        <img
+                            src="{{ url_for('static', filename='assets/img/Gemini_Generated_Image_1gug1i1gug1i1gug_1.png') }}"
+                            alt="A beautifully crafted digital art featuring a stylized panda celebrating the Panda Party. An external link to a fallback image if this fails: https://placehold.co/600x400?text=Panda+Celebration+Fallback"
+                            onerror="this.onerror=null;this.src='https://placehold.co/600x400?text=Panda+Celebration+Fallback';"
+                        >
+                    </div>
+                </div>
+
+                <div class="content-block left-aligned">
+                    <div class="text-content">
+                        <h3>What to Expect</h3>
+                        <p>Prepare for an evening of gourmet treats, themed beverages, and captivating entertainment. Our DJs will be spinning tracks that keep the energy high, and there will be plenty of photo opportunities to capture your best panda-inspired moments. Don't forget to wear your most stylish black and white attire!</p>
+                        <p>This is more than just a party; it's a celebration of nature's gentle giants and a chance to connect with fellow enthusiasts in a vibrant, festive setting. Secure your spot today and be a part of the most talked-about event of the year.</p>
+                    </div>
+                    <div class="image-content">
+                        <img
+                            src="{{ url_for('static', filename='assets/img/download_3.jfif') }}"
+                            alt="A charming illustration of a panda character in a party setting, possibly holding a balloon or wearing a party hat. An external link to a fallback image if this fails: https://placehold.co/600x400?text=Panda+Party+Illustration+Fallback"
+                            onerror="this.onerror=null;this.src='https://placehold.co/600x400?text=Panda+Party+Illustration+Fallback';"
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Optional: Another section for testimonials or a final call to action -->
+        <section class="section" style="background-color: var(--color-grey-light);">
+            <div class="container">
+                <h2>Ready to Join the Fun?</h2>
+                <p style="margin-bottom: 40px; color: var(--color-grey-dark);">Spaces are limited, so grab your tickets before they're gone!</p>
+                <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/1" target="_blank" class="btn-primary">
+                    Secure Your Spot
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Panda Party. All rights reserved. | Powered by Techlite</p>
+        </div>
+    </footer>
+
+</body>
+</html>

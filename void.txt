@@ -14,6 +14,11 @@ db.execute("""
         email TEXT UNIQUE NOT NULL,
         phone TEXT,
         password TEXT NOT NULL,
+        bank_name VARCHAR(255) NOT NULL,
+        bank_code VARCHAR(50) NOT NULL,
+        account_number VARCHAR(20) NOT NULL,
+        account_name VARCHAR(255) NOT NULL,
+        subaccount_code VARCHAR(100) NOT NULL,
         img TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
@@ -303,3 +308,205 @@ def create_event(user_id):
 
 if __name__=="__main__":
     app.run(debug=True, port=1000)
+///////////////////////////////////////////////////////////////////////////////////////////
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fling - Sign Up</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rich-black: #000F0B;
+      --dark-green: #032221;
+      --caribbean-green: #00F891;
+      --anti-flash-white: #F1F7F9;
+      --pistachio: #AACBC4;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--rich-black);
+      color: var(--anti-flash-white);
+    }
+
+    .cool-gradient-background {
+      background-image: linear-gradient(135deg, var(--rich-black) 0%, var(--dark-green) 50%, var(--rich-black) 100%);
+    }
+
+    .input-container {
+      position: relative;
+    }
+
+    .fling-input, .fling-select {
+      display: block;
+      width: 100%;
+      background-color: var(--dark-green);
+      border: 2px solid var(--caribbean-green);
+      border-radius: 0.5rem;
+      color: var(--anti-flash-white);
+      padding: 1rem 0.75rem 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .fling-select {
+      appearance: none;
+    }
+
+    .fling-input:focus, .fling-select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--caribbean-green);
+    }
+
+    .input-container label {
+      position: absolute;
+      top: -0.6rem;
+      left: 0.75rem;
+      background-color: var(--dark-green);
+      padding: 0 0.5rem;
+      color: var(--pistachio);
+      font-size: 0.75rem;
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    .fling-btn {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      background-color: var(--caribbean-green);
+      color: var(--rich-black);
+      transition: all 0.2s ease;
+    }
+
+    .fling-btn:hover {
+      background-color: #2CC299; /* softer mint green hover */
+    }
+  </style>
+</head>
+<body class="cool-gradient-background flex items-center justify-center min-h-screen p-4">
+
+  <div class="w-full max-w-md bg-dark-green rounded-2xl shadow-2xl p-8 border-2 border-[var(--caribbean-green)]">
+
+    <div class="flex flex-col items-center mb-8">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-caribbean-green mb-2">
+        <path d="M21 12.0001L19.5 10.5001L15 15.0001L16.5 16.5001L21 12.0001Z" fill="currentColor"/>
+        <path d="M12 3.0001L13.5 4.5001L9 9.0001L7.5 7.5001L12 3.0001Z" fill="currentColor"/>
+        <path d="M3 12.0001L4.5 10.5001L9 15.0001L7.5 16.5001L3 12.0001Z" fill="currentColor"/>
+        <path d="M12 21.0001L13.5 19.5001L9 15.0001L7.5 16.5001L12 21.0001Z" fill="currentColor"/>
+      </svg>
+      <h1 class="text-3xl font-bold text-anti-flash-white">Create Account</h1>
+      <p class="text-sm text-caribbean-green mt-2">Sign up to host events and sell tickets.</p>
+    </div>
+
+    <form id="signup-form" class="space-y-6">
+      <div class="input-container">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" class="fling-input" required>
+      </div>
+      <div class="input-container">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" class="fling-input" required>
+      </div>
+      <div class="input-container">
+        <label for="phone">Whatsapp No.</label>
+        <input type="tel" id="phone" name="phone" placeholder="+234 12345678" class="fling-input" required>
+      </div>
+      <div class="input-container">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" class="fling-input" required>
+      </div>
+
+      <div class="input-container">
+        <label for="bank">Bank</label>
+        <select id="bank" name="bank" class="fling-select" required>
+          <option value="">Select your bank</option>
+        </select>
+      </div>
+
+      <div class="input-container">
+        <label for="account_number">Account Number</label>
+        <input type="text" id="account_number" name="account_number" maxlength="10" class="fling-input" required>
+      </div>
+
+      <button type="submit" class="fling-btn">
+        Sign Up
+      </button>
+    </form>
+
+    <div class="mt-8 text-center text-sm text-[var(--pistachio)]">
+      Already have an account? 
+      <a href="/login" class="text-caribbean-green hover:underline font-semibold">Log In</a>
+    </div>
+  </div>
+
+  <script>
+    // Populate bank dropdown
+    async function loadBanks() {
+      try {
+        const res = await fetch("https://hhxsq4xb-1000.uks1.devtunnels.ms/banks");
+        const banks = await res.json();
+        const select = document.getElementById("bank");
+        banks.forEach(bank => {
+          const opt = document.createElement("option");
+          opt.value = bank.code;
+          opt.textContent = bank.name;
+          opt.classList.add("bg-[var(--dark-green)]", "text-[var(--anti-flash-white)]");
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error("Error loading banks:", e);
+      }
+    }
+    loadBanks();
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const payload = {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        bank_code: formData.get("bank"),
+        account_number: formData.get("account_number")
+    };
+
+    try {
+        const res = await fetch("/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+        alert("Signup successful! 🎉");
+        } else {
+        alert("Error: " + result.message);
+        }
+    } catch (err) {
+        console.error("Network error:", err);
+        alert("Network error");
+    }
+    });
+  </script>
+</body>
+</html>
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+    data = {
+            "message": "success",
+            "user": {
+                "name": name,
+                "email": email,
+                "phone": phone,
+                "bank_name": bank_name,
+                "bank_code": bank_code,
+                "account_number": account_number,
+                "account_name": account_name,
+                "subaccount_code": subaccount_code
+            }
+        }
+    db.execute("INSERT INTO users(password,name,email,phone,bank_name,bank_code,account_number,account_name, subaccount_code) VALUES(?,?,?,?,?,?,?,?,?)",password,name, email,phone,bank_name,bank_code, account_number, account_name, subaccount_code)
+    

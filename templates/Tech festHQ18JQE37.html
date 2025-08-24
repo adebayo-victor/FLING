@@ -1,0 +1,423 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Fest - An Unforgettable Tech Experience</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm-2.5-7c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zM12 6c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm-1 2h2v2h-2V8z' fill='%236C63FF'/%3E%3C/svg%3E" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6C63FF; /* Vibrant Purple */
+            --secondary-color: #00C896; /* Tech Green */
+            --dark-bg: #1A1A2E; /* Deep Blue-Black */
+            --light-bg: #EAEAEA; /* Light Grey */
+            --text-color: #F8F8F8; /* Light Text */
+            --dark-text: #333333; /* Dark Text */
+            --card-bg: #2B2B4A; /* Slightly Lighter Dark */
+            --border-radius: 8px;
+            --spacing-unit: 1rem;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--dark-bg);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-unit);
+        }
+
+        /* --- Header/Hero Section --- */
+        .hero {
+            position: relative;
+            height: 80vh; /* Adjust height for impact */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-color);
+            background: linear-gradient(45deg, rgba(26, 26, 46, 0.9), rgba(69, 57, 137, 0.7)),
+                        url("{{ url_for('static', filename='assets/img/download_3.jfif') }}") center/cover no-repeat;
+            background-attachment: fixed; /* Parallax effect */
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay for text readability */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: calc(var(--spacing-unit) * 2);
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-unit);
+            font-weight: 700;
+            line-height: 1.1;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: fadeInDown 1s ease-out forwards;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: calc(var(--spacing-unit) * 2);
+            font-weight: 300;
+            animation: fadeInUp 1s ease-out forwards 0.3s;
+            opacity: 0; /* Start hidden for animation */
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            animation: scaleIn 0.8s ease-out forwards 0.6s;
+            opacity: 0;
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+        }
+
+        .primary-btn:hover {
+            background-color: #5d56d4; /* Darker primary */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.6);
+        }
+
+        .secondary-btn {
+            background-color: var(--secondary-color);
+            color: var(--dark-text);
+            box-shadow: 0 4px 15px rgba(0, 200, 150, 0.4);
+        }
+
+        .secondary-btn:hover {
+            background-color: #00b386; /* Darker secondary */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 200, 150, 0.6);
+        }
+
+        /* --- Sections --- */
+        .section-padded {
+            padding: calc(var(--spacing-unit) * 4) 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-padded h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: calc(var(--spacing-unit) * 3);
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: var(--spacing-unit);
+        }
+
+        .section-padded h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .bg-light {
+            background-color: var(--card-bg); /* Use card-bg for consistency */
+            color: var(--text-color);
+        }
+
+        .bg-dark {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+        }
+
+        /* --- Event Details Grid --- */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: calc(var(--spacing-unit) * 2);
+            text-align: center;
+            margin-top: calc(var(--spacing-unit) * 3);
+        }
+
+        .details-grid > div {
+            background-color: var(--card-bg);
+            padding: calc(var(--spacing-unit) * 2);
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .details-grid > div:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .details-grid h3 {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-bottom: var(--spacing-unit);
+        }
+
+        .details-grid p {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--light-bg);
+        }
+
+        /* --- About Section --- */
+        #about-event p {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--light-bg);
+        }
+
+        /* --- Gallery Section --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: calc(var(--spacing-unit) * 1.5);
+            margin-top: calc(var(--spacing-unit) * 3);
+        }
+
+        .gallery-grid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-grid img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* --- Call to Action Footer --- */
+        #call-to-action {
+            text-align: center;
+            padding: calc(var(--spacing-unit) * 3) 0;
+        }
+
+        #call-to-action h2 {
+            color: var(--secondary-color);
+        }
+
+        #call-to-action p {
+            font-size: 1.2rem;
+            margin-bottom: calc(var(--spacing-unit) * 2);
+            color: var(--light-bg);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #11111f; /* Even darker shade */
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            padding: calc(var(--spacing-unit) * 1.5) 0;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .hero {
+                height: 70vh;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .section-padded {
+                padding: calc(var(--spacing-unit) * 3) 0;
+            }
+
+            .section-padded h2 {
+                font-size: 2rem;
+                margin-bottom: calc(var(--spacing-unit) * 2);
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                height: 60vh;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-content {
+                padding: var(--spacing-unit);
+            }
+
+            .section-padded {
+                padding: calc(var(--spacing-unit) * 2) 0;
+            }
+
+            .section-padded h2 {
+                font-size: 1.8rem;
+                margin-bottom: var(--spacing-unit);
+            }
+
+            .gallery-grid img {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-content container">
+            <h1>Tech Fest</h1>
+            <p>Tech fest for tech people, irrespective</p>
+            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/4" class="btn primary-btn">
+                Buy Tickets - ₹1000
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section id="event-details" class="section-padded container">
+            <h2>Event Essentials</h2>
+            <div class="details-grid">
+                <div>
+                    <h3>Date</h3>
+                    <p>August 30, 2025</p>
+                </div>
+                <div>
+                    <h3>Time</h3>
+                    <p>22:16 IST</p>
+                </div>
+                <div>
+                    <h3>Venue</h3>
+                    <p>Grand Convention Center, Tech City</p>
+                </div>
+                <div>
+                    <h3>Price</h3>
+                    <p>₹1000</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about-event" class="section-padded bg-light">
+            <div class="container">
+                <h2>About the Tech Fest</h2>
+                <p>Join us for an electrifying Tech fest designed for tech enthusiasts, innovators, and learners alike. Whether you're a seasoned professional or just starting your journey, this event promises to be an unforgettable experience filled with cutting-edge discussions, interactive workshops, and networking opportunities. Immerse yourself in the world of front-end development, AI, machine learning, cybersecurity, and much more. Connect with like-minded individuals, learn from industry leaders, and discover the future of technology.</p>
+            </div>
+        </section>
+
+        <section id="gallery" class="section-padded container">
+            <h2>Glimpses & Inspiration</h2>
+            <div class="gallery-grid">
+                <img src="{{ url_for('static', filename='assets/img/download_3.jfif') }}" 
+                     alt="Diverse audience engaging at a tech conference. External image source: https://picsum.photos/id/1018/600/400">
+                <img src="{{ url_for('static', filename='assets/img/download_2.jfif') }}" 
+                     alt="Hands-on workshop, participants coding at a tech event. External image source: https://picsum.photos/id/1040/600/400">
+                <img src="{{ url_for('static', filename='assets/img/kemitsu.jfif') }}" 
+                     alt="Engaging speaker presenting on a large screen at Tech Fest. External image source: https://picsum.photos/id/10/600/400">
+            </div>
+        </section>
+
+        <section id="call-to-action" class="section-padded bg-dark text-center">
+            <div class="container">
+                <h2>Ready to Join the Future?</h2>
+                <p>Don't miss out on this unparalleled opportunity to learn, network, and grow. Secure your spot now!</p>
+                <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/4" class="btn secondary-btn">
+                    Get Your Tickets Today!
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Tech Fest. All rights reserved.</p>
+            <p>Powered by Techlite</p>
+        </div>
+    </footer>
+</body>
+</html>

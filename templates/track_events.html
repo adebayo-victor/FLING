@@ -36,7 +36,7 @@
         placeholder="🔍 Search attendees..."
         class="mb-3 p-3 rounded-lg bg-gray-800/60 text-gray-100 w-full border border-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400"
       />
-      <input type="hidden" value="" class="event-id">
+      <input type="hidden" value="{{event.id}}" class="event-id">
 
       <!-- Attendee list -->
       <div id="attendeeList" class="flex-1 overflow-y-auto bg-gray-800/60 rounded-xl p-4 space-y-3 border border-gray-700">
@@ -69,6 +69,7 @@
     </div>
   </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // NORMAL SEARCH (fetch from backend)
     document.getElementById("attendeeSearch").addEventListener("input", async function () {
@@ -100,7 +101,7 @@
         attendeeList.innerHTML = `<p class="text-red-400">Error fetching attendees</p>`;
       }
     });
-
+    let eventId = document.querySelector(".event-id").value
     // AI SEARCH (fetch from backend)
     async function sendAIPrompt() {
       const promptInput = document.getElementById("aiPrompt");
@@ -116,7 +117,7 @@
       aiBox.appendChild(loadingEl);
 
       promptInput.value = "";
-      let event_id = 1;
+      let event_id = document.querySelector(".event-id").value
 
       try {
         const response = await fetch("/ask_ai", {

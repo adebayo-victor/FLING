@@ -1,0 +1,384 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Fest - The Ultimate Anime Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Easy Customization */
+        :root {
+            --primary-bg: #1a1a2e; /* Deep dark purple-blue */
+            --secondary-bg: #2a2a4e; /* Slightly lighter */
+            --text-color: #e0e0e0; /* Light grey */
+            --accent-color: #ff2d55; /* Vibrant red for calls to action */
+            --border-color: #4a4a6e; /* Muted purple for borders */
+            --card-bg-light: #3a3a5e; /* Lightest background for cards */
+
+            /* Anime Inspired Colors */
+            --anime-red: #e74c3c; /* Naruto / Akatsuki */
+            --anime-green: #2ecc71; /* Demon Slayer */
+            --anime-blue: #3498db; /* Dragon Ball / Gojo */
+            --anime-purple: #9b59b6; /* Jujutsu Kaisen / Evangelion */
+            --anime-orange: #f39c12; /* One Piece / Attack on Titan */
+
+            --line-art-border-style: 2px dashed;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-color);
+            margin-bottom: 0.8em;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #ff6b81;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Header - Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1593348122676-e17df2095f9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMjd8MHwxfHNlYXJjaHw2fHxhbmltZSUyMGdpcmx8ZW58MHx8fHwxNjk5NjE2MzQ4fDA&ixlib=rb-4.0.3&q=80&w=1400') no-repeat center center/cover;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 2rem 1.5rem;
+            border-bottom: var(--line-art-border-style) var(--anime-purple);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Event Details */
+        .event-details {
+            background-color: var(--secondary-bg);
+            padding: 3rem 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            border-bottom: var(--line-art-border-style) var(--anime-blue);
+        }
+
+        .detail-item {
+            flex: 1 1 250px; /* Allows items to grow/shrink, with a base of 250px */
+            max-width: 300px;
+            background-color: var(--card-bg-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: var(--line-art-border-style) var(--border-color);
+        }
+
+        .detail-item h3 {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-item p {
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* Anime Showcase - Image Gallery */
+        .anime-showcase {
+            padding: 4rem 1.5rem;
+            text-align: center;
+            background-color: var(--primary-bg);
+            border-bottom: var(--line-art-border-style) var(--anime-red);
+        }
+
+        .anime-showcase h2 {
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            color: var(--accent-color);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            background-color: var(--card-bg-light);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            text-align: center;
+            border: var(--line-art-border-style); /* Base for line art border */
+        }
+
+        .gallery-item:nth-child(1) { border-color: var(--anime-red); background-color: rgba(231, 76, 60, 0.1); } /* Naruto */
+        .gallery-item:nth-child(2) { border-color: var(--anime-green); background-color: rgba(46, 204, 113, 0.1); } /* Demon Slayer */
+        .gallery-item:nth-child(3) { border-color: var(--anime-blue); background-color: rgba(52, 152, 219, 0.1); } /* Dragon Ball */
+        .gallery-item:nth-child(4) { border-color: var(--anime-purple); background-color: rgba(155, 89, 182, 0.1); } /* Jujutsu Kaisen */
+        .gallery-item:nth-child(5) { border-color: var(--anime-orange); background-color: rgba(243, 156, 18, 0.1); } /* One Piece */
+        .gallery-item:nth-child(6) { border-color: var(--anime-red); background-color: rgba(231, 76, 60, 0.1); }
+        .gallery-item:nth-child(7) { border-color: var(--anime-blue); background-color: rgba(52, 152, 219, 0.1); }
+        .gallery-item:nth-child(8) { border-color: var(--anime-green); background-color: rgba(46, 204, 113, 0.1); }
+
+        .gallery-item img {
+            max-width: 100%;
+            height: 200px;
+            object-fit: contain; /* Ensures the whole image is visible */
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            background-color: rgba(255, 255, 255, 0.05); /* Slight background for transparent images */
+            padding: 0.5rem;
+        }
+
+        .gallery-item h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        .gallery-item p {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        /* Ticket Action */
+        .ticket-action {
+            background-color: var(--secondary-bg);
+            padding: 4rem 1.5rem;
+            text-align: center;
+            border-bottom: var(--line-art-border-style) var(--anime-orange);
+        }
+
+        .ticket-action h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255, 45, 85, 0.4);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #ff6b81;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 45, 85, 0.6);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-bg);
+            color: rgba(224, 224, 224, 0.7);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            border-top: var(--line-art-border-style) var(--border-color);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero {
+                min-height: 50vh;
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .hero p {
+                font-size: 1.1rem;
+            }
+            .event-details {
+                flex-direction: column;
+                align-items: center;
+            }
+            .detail-item {
+                max-width: 90%;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr; /* Single column on smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .hero p {
+                font-size: 0.95rem;
+            }
+            .anime-showcase h2, .ticket-action h2 {
+                font-size: 2rem;
+            }
+            .btn {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Anime Fest 2025</h1>
+            <p>Dive into the vibrant world of anime at the ultimate Anime themed fest! Experience incredible art, cosplays, special guests, and unforgettable moments.</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="event-details container">
+            <div class="detail-item">
+                <h3>Date</h3>
+                <p>August 30, 2025</p>
+            </div>
+            <div class="detail-item">
+                <h3>Time</h3>
+                <p>23:56 (GMT)</p>
+            </div>
+            <div class="detail-item">
+                <h3>Price</h3>
+                <p>₹5000</p>
+            </div>
+        </section>
+
+        <section class="anime-showcase container">
+            <h2>Featured Anime & Characters</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='assets/img/anime_pfp_animepfp_animeicons_blackanime.jfif') }}"
+                         alt="Stylish Black Anime Character Profile Picture. Fallback: Naruto inspired character."
+                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1621379965042-32b07d6a2f8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMjd8MHwxfHNlYXJjaHw1NXx8YW5pbWUlMjBjaGFyYWN0ZXJ8ZW58MHx8fHwxNjk5NjE2MjQ4fDA&ixlib=rb-4.0.3&q=80&w=400';"
+                    >
+                    <h3>Mysterious Ninja</h3>
+                    <p>Inspired by the shadows of Akatsuki.</p>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='assets/img/kemitsu.jfif') }}"
+                         alt="Kemitsu Anime Character from Demon Slayer. Fallback: Green-themed anime character."
+                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1621379965042-32b07d6a2f8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMjd8MHwxfHNlYXJjaHw1NXx8YW5pbWUlMjBjaGFyYWN0ZXJ8ZW58MHx8fHwxNjk5NjE2MjQ4fDA&ixlib=rb-4.0.3&q=80&w=400';"
+                    >
+                    <h3>Flame Hashira</h3>
+                    <p>A fiery spirit, ready to defend humanity.</p>
+                </div>
+
+                <div class="gallery-item">
+                    <!-- This slot was requested as 'None' for its local path, so using a direct external link -->
+                    <img src="https://images.unsplash.com/photo-1593348122676-e17df2095f9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMjd8MHwxfHNlYXJjaHw2fHxhbmltZSUyMGdpcmx8ZW58MHx8fHwxNjk5NjE2MzQ4fDA&ixlib=rb-4.0.3&q=80&w=400"
+                         alt="Blue-haired anime girl, representing serene beauty.">
+                    <h3>Azure Maiden</h3>
+                    <p>Graceful warrior with the power of the sea.</p>
+                </div>
+
+                <div class="gallery-item">
+                    <!-- Additional external image to showcase "a bunch of anime logos and stuff" -->
+                    <img src="https://images.unsplash.com/photo-1550993074-b51f04369e46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMjd8MHwxfHNlYXJjaHw0OXx8YW5pbWUlMjBsYW5kc2NhcGV8ZW58MHx8fHwxNjk5NjE2MzQ4fDA&ixlib=rb-4.0.3&q=80&w=400"
+                         alt="Fantasy anime landscape, mystic forest.">
+                    <h3>Enchanted Forest</h3>
+                    <p>Where spirits dwell and adventures begin.</p>
+                </div>
+
+                <div class="gallery-item">
+                    <!-- Another external image -->
+                    <img src="https://images.unsplash.com/photo-1621980074697-3f309d9438d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMjd8MHwxfHNlYXJjaHwxNXx8YW5pbWUlMjBib3l8ZW58MHx8fHwxNjk5NjE2MzQ4fDA&ixlib=rb-4.0.3&q=80&w=400"
+                         alt="Anime boy with headphones, cool urban style.">
+                    <h3>Urban Beat</h3>
+                    <p>Modern hero navigating a vibrant city.</p>
+                </div>
+
+                <div class="gallery-item">
+                    <!-- And one more -->
+                    <img src="https://images.unsplash.com/photo-1623307567807-6f6d54d4f820?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMjd8MHwxfHNlYXJjaHwxOHx8YW5pbWUlMjB3b21hbnxlbnwwfHx8fDE2OTk2MTYzNDh8MA&ixlib=rb-4.0.3&q=80&w=400"
+                         alt="Anime woman with flowing hair, powerful aura.">
+                    <h3>Crimson Witch</h3>
+                    <p>Master of magic and ancient spells.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="ticket-action container">
+            <h2>Don't Miss Out!</h2>
+            <p>Secure your spot at the biggest anime event of the year.</p>
+            <a href="{{ 'https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/2' }}" class="btn">Get Your Tickets Now</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by Techlite</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,537 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prom Night: Celestial Cosmos</title>
+    <!-- Google Fonts for a modern, cosmic look -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Easy Customization */
+        :root {
+            --primary-color: #7B68EE; /* MediumSlateBlue - deep purple-blue */
+            --secondary-color: #8A2BE2; /* BlueViolet - vibrant purple */
+            --tertiary-color: #20B2AA; /* LightSeaGreen - glowing teal */
+            --dark-bg: #0A0A1A; /* Very dark blue-black, almost space-like */
+            --light-text: #E0FFFF; /* Light Cyan for readability */
+            --accent-silver: #C0C0C0; /* For shimmering details */
+            --accent-gold: #FFD700; /* For sparkling accents */
+        }
+
+        /* Basic Reset & Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            text-rendering: optimizeLegibility;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif; /* Futuristic font */
+            color: var(--tertiary-color);
+            text-shadow: 0 0 10px rgba(32, 178, 170, 0.7); /* Glowing effect */
+            margin-bottom: 0.5em;
+        }
+
+        h1 { font-size: clamp(2.5em, 6vw, 4em); text-align: center; }
+        h2 { font-size: clamp(1.8em, 4vw, 2.8em); border-bottom: 2px solid var(--primary-color); padding-bottom: 0.3em; margin-bottom: 1em; }
+        h3 { font-size: clamp(1.4em, 3vw, 2em); color: var(--secondary-color); }
+        p { margin-bottom: 1em; }
+        ul { list-style: none; padding-left: 0; }
+        ul li { margin-bottom: 0.5em; position: relative; padding-left: 1.8em; }
+        ul li::before {
+            content: '✨'; /* A little star bullet */
+            position: absolute;
+            left: 0;
+            color: var(--accent-silver);
+            font-size: 1.2em;
+        }
+
+        a {
+            color: var(--tertiary-color);
+            text-decoration: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 8px var(--tertiary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hero Section - The Main Attraction */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--light-text);
+            overflow: hidden;
+            background-color: #000; /* Fallback for video */
+        }
+
+        .hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.4); /* Dim the video for text readability */
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(32, 178, 170, 0.9); /* Stronger glow */
+            max-width: 900px;
+            animation: fadeInScale 2s ease-out forwards;
+            backdrop-filter: blur(5px);
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3em, 8vw, 5.5em);
+            margin-bottom: 0.2em;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px var(--tertiary-color);
+            line-height: 1;
+        }
+
+        .hero-content p {
+            font-size: clamp(1.2em, 2.5vw, 1.8em);
+            margin-bottom: 1.5em;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--light-text);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .event-details {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            justify-content: center;
+            gap: 25px; /* Reduced gap for better mobile fit */
+            margin-top: 2em;
+            font-size: clamp(1em, 2vw, 1.2em);
+            font-weight: bold;
+        }
+
+        .event-detail-item {
+            background: rgba(123, 104, 238, 0.2);
+            padding: 12px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 0 20px rgba(123, 104, 238, 0.6);
+            transition: transform 0.3s ease, background 0.3s ease;
+            white-space: nowrap; /* Prevent breaking of content */
+        }
+
+        .event-detail-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(123, 104, 238, 0.4);
+            box-shadow: 0 0 30px rgba(123, 104, 238, 0.8);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--light-text);
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: clamp(1.1em, 2.5vw, 1.4em);
+            letter-spacing: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.8);
+            border: none;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.25);
+            transform: skewX(-30deg);
+            transition: all 0.7s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.07);
+            box-shadow: 0 0 40px rgba(138, 43, 226, 1.2);
+        }
+
+        /* Sections Styling */
+        section {
+            padding: 100px 0;
+            position: relative;
+            background-color: var(--dark-bg);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .section-header h2 {
+            display: inline-block;
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 0;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px; /* Wider underline */
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            box-shadow: 0 0 12px var(--primary-color);
+        }
+
+        /* About Section */
+        #about {
+            background-image: url('https://images.unsplash.com/photo-1543722530-d2251ee2576b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzh8fGNvc21pYyUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Parallax effect */
+            color: var(--light-text);
+            padding: 120px 0;
+            position: relative;
+        }
+
+        #about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75); /* Darker overlay for text readability */
+            z-index: 0;
+        }
+
+        #about .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features/Details Grid */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px; /* Adjusted gap */
+            margin-top: 40px;
+        }
+
+        .grid-item {
+            background: rgba(10, 10, 26, 0.8); /* Slightly less opaque */
+            border: 1px solid var(--secondary-color);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.6); /* Stronger glow */
+            text-align: center;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative; /* For the subtle star effect */
+        }
+
+        .grid-item:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 0 40px rgba(138, 43, 226, 1);
+        }
+
+        .grid-item h3 {
+            margin-bottom: 15px;
+            color: var(--tertiary-color);
+            text-shadow: 0 0 10px rgba(32, 178, 170, 0.6);
+        }
+
+        .grid-item p, .grid-item ul {
+            font-size: 1em;
+            color: var(--light-text);
+        }
+        .grid-item ul li::before {
+            content: '🌌'; /* Galaxy emoji for list items */
+            font-size: 1.1em;
+        }
+
+        /* Specific sections emojis */
+        #venue-decor .grid-item ul li::before { content: '🌠'; }
+        #activities-entertainment .grid-item ul li::before { content: '💫'; }
+        #dress-code .grid-item ul li::before { content: '👗'; } /* Keeping it relevant */
+
+        /* Ticket Section */
+        #tickets {
+            text-align: center;
+            background: linear-gradient(to right, #0F003A, #3A004F);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        #tickets::before { /* Subtle background pattern */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        #tickets h2 {
+            color: var(--light-text);
+            border-color: var(--accent-gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            margin-bottom: 1em;
+        }
+
+        .ticket-info {
+            font-size: clamp(1.3em, 2.5vw, 1.8em);
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: var(--accent-gold);
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #050510;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Animations */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-content h1 { font-size: clamp(2.5em, 7vw, 4.5em); }
+            .hero-content p { font-size: clamp(1.1em, 2.2vw, 1.5em); }
+            h1 { font-size: clamp(2em, 5vw, 3.5em); }
+            h2 { font-size: clamp(1.6em, 3.5vw, 2.4em); }
+            h3 { font-size: clamp(1.3em, 2.5vw, 1.8em); }
+            section { padding: 80px 0; }
+            .cta-button { padding: 15px 35px; font-size: clamp(1em, 2vw, 1.2em); }
+        }
+
+        @media (max-width: 768px) {
+            .event-details {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .event-detail-item {
+                font-size: 1em;
+                padding: 10px 20px;
+            }
+            .grid-layout {
+                grid-template-columns: 1fr; /* Stack items vertically */
+            }
+            .grid-item {
+                padding: 25px;
+            }
+            #about { padding: 80px 0; }
+            #tickets { padding: 80px 0; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 { font-size: clamp(2em, 8vw, 3.5em); letter-spacing: 3px;}
+            .hero-content p { font-size: clamp(0.9em, 2.5vw, 1.2em); }
+            .cta-button { font-size: clamp(0.9em, 2.5vw, 1.1em); padding: 12px 28px; }
+            h1 { font-size: clamp(1.6em, 5vw, 2.8em); }
+            h2 { font-size: clamp(1.4em, 4.5vw, 2em); }
+            h3 { font-size: clamp(1.2em, 3.5vw, 1.6em); }
+            section { padding: 60px 0; }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <!-- Background video for celestial feel -->
+        <video src="{{ url_for('static', filename='videos/celestial_prom_intro.mp4') }}"
+               poster="https://images.unsplash.com/photo-1543722530-d2251ee2576b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzh8fGNvc21pYyUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=1920&q=80"
+               muted loop autoplay playsinline
+               alt="A captivating video showcasing cosmic lights and celestial movement. External reference: https://videos.pexels.com/video-files/3831776/3831776-hd_1920_1080_24fps.mp4">
+        </video>
+
+        <div class="hero-content">
+            <h1>Prom Night</h1>
+            <p>Theme: Celestial Cosmos: A Cosmic Celebration</p>
+            <div class="event-details">
+                <div class="event-detail-item">
+                    <strong>Date:</strong> 2025-08-30
+                </div>
+                <div class="event-detail-item">
+                    <strong>Time:</strong> 19:38
+                </div>
+                <div class="event-detail-item">
+                    <strong>Price:</strong> $1000
+                </div>
+            </div>
+            <button class="cta-button" onclick="location.href='{{ 'https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/1' }}'">Buy Tickets Now</button>
+        </div>
+    </header>
+
+    <main>
+        <section id="about" class="container">
+            <div class="section-header">
+                <h2>About the Celestial Cosmos</h2>
+            </div>
+            <p>This theme is all about creating an enchanting, out-of-this-world experience for the attendees. The goal is to make everyone feel like they have been transported to a magical galaxy, celebrating under a sky full of stars. Prepare to be dazzled as we transform our venue into a shimmering cosmic wonderland, where every detail evokes the grandeur and mystery of the universe.</p>
+            <p>From the moment you step through our starry portal, you'll be immersed in a vibrant spectacle of light, color, and sound, designed to make your Prom night truly unforgettable. This is your chance to shine bright among the stars!</p>
+        </section>
+
+        <section id="venue-decor" class="container">
+            <div class="section-header">
+                <h2>Venue & Decor: A Galactic Transformation</h2>
+            </div>
+            <div class="grid-layout">
+                <div class="grid-item">
+                    <h3>Color Palette</h3>
+                    <p>A cosmic mix of deep blues, purples, and black, accented with shimmering silver, gold, and iridescent shades that echo the depths of space.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Lighting</h3>
+                    <p>String lights, star projectors, and blacklights will make glowing elements pop. LED light-up planets and stars will hang from the ceiling, creating a mesmerizing, dynamic galaxy above.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Fabric & Draping</h3>
+                    <p>Sheer, dark fabrics will cascade to create a "sky" effect on the ceiling, embellished with glitter or glow-in-the-dark stars to mimic distant nebulae and constellations.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Entrances</h3>
+                    <p>Step through a grand entrance designed as a starry portal or a futuristic spaceship hatch. A fog machine will enhance the otherworldly and mysterious arrival experience.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Interactive Art</h3>
+                    <p>Engage your creativity with a large mural of a nebula or a galaxy that attendees can add to using glow-in-the-dark paint, leaving their unique mark on our cosmic canvas.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Refreshments</h3>
+                    <p>Savor space-themed drinks like "Cosmic Cooler" or "Galaxy Punch", enhanced with edible glitter. Our culinary team will present food to look like meteors or moon rocks for a truly immersive taste of the cosmos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="activities-entertainment" class="container">
+            <div class="section-header">
+                <h2>Activities & Entertainment: Beyond the Stars</h2>
+            </div>
+            <div class="grid-layout">
+                <div class="grid-item">
+                    <h3>The "Cosmic" Photobooth</h3>
+                    <p>Capture your unforgettable moments with out-of-this-world props like space helmets, alien antennae, and star wands against a high-resolution print of the Milky Way or a custom-designed nebula backdrop.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>A "Stargazer" Lounge</h3>
+                    <p>Find your tranquil escape in a quiet, comfortable area furnished with beanbags and blankets. Star projectors will envelop the walls and ceiling, creating a relaxing, contemplative space away from the main music.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>Music & Performance</h3>
+                    <p>A talented DJ will be curating a mix of futuristic, ambient, and electronic music that perfectly matches our cosmic theme. Keep an eye out for captivating live performers dressed as futuristic astronauts or friendly aliens interacting with the crowd!</p>
+                </div>
+                <div class="grid-item">
+                    <h3>VR Exploration</h3>
+                    <p>Embark on an interstellar journey at our VR station, featuring captivating games and simulations that allow you to "explore" distant planets and galaxies from the comfort of Earth.</p>
+                </div>
+                <div class="grid-item">
+                    <h3>"Cosmic Creations" Station</h3>
+                    <p>Unleash your inner artist at our craft table where you can decorate your own star charts, paint celestial bodies on small canvases, or fashion custom bracelets adorned with star and moon charms.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="dress-code" class="container">
+            <div class="section-header">
+                <h2>Dress Code: Shine Like a Star!</h2>
+            </div>
+            <p>Embrace the celestial theme and encourage attendees to wear space-themed attire! Think metallic clothing, holographic fabrics, and glow-in-the-dark accessories that will truly stand out under the cosmic lights. You can dress as a sleek astronaut, an enigmatic alien, or simply don clothes adorned with star and planet prints. Let your imagination soar and dress to impress the cosmos!</p>
+            <p><strong>Suggestions to ignite your cosmic fashion:</strong></p>
+            <ul>
+                <li><strong>Metallic Glam:</strong> Silvers, golds, coppers, and iridescent materials that shimmer and catch the light like stardust.</li>
+                <li><strong>Holographic Hues:</strong> Fabrics that shift colors with every movement, mimicking the ethereal beauty of nebulae.</li>
+                <li><strong>Glow-in-the-Dark:</strong> Accessorize with glowing elements, paint, or fabric accents that pop dramatically under blacklights.</li>
+                <li><strong>Celestial Prints:</strong> Dresses, suits, or accessories adorned with stars, planets, galaxies, or constellations for a direct connection to the theme.</li>
+                <li><strong>Futuristic Flair:</strong> Opt for sleek, structured designs with a sci-fi edge – think clean lines and innovative textures.</li>
+                <li><strong>Accessories:</strong> Complement your outfit with cosmic-themed jewelry, starry headpieces, or even a subtle, elegant alien touch!</li>
+            </ul>
+        </section>
+
+        <section id="tickets">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Secure Your Passage to the Cosmos!</h2>
+                </div>
+                <p class="ticket-info">Don't miss out on this intergalactic Prom experience!</p>
+                <p class="ticket-info">Ticket Price: ${{ 1000 }}</p>
+                <button class="cta-button" onclick="location.href='{{ 'https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/1' }}'">Buy Tickets Now</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Prom Night: Celestial Cosmos. All rights reserved.</p>
+        <p>Powered by Techlite</p>
+    </footer>
+</body>
+</html>

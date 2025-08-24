@@ -1,0 +1,502 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Party - An Epic Event</title>
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Easy Customization & Dark/Light Mode */
+        :root {
+            /* Light Mode Colors */
+            --background-color-light: #f8f9fa;
+            --text-color-light: #343a40;
+            --primary-color-light: #6f42c1; /* Deep Purple */
+            --accent-color-light: #20c997; /* Vibrant Teal */
+            --card-bg-light: #ffffff;
+            --border-color-light: #e9ecef;
+            --shadow-color-light: rgba(0, 0, 0, 0.08);
+
+            /* Dark Mode Colors */
+            --background-color-dark: #212529; /* Dark Grey */
+            --text-color-dark: #f8f9fa; /* Off-white */
+            --primary-color-dark: #916dd5; /* Lighter Purple */
+            --accent-color-dark: #66d9ef; /* Bright Cyan */
+            --card-bg-dark: #343a40; /* Darker Grey for Cards */
+            --border-color-dark: #495057; /* Greyish Border */
+            --shadow-color-dark: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: var(--background-color-light);
+            color: var(--text-color-light);
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
+            line-height: 1.6;
+        }
+
+        /* Dark Mode Activation */
+        body.dark-mode {
+            background-color: var(--background-color-dark);
+            color: var(--text-color-dark);
+        }
+
+        /* Utility Container for Content Width */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Dark/Light Mode Toggle Switch */
+        .theme-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-switch input[type="checkbox"] {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+        }
+
+        .theme-switch label {
+            cursor: pointer;
+            width: 60px;
+            height: 30px;
+            background-color: var(--card-bg-light);
+            display: block;
+            border-radius: 100px;
+            position: relative;
+            box-shadow: 0 2px 5px var(--shadow-color-light);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body.dark-mode .theme-switch label {
+            background-color: var(--card-bg-dark);
+            box-shadow: 0 2px 5px var(--shadow-color-dark);
+        }
+
+        .theme-switch label:after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color-light);
+            border-radius: 90px;
+            transition: 0.3s;
+        }
+
+        .theme-switch input:checked + label {
+            background: var(--card-bg-dark);
+        }
+
+        .theme-switch input:checked + label:after {
+            left: calc(100% - 3px);
+            transform: translateX(-100%);
+            background: var(--primary-color-dark);
+        }
+
+        .theme-switch label:active:after {
+            width: 30px;
+        }
+
+        .theme-switch span {
+            font-weight: 600;
+            color: var(--text-color-light);
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .theme-switch span {
+            color: var(--text-color-dark);
+        }
+
+        /* Hero Section - The Grand Entrance */
+        .hero {
+            position: relative;
+            height: 600px; /* Optimal height for visual impact */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+            background-color: #333; /* Fallback background if video fails */
+        }
+
+        .hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            background-size: cover;
+            filter: brightness(0.6); /* Darken video for text readability */
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent overlay for text */
+            border-radius: 10px;
+        }
+
+        .hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Text shadow for depth */
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .event-details {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            backdrop-filter: blur(5px); /* Modern blur effect */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* General Section Styling */
+        section {
+            padding: 60px 0;
+            border-bottom: 1px solid var(--border-color-light);
+            transition: border-color 0.3s ease;
+        }
+
+        body.dark-mode section {
+            border-color: var(--border-color-dark);
+        }
+
+        section:last-of-type {
+            border-bottom: none; /* No border for the last section */
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-color-light);
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode h2 {
+            color: var(--primary-color-dark);
+        }
+
+        /* About Section */
+        .about-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            text-align: center;
+        }
+
+        .about-content p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1em;
+        }
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 20px;
+        }
+
+        .gallery-item {
+            background-color: var(--card-bg-light);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px var(--shadow-color-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        body.dark-mode .gallery-item {
+            background-color: var(--card-bg-dark);
+            box-shadow: 0 4px 15px var(--shadow-color-dark);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px); /* Subtle lift on hover */
+            box-shadow: 0 8px 25px var(--shadow-color-light);
+        }
+
+        body.dark-mode .gallery-item:hover {
+            box-shadow: 0 8px 25px var(--shadow-color-dark);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover; /* Ensures images fill their space nicely */
+            display: block;
+        }
+
+        /* Ticket Purchase Section */
+        .ticket-section {
+            text-align: center;
+            padding-bottom: 80px;
+        }
+
+        .ticket-section h2 {
+            margin-bottom: 20px;
+        }
+
+        .ticket-price {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--accent-color-light);
+            margin-bottom: 30px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .ticket-price {
+            color: var(--accent-color-dark);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color-light);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px; /* Pill-shaped button */
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            cursor: pointer;
+        }
+
+        body.dark-mode .btn {
+            background-color: var(--primary-color-dark);
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color-light);
+            transform: translateY(-3px); /* Subtle lift on hover */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .btn:hover {
+            background-color: var(--accent-color-dark);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--card-bg-light);
+            color: var(--text-color-light);
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid var(--border-color-light);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        body.dark-mode footer {
+            background-color: var(--card-bg-dark);
+            color: var(--text-color-dark);
+            border-color: var(--border-color-dark);
+        }
+
+        /* Responsive Design (Mobile-First) */
+        @media (max-width: 768px) {
+            .hero {
+                height: 500px;
+            }
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+
+            .event-details {
+                flex-direction: column; /* Stack details vertically */
+                gap: 15px;
+            }
+
+            .detail-item {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+
+            h2 {
+                font-size: 2em;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr; /* Stack images on small screens */
+            }
+
+            .btn {
+                padding: 12px 30px;
+                font-size: 1.1em;
+            }
+
+            section {
+                padding: 40px 0;
+            }
+
+            .theme-switch {
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                height: 400px;
+            }
+            .hero h1 {
+                font-size: 2em;
+            }
+            .hero p {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark/Light Mode Toggle -->
+    <div class="theme-switch">
+        <input type="checkbox" id="theme-toggle" />
+        <label for="theme-toggle"></label>
+        <span>Dark Mode</span>
+    </div>
+
+    <header class="hero">
+        <!-- Event Promotional Video Background -->
+        <video autoplay muted loop playsinline id="heroVideo" onerror="this.onerror=null; this.src='https://res.cloudinary.com/demo/video/upload/v1/event_placeholder.mp4'; this.load();">
+            <source src="{{ url_for('static', filename='videos/event_promo_video.mp4') }}" type="video/mp4">
+            <!-- Fallback text/link if video doesn't play -->
+            Your browser does not support the video tag. <a href="https://res.cloudinary.com/demo/video/upload/v1/event_placeholder.mp4" target="_blank">Download the event preview video here</a>.
+        </video>
+        <div class="hero-content">
+            <h1>Panda Party</h1>
+            <p>Dive into an unforgettable night of music, art, and vibrant connections. Experience a unique journey where every moment is crafted to inspire and entertain. Get ready for an epic celebration!</p>
+            <div class="event-details">
+                <div class="detail-item">Date: 2025-08-30</div>
+                <div class="detail-item">Time: 19:50</div>
+                <div class="detail-item">Price: $3000</div>
+            </div>
+        </div>
+    </header>
+
+    <section id="about" class="container">
+        <h2>About the Event</h2>
+        <div class="about-content">
+            <p>Join us for the most anticipated event of the year, the Panda Party! This exclusive gathering promises an evening filled with mesmerizing performances, innovative art installations, and a community of like-minded individuals ready to celebrate. From live DJs spinning the latest tracks to immersive visual experiences, every detail has been thoughtfully curated to provide an unparalleled sensory adventure. Don't miss out on creating memories that will last a lifetime.</p>
+        </div>
+    </section>
+
+    <section id="gallery" class="container">
+        <h2>Gallery & Highlights</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='images/panda_party_1.jpg') }}" alt="Crowd enjoying the Panda Party event" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400.png?text=Event+Highlight+1';">
+            </div>
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='images/panda_party_2.jpg') }}" alt="Stage setup with vibrant lights" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400.png?text=Event+Highlight+2';">
+            </div>
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='images/panda_party_3.jpg') }}" alt="People dancing at the event" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400.png?text=Event+Highlight+3';">
+            </div>
+             <div class="gallery-item">
+                <img src="{{ url_for('static', filename='images/panda_party_4.jpg') }}" alt="Art installation at Panda Party" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400.png?text=Event+Highlight+4';">
+            </div>
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='images/panda_party_5.jpg') }}" alt="DJ performing live" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400.png?text=Event+Highlight+5';">
+            </div>
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='images/panda_party_6.jpg') }}" alt="Attendees interacting" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400.png?text=Event+Highlight+6';">
+            </div>
+        </div>
+    </section>
+
+    <section id="tickets" class="ticket-section container">
+        <h2>Secure Your Spot!</h2>
+        <p class="ticket-price">Price: $3000</p>
+        <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/2" class="btn">Buy Your Ticket Now</a>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Panda Party. All rights reserved.</p>
+            <p>Powered by Techlite</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Dark/Light Mode Toggle -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const themeSwitchSpan = document.querySelector('.theme-switch span');
+
+        // Check for saved theme preference in localStorage
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.checked = true;
+            themeSwitchSpan.textContent = 'Light Mode';
+        } else {
+             themeSwitchSpan.textContent = 'Dark Mode';
+        }
+
+        // Event listener for theme toggle
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark'); // Save preference
+                themeSwitchSpan.textContent = 'Light Mode';
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light'); // Save preference
+                themeSwitchSpan.textContent = 'Dark Mode';
+            }
+        });
+    </script>
+</body>
+</html>
