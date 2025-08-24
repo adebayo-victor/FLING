@@ -170,6 +170,10 @@ def send_otp_email_via_emailjs(to_email, otp_code):
     except requests.exceptions.RequestException as e:
         print(f"Error sending email via Email.js: {e}")
         return False
+#index
+@app.route("/")
+def index():
+    return render_template("index.html")
 #bank list route
 @app.route("/banks", methods=["GET"])
 def get_banks():

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fling - Event Hosting App</title>
+    <!-- Google Fonts for "Inter" -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #032221; /* Dark Green */
+            color: #f2f7f9; /* Anti-Flash White */
+            scroll-behavior: smooth;
+        }
+        /* Custom colors from the provided image */
+        .bg-rich-black { background-color: #000F01; }
+        .bg-dark-green { background-color: #032221; }
+        .bg-bangladesh-green { background-color: #03624c; }
+        .bg-mountain-meadow { background-color: #2cc289; }
+        .bg-caribbean-green { background-color: #00df81; }
+        .text-caribbean-green { color: #00df81; }
+        .border-caribbean-green { border-color: #00df81; }
+        .text-mint { color: #2fa68c; }
+        .text-stone { color: #707070; }
+        .hover\:bg-caribbean-green:hover { background-color: #00df81; }
+        .hover\:text-dark-green:hover { color: #032221; }
+
+        /* New custom blue color */
+        .bg-event-blue { background-color: #42a5f5; }
+        .text-event-blue { color: #42a5f5; }
+        .border-event-blue { border-color: #42a5f5; }
+        .hover\:bg-event-blue:hover { background-color: #42a5f5; }
+        .hover\:text-event-blue:hover { color: #42a5f5; }
+
+        /* Animation classes */
+        .feature-card {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .feature-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-dark-green bg-opacity-90 backdrop-blur-sm p-4 md:p-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-2">
+                <!-- Logo SVG -->
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="text-event-blue w-8 h-8">
+                    <path d="M21 12.0001L19.5 10.5001L15 15.0001L16.5 16.5001L21 12.0001Z" />
+                    <path d="M12 3.0001L13.5 4.5001L9 9.0001L7.5 7.5001L12 3.0001Z" />
+                    <path d="M3 12.0001L4.5 10.5001L9 15.0001L7.5 16.5001L3 12.0001Z" />
+                    <path d="M12 21.0001L13.5 19.5001L9 15.0001L7.5 16.5001L12 21.0001Z" />
+                    <path d="M16.5 7.5001L15 9.0001L19.5 13.5001L21 12.0001L16.5 7.5001Z" />
+                    <path d="M7.5 7.5001L9 9.0001L4.5 13.5001L3 12.0001L7.5 7.5001Z" />
+                    <path d="M16.5 16.5001L15 15.0001L19.5 10.5001L21 12.0001L16.5 16.5001Z" />
+                    <path d="M7.5 16.5001L9 15.0001L4.5 10.5001L3 12.0001L7.5 16.5001Z" />
+                </svg>
+                <span class="text-2xl font-bold text-event-blue">Fling</span>
+            </a>
+            <nav class="flex items-center space-x-4">
+                <a href="https://fling-jpfl.onrender.com/register_login" class="text-mint font-semibold hover:text-event-blue transition duration-300">Login</a>
+                <a href="https://fling-jpfl.onrender.com/register" class="bg-caribbean-green text-rich-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300 ease-in-out hover:bg-event-blue hover:text-white">Sign Up</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center text-center p-8 bg-dark-green">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4">
+                <span class="text-caribbean-green">Host</span> <span class="text-event-blue">Events,</span> <span class="text-caribbean-green">Reimagined.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-stone mb-8">
+                Your all-in-one platform for creating, managing, and monetizing your events with ease. From website generation to AI-powered insights, we've got you covered.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="#features" class="inline-block bg-caribbean-green text-rich-black font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out hover:bg-event-blue hover:text-white">
+                    Explore Features
+                </a>
+                <a href="https://fling-jpfl.onrender.com/register" class="inline-block border-2 border-caribbean-green text-caribbean-green font-semibold py-3 px-8 rounded-full transition duration-300 ease-in-out hover:bg-caribbean-green hover:text-dark-green hover:border-event-blue hover:text-event-blue">
+                    Sign Up Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-24 bg-dark-green">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-center text-3xl sm:text-4xl font-bold mb-12 text-mint">
+                Features That Propel Your Events
+            </h2>
+            <!-- Features Container -->
+            <div id="features-container" class="space-y-12">
+                <!-- Feature 1: Website Generation -->
+                <div class="md:flex md:justify-end">
+                    <div class="feature-card max-w-xl bg-rich-black rounded-xl p-8 shadow-xl border border-bangladesh-green">
+                        <div class="text-5xl mb-4 text-caribbean-green">📄</div>
+                        <h3 class="text-xl font-bold mb-2">Automated Website Generation</h3>
+                        <p class="text-stone">
+                            Instantly create beautiful, mobile-friendly websites for your events. No coding required.
+                        </p>
+                    </div>
+                </div>
+                <!-- Feature 2: Secure Hosting -->
+                <div class="md:flex md:justify-start">
+                    <div class="feature-card max-w-xl bg-rich-black rounded-xl p-8 shadow-xl border border-bangladesh-green">
+                        <div class="text-5xl mb-4 text-caribbean-green">🌐</div>
+                        <h3 class="text-xl font-bold mb-2">Secure & Reliable Hosting</h3>
+                        <p class="text-stone">
+                            We host your event website with enterprise-grade security and uptime, so you never miss a beat.
+                        </p>
+                    </div>
+                </div>
+                <!-- Feature 3: Payment Gateway -->
+                <div class="md:flex md:justify-end">
+                    <div class="feature-card max-w-xl bg-rich-black rounded-xl p-8 shadow-xl border border-bangladesh-green">
+                        <div class="text-5xl mb-4 text-caribbean-green">💳</div>
+                        <h3 class="text-xl font-bold mb-2">Integrated Payment Gateway</h3>
+                        <p class="text-stone">
+                            Seamlessly sell tickets with our built-in payment system. Secure, fast, and easy for your attendees.
+                        </p>
+                    </div>
+                </div>
+                <!-- Feature 4: AI Event Tracking -->
+                <div class="md:flex md:justify-start">
+                    <div class="feature-card max-w-xl bg-rich-black rounded-xl p-8 shadow-xl border border-bangladesh-green">
+                        <div class="text-5xl mb-4 text-caribbean-green">🧠</div>
+                        <h3 class="text-xl font-bold mb-2">AI-Powered Event Tracking</h3>
+                        <p class="text-stone">
+                            Gain valuable insights with AI. Track attendee engagement, ticket sales, and event performance in real-time.
+                        </p>
+                    </div>
+                </div>
+                <!-- Feature 5: Ticket Validation -->
+                <div class="md:flex md:justify-end">
+                    <div class="feature-card max-w-xl bg-rich-black rounded-xl p-8 shadow-xl border border-bangladesh-green">
+                        <div class="text-5xl mb-4 text-caribbean-green">🎟️</div>
+                        <h3 class="text-xl font-bold mb-2">Effortless Ticket Validation</h3>
+                        <p class="text-stone">
+                            Validate tickets on-site by entering a unique code. Our system ensures a smooth and secure entry process for everyone.
+                        </p>
+                    </div>
+                </div>
+                <!-- Feature 6: Event Management -->
+                <div class="md:flex md:justify-start">
+                    <div class="feature-card max-w-xl bg-rich-black rounded-xl p-8 shadow-xl border border-bangladesh-green">
+                        <div class="text-5xl mb-4 text-caribbean-green">⚙️</div>
+                        <h3 class="text-xl font-bold mb-2">Comprehensive Management Tools</h3>
+                        <p class="text-stone">
+                            Manage all aspects of your event, from ticket tiers to attendee lists, all from a single dashboard.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section id="cta" class="py-16 md:py-24 text-center bg-rich-black">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+                <span class="text-event-blue">Ready to Create Your</span> <span class="text-caribbean-green">Next Great Event?</span>
+            </h2>
+            <p class="text-lg md:text-xl text-stone mb-8">
+                Start your journey with Fling today and experience the future of event hosting.
+            </p>
+            <a href="https://fling-jpfl.onrender.com/register" class="inline-block bg-caribbean-green text-rich-black font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out hover:bg-event-blue hover:text-white">
+                Create Your First Event
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-green py-8 text-center text-stone">
+        <p>&copy; 2023 Fling. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const featuresContainer = document.getElementById('features-container');
+            const featureCards = document.querySelectorAll('.feature-card');
+
+            // Set a staggered delay for the animation
+            featureCards.forEach((card, index) => {
+                card.style.transitionDelay = `${index * 100}ms`;
+            });
+
+            // IntersectionObserver to trigger the animation
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        featureCards.forEach(card => card.classList.add('is-visible'));
+                        // Optional: Unobserve after the animation has been triggered once
+                        // observer.unobserve(entry.target);
+                    } else {
+                        // Optional: Reset animation when section is out of view
+                        // featureCards.forEach(card => card.classList.remove('is-visible'));
+                    }
+                });
+            }, {
+                threshold: 0.2 // Trigger when 20% of the section is visible
+            });
+
+            // Start observing the features container
+            observer.observe(featuresContainer);
+        });
+    </script>
+</body>
+</html>
