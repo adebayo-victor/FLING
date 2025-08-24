@@ -79,7 +79,7 @@ def generate_ticket_template(prompt):
     }
 
     try:
-        response = requests.post(GEMINI_URL, headers=headers, params=params, json=data)
+        response = requests.post(GEMINI_URL, headers=headers, params=params, json=data, timeout=120)
         
         # Raise an exception for bad status codes
         response.raise_for_status()
