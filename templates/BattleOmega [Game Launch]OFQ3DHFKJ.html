@@ -1,0 +1,559 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BattleOmega [Game Launch]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles & Reset */
+        :root {
+            --color-dark-bg: #0C0A1A; /* Deep, dark base */
+            --color-dark-alt: #1A152E; /* Slightly lighter dark for contrast */
+            --color-neon-blue: #00FFFF; /* Vibrant Cyan */
+            --color-neon-pink: #FF00FF; /* Vibrant Magenta */
+            --color-text-light: #E0E0E0; /* Light text for readability */
+            --color-text-medium: #A0A0A0; /* Subtler text */
+            --color-border: #3A3050; /* Subtle border for elements */
+            --color-error-red: #FF4136; /* For fallback messages */
+
+            --font-display: 'Orbitron', sans-serif; /* Futuristic, strong headers */
+            --font-body: 'Roboto', sans-serif; /* Clean, readable body text */
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text-light);
+            background-color: var(--color-dark-bg);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes neonPulse {
+            0% { text-shadow: 0 0 5px var(--color-neon-blue), 0 0 10px var(--color-neon-blue); }
+            50% { text-shadow: 0 0 10px var(--color-neon-blue), 0 0 20px var(--color-neon-blue), 0 0 30px var(--color-neon-blue); }
+            100% { text-shadow: 0 0 5px var(--color-neon-blue), 0 0 10px var(--color-neon-blue); }
+        }
+
+        /* Header / Hero Section */
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            background: var(--color-dark-bg); /* Fallback background color */
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("{{ url_for('static', filename='assets/img/generated_image.png') }}"); /* Cyberpunk city background */
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.4) contrast(1.2); /* Darken and enhance contrast */
+            z-index: 1;
+            transform: scale(1.05); /* Initial scale for parallax effect */
+            transition: transform 0.1s ease-out; /* Smooth transition for JS parallax */
+        }
+
+        /* Fallback for hero background image if it fails to load */
+        .hero-background::before {
+            content: "Background image failed to load. A sprawling cyberpunk city at night provides the backdrop.";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: var(--color-error-red);
+            background-color: var(--color-dark-alt);
+            font-size: 1.2em;
+            text-align: center;
+            opacity: 0; /* Hidden by default */
+        }
+
+        /* Show fallback message if background image is not supported or fails */
+        @supports not (background-image: url("{{ url_for('static', filename='assets/img/generated_image.png') }}")) {
+            .hero-background {
+                background-image: none;
+            }
+            .hero-background::before {
+                opacity: 1; /* Show fallback message */
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            max-width: 900px;
+            animation: fadeIn 1.5s ease-out forwards; /* Delayed fade in for content */
+        }
+
+        .hero-content h1 {
+            font-family: var(--font-display);
+            font-size: 4em;
+            margin-bottom: 10px;
+            color: var(--color-neon-blue);
+            text-shadow: 0 0 15px var(--color-neon-blue), 0 0 25px var(--color-neon-blue); /* Neon glow effect */
+            animation: neonPulse 2s infinite alternate; /* Pulsing glow */
+            letter-spacing: 2px;
+        }
+
+        .hero-content p {
+            font-size: 1.5em;
+            font-family: var(--font-display); /* Use display font for tagline */
+            color: var(--color-neon-pink);
+            margin-bottom: 30px;
+            text-shadow: 0 0 8px var(--color-neon-pink); /* Subtle glow */
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--color-neon-blue);
+            color: var(--color-dark-bg); /* Dark text on neon button */
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px var(--color-neon-blue); /* Initial glow */
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            background-color: var(--color-neon-pink); /* Change color on hover */
+            color: var(--color-text-light);
+            box-shadow: 0 0 25px var(--color-neon-pink), 0 0 40px var(--color-neon-pink); /* Enhanced glow */
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        /* Subtle ripple effect on button hover */
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.7s ease;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+        }
+
+        .cta-button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 80px 0;
+            background-color: var(--color-dark-alt);
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+            animation: fadeIn 1s ease-out forwards; /* Fade in on load/scroll */
+        }
+
+        section:nth-of-type(even) {
+            background-color: var(--color-dark-bg);
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: 2.8em;
+            color: var(--color-neon-blue);
+            text-align: center;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--color-neon-pink);
+            box-shadow: 0 0 10px var(--color-neon-pink); /* Underline glow */
+            border-radius: 2px;
+        }
+
+        /* About Section */
+        .about-section p {
+            font-size: 1.1em;
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            color: var(--color-text-medium);
+            text-align: justify;
+        }
+
+        .about-section .image-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            flex-wrap: wrap; /* Allows images to wrap on smaller screens */
+        }
+
+        /* Container for individual images to handle fallbacks */
+        .image-container {
+            position: relative;
+            width: 100%;
+            max-width: 550px; /* Increased max-width for hero image */
+            min-height: 300px; /* Ensure some height for fallback */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-dark-alt);
+            border-radius: 10px;
+            border: 2px solid var(--color-neon-blue);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); /* Initial glow */
+            overflow: hidden;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .image-container img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px; /* Slightly smaller radius for internal image */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+            opacity: 0.9;
+            filter: grayscale(20%); /* Subtle grayscale */
+        }
+
+        .image-container:hover img {
+            transform: translateY(-5px) scale(1.02);
+            filter: grayscale(0%); /* Remove grayscale on hover */
+            opacity: 1;
+        }
+
+        /* Fallback message for specific images */
+        .image-container::before {
+            content: attr(data-fallback-text); /* Content from data-attribute */
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-dark-alt);
+            color: var(--color-error-red);
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none; /* Allows clicks to pass through if needed */
+        }
+
+        /* Hide image and show fallback message if image fails to load */
+        .image-container img.fallback-hide {
+            display: none;
+        }
+        .image-container img.fallback-hide + .image-container::before {
+            opacity: 1;
+        }
+
+        /* Event Details Section */
+        .event-details {
+            background-color: var(--color-dark-bg);
+            padding-bottom: 100px; /* More space before footer */
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .detail-card {
+            background-color: var(--color-dark-alt);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1; /* Ensure content is above pseudo-elements */
+        }
+
+        .detail-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+        }
+
+        /* Neon border glow effect for detail cards */
+        .detail-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--color-neon-blue), var(--color-neon-pink));
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .detail-card:hover::before {
+            opacity: 0.6;
+        }
+
+        .detail-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.8em;
+            color: var(--color-neon-pink);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .detail-card p {
+            font-size: 1.1em;
+            color: var(--color-text-light);
+        }
+
+        .detail-card .icon {
+            font-size: 3em;
+            color: var(--color-neon-blue);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--color-dark-bg);
+            color: var(--color-text-medium);
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 1px solid var(--color-border);
+            font-size: 0.9em;
+            position: relative;
+            z-index: 10;
+        }
+
+        footer p {
+            margin: 0;
+            padding-top: 5px; /* Spacing between lines */
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.8em;
+            }
+
+            .hero-content p {
+                font-size: 1.2em;
+            }
+
+            .cta-button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+
+            h2 {
+                font-size: 2.2em;
+            }
+
+            .about-section p {
+                font-size: 1em;
+            }
+
+            .about-section .image-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .detail-card h3 {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 2em;
+                letter-spacing: 1px;
+            }
+
+            .hero-content p {
+                font-size: 1em;
+                margin-bottom: 20px;
+            }
+
+            .cta-button {
+                font-size: 0.9em;
+                padding: 10px 20px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+                margin-bottom: 30px;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero-section">
+        <div class="hero-background"></div>
+        <div class="hero-content container">
+            <h1>BattleOmega [Game Launch]</h1>
+            <p>The Ultimate Arena Awaits.</p>
+            <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/4" class="cta-button">Buy Your Ticket Now</a>
+        </div>
+    </header>
+
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>About BattleOmega</h2>
+            <p>Step into a futuristic world where chaos reigns and only the strongest survive. In BattleOmega, you are not just a player—you are a contender in the universe's most brutal and celebrated combat sport. Pit your skills against other elite fighters in a high-stakes, real-time arena where victory is earned through strategy, speed, and sheer will.</p>
+            <p>Choose your hero from a roster of diverse warriors, each with unique abilities and a backstory that drives their ambition. Customize your gear, upgrade your weapons, and master a combat style that’s all your own. Whether you prefer to strike from the shadows, unleash a storm of elemental fury, or stand your ground as an unbreakable juggernaut, the path to glory is yours to forge.</p>
+            <p>Engage in a variety of game modes, from intense one-on-one duels to chaotic team-based brawls. Climb the global leaderboards, earn legendary loot, and prove that you have what it takes to be crowned the BattleOmega champion. The roar of the crowd is your soundtrack, and the fate of the arena rests in your hands.</p>
+            <p class="text-center">Are you ready to fight for your legacy?</p>
+
+            <div class="image-grid">
+                <div class="image-container" data-fallback-text="Image failed to load. A massive Jaeger robot, ready for battle. Learn more about Jaegers and their universe: https://en.wikipedia.org/wiki/Jaeger_(Pacific_Rim)">
+                    <img src="{{ url_for('static', filename='assets/img/generated_image_1.png') }}" alt="A massive Jaeger robot, ready for battle in a futuristic setting" onerror="this.classList.add('fallback-hide')">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="details" class="event-details">
+        <div class="container">
+            <h2>Event Details</h2>
+            <div class="details-grid">
+                <div class="detail-card">
+                    <span class="icon">&#128197;</span> <!-- Unicode Calendar icon -->
+                    <h3>Date</h3>
+                    <p>30 August, 2025</p>
+                </div>
+                <div class="detail-card">
+                    <span class="icon">&#9200;</span> <!-- Unicode Clock icon -->
+                    <h3>Time</h3>
+                    <p>14:08 (GMT+0)</p>
+                </div>
+                <div class="detail-card">
+                    <span class="icon">&#128182;</span> <!-- Unicode Money Bag icon -->
+                    <h3>Price</h3>
+                    <p>1000 Credits</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 BattleOmega. All rights reserved.</p>
+        <p>Powered by Techlite</p>
+    </footer>
+
+    <script>
+        // Subtle parallax effect for the hero background based on mouse movement
+        document.addEventListener('mousemove', function(e) {
+            const heroBg = document.querySelector('.hero-background');
+            if (heroBg) {
+                const speed = 0.005; // Adjust for more/less effect
+                const x = (window.innerWidth - e.pageX * speed) / 100;
+                const y = (window.innerHeight - e.pageY * speed) / 100;
+                heroBg.style.transform = `scale(1.05) translate(${x}px, ${y}px)`;
+            }
+        });
+
+        // Basic image loading error handling for specific images within .image-container
+        document.querySelectorAll('.image-container img').forEach(img => {
+            img.onerror = function() {
+                this.classList.add('fallback-hide'); // Add class to trigger CSS fallback
+            };
+        });
+
+        // Optional: Simple scroll reveal animation for sections
+        const observerOptions = {
+            root: null, /* viewport */
+            rootMargin: '0px',
+            threshold: 0.1 /* trigger when 10% of element is visible */
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target); /* Stop observing once animated */
+                }
+            });
+        }, observerOptions);
+
+        // Apply initial hidden state and observe sections
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 1s ease-out, transform 1s ease-out';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

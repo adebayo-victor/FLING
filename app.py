@@ -291,7 +291,7 @@ def register_signup():
         user = db.execute("SELECT * FROM users WHERE email = ?", email)
         if user:
             print("signup successful")
-            return {"response":"successful", "url":f"https://fling-jpfl.onrender.com/{user[0]['id']}"}
+            return {"response":"successful", "url":f"https://hhxsq4xb-1000.uks1.devtunnels.ms/{user[0]['id']}"}
     return render_template("signup1.html")
 # Login / Register
 @app.route("/register_login", methods=["GET","POST"])
@@ -306,7 +306,7 @@ def register_login():
             print("login successful")
             # Store in session
             session["user_id"] = user[0]["id"]
-            return {"response": "successful", "url": "https://fling-jpfl.onrender.com/dashboard"}
+            return {"response": "successful", "url": "https://hhxsq4xb-1000.uks1.devtunnels.ms/dashboard"}
         else:
             return {"response": "unsuccessful"}
 
@@ -318,12 +318,53 @@ def dashboard():
         return redirect("/register_login")
 
     user_id = session["user_id"]
+    format_string = "%Y-%m-%d"
+    
+    # Define a safe directory for deletion
+    template_dir = os.path.join(os.getcwd(), "templates")
+    
     user = db.execute("SELECT * FROM users WHERE id = ?", user_id)[0]
+    
     events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
+    
+    for event in events:
+        event_datetime = datetime.strptime(event['date'], format_string)
+        
+        # Check if the event date is in the past
+        if datetime.now() >= event_datetime:
+            # Construct a safe, full file path
+            file_path = os.path.join(template_dir, event["html"])
+            
+            # Crucial security check: Ensure the path is a subdirectory of the templates folder
+            # This prevents directory traversal attacks
+            if os.path.abspath(file_path).startswith(os.path.abspath(template_dir) + os.sep):
+                if os.path.exists(file_path):
+                    try:
+                        os.remove(file_path)
+                        print(f"File '{file_path}' has been successfully deleted.")
+                        
+                        # Use a single database transaction for the deletions
+                        db.execute("BEGIN TRANSACTION")
+                        db.execute("DELETE FROM tickets WHERE event_id = ?", event['id'])
+                        db.execute("DELETE FROM events WHERE id = ?", event['id'])
+                        db.execute("COMMIT")
+                        
+                    except OSError as e:
+                        print(f"Error deleting file {event['html']}: {e.strerror}")
+                        db.execute("ROLLBACK")
+                else:
+                    print(f"Warning: File '{file_path}' does not exist.")
+            else:
+                print(f"Security Alert: Attempted path traversal for file: {event['html']}")
+                
+    # Re-fetch the updated event list after deletions
+    events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
+    
     tickets = db.execute(
-        "SELECT * FROM tickets JOIN events ON events.id = tickets.event_id WHERE user_id = ?", 
+        "SELECT * FROM tickets JOIN events ON events.id = tickets.event_id WHERE user_id = ?",
         user_id
     )
+    
     return render_template("my_dashboard.html", user=user, events=events, tickets=tickets)
 # --- New Route for Event Creation ---
 @app.route("/create_event/<int:user_id>", methods=["POST"])
@@ -335,6 +376,7 @@ def create_event(user_id):
     if request.method == "POST":
         try:
             # Retrieve form data
+            format_string = "%Y-%m-%d %H:%M:%S"
             title = request.form.get("event-title")
             date = request.form.get("event-date")
             time = request.form.get("event-time")
@@ -348,9 +390,10 @@ def create_event(user_id):
             img3_path = handle_file_upload("image-3").get("path")
             video_path = handle_file_upload("video").get("path")
 
-            # Note: The `aiTemplatePrompt` and `status` keys from your description
-            # are not being stored in the `events` table because your provided schema
-            # does not include columns for them.
+            #ensuring the uploaded time is not a time from the past 
+            date_to_check = datetime.strftime(date, format_string)
+            if datetime.now() >= date_to_check:
+                return jsonify({"response":"Date is less than today's date"})
 
             # Ensure required fields are not empty
             if not all([title, date, time, location, description]):
@@ -379,7 +422,7 @@ def create_event(user_id):
                 #template generation
                 event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key = ?", user_id, url_key)
                 # --- Main script execution ---
-                prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events.Use the uploaded pic for design like background and stuff,not directly in the template The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
+                prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events.Use the uploaded pic for design like background and stuff,not directly in the template The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax,do not use the media asset that is 'none',  add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
                 prompt += (f'''
                     Current time(u need the current year for the footer):{datetime.now()}
                     {user_prompt}
@@ -388,7 +431,7 @@ def create_event(user_id):
                     event-time:{time},
                     event-date:{date},
                     event-price:{price},
-                    ticket-purchase-link:https://fling-jpfl.onrender.com/ticket_login/{event[0]['id']},
+                    ticket-purchase-link:https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/{event[0]['id']},
                     img-1 path: {img1_path},
                     img-1 path: {img2_path},
                     img-1 path: {img3_path},
@@ -407,7 +450,7 @@ def create_event(user_id):
                     print(html_result)
                     save_html(html_result,f"{event[0]['title']}{event[0]['url_key']}.html",  'templates')
                     db.execute("UPDATE events SET html = ? wHERE id = ?", f"{event[0]['title']}{event[0]['url_key']}.html", f"{event[0]['id']}")
-                    return jsonify([{"response":"successful", "event_link":f"https://fling-jpfl.onrender.com/view_event/{event[0]['url_key']}"}])
+                    return jsonify([{"response":"successful", "event_link":f"https://hhxsq4xb-1000.uks1.devtunnels.ms/view_event/{event[0]['url_key']}"}])
                 else:
                     print("Could not generate HTML template.")
             except Exception as e:
@@ -578,7 +621,7 @@ def post_session():
             "email": email,
             "amount": int(float(price) * 100),  # Paystack wants kobo
             "metadata": metadata,
-            "callback_url": "https://fling-jpfl.onrender.com/callback",
+            "callback_url": "https://hhxsq4xb-1000.uks1.devtunnels.ms/callback",
 
             # 👇 Revenue sharing
             "subaccount": subaccount[0]['subaccount_code'],  # seller's subaccount
@@ -622,7 +665,7 @@ def callback():
     try:
         code = generate_code()
         if db.execute("INSERT INTO tickets(user_id, event_id, ticket_code) VALUES(?,?,?)",metadata["user_id"], metadata["event_id"], code):
-            return render_template('success.html', home=f"https://fling-jpfl.onrender.com/dashboard")  # or return a JSON response
+            return render_template('success.html', home=f"https://hhxsq4xb-1000.uks1.devtunnels.ms/dashboard")  # or return a JSON response
     except IndexError as e:
         return {"error": str(e)}
 @app.route("/validation/<key>", methods=["GET", "POST"])
