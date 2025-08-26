@@ -9,17 +9,15 @@ load_dotenv()
 # Replace this line with your Render DATABASE_URL environment variable
 db = SQL(os.environ.get("DATABASE_URL"))
 
-# --- TABLE CREATION FOR POSTGRESQL ---
-
 try:
-    # USERS TABLE (Updated for Postgres)
+    # USERS TABLE (Updated with `img` column)
     db.execute("""
         CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) UNIQUE NOT NULL,
-            phone VARCHAR(20),
-            password VARCHAR(255) NOT NULL,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            phone TEXT,
+            password TEXT NOT NULL,
             bank_name VARCHAR(255) NOT NULL,
             bank_code VARCHAR(50) NOT NULL,
             account_number VARCHAR(20) NOT NULL,
@@ -30,17 +28,17 @@ try:
         )
     """)
 
-    # EVENTS TABLE (Updated for Postgres)
+    # EVENTS TABLE (Updated to accommodate three pictures and one video path)
     db.execute("""
         CREATE TABLE IF NOT EXISTS events (
-            id SERIAL PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
             description TEXT,
             location TEXT,
             date DATE NOT NULL,
             time TIME NOT NULL,
-            price NUMERIC(10, 2) NOT NULL,
-            url_key VARCHAR(255) UNIQUE,
+            price INTEGER NOT NULL,
+            url_key VARCHAR UNIQUE,
             html TEXT,
             img1 TEXT,
             img2 TEXT,
@@ -52,36 +50,37 @@ try:
         )
     """)
 
-    # TICKETS TABLE (Updated for Postgres)
+    # TICKETS TABLE
     db.execute("""
         CREATE TABLE IF NOT EXISTS tickets (
-            id SERIAL PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             event_id INTEGER NOT NULL,
-            ticket_code VARCHAR(255) UNIQUE NOT NULL,
+            ticket_code TEXT UNIQUE NOT NULL,
             qr_code TEXT,
-            status VARCHAR(50) DEFAULT 'valid',
+            status TEXT DEFAULT 'valid',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id),
             FOREIGN KEY(event_id) REFERENCES events(id)
         )
     """)
 
-    # PAYMENT TABLE (Updated for Postgres)
+    # PAYMENT TABLE (optional)
     db.execute("""
         CREATE TABLE IF NOT EXISTS payments (
-            id SERIAL PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             event_id INTEGER NOT NULL,
-            amount NUMERIC(10, 2) NOT NULL,
-            reference VARCHAR(255) UNIQUE NOT NULL,
-            payment_status VARCHAR(50) DEFAULT 'pending',
+            amount REAL NOT NULL,
+            reference TEXT UNIQUE NOT NULL,
+            payment_status TEXT DEFAULT 'pending',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id),
             FOREIGN KEY(event_id) REFERENCES events(id)
         )
     """)
-    print("✅ All tables created with updated events table.")
 
+    print("✅ All tables created with updated events table.")
 except Exception as e:
-    print(f"Error creating tables: {e}")
+    # A general try-except block to catch any database-related errors
+    print(f"❌ An error occurred during database setup: {e}")
