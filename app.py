@@ -45,7 +45,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 app.secret_key = os.environ.get("app_secret_key")
-db = SQL('sqlite:///info.db')
+db = SQL(os.environ.get("DATABASE_URL"))
 #gemini prompt functions
 API_KEY = os.environ.get("gemini_key")
 if not API_KEY:
