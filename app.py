@@ -473,16 +473,24 @@ def view_event(url_key):
 def get_user_events(id):
     events = db.execute("SELECT * FROM events WHERE created_by = ?", id)
     if events:
-        # Iterate through the list of events to format the created_at key
+        # Iterate through the list of events to format the date and time keys
         for event in events:
-            # Check if 'created_at' exists and is a datetime object before converting
+            # Convert the 'date' key to a string
+            if 'date' in event and isinstance(event['date'], date):
+                event['date'] = event['date'].strftime("%Y-%m-%d")
+
+            # Convert the 'time' key to a string
+            if 'time' in event and isinstance(event['time'], time):
+                event['time'] = event['time'].strftime("%H:%M:%S")
+
+            # Convert the 'created_at' key to a string
             if 'created_at' in event and isinstance(event['created_at'], datetime):
-                # Convert the datetime object to a string
-                event['created_at'] = event['created_at'].strftime("%Y-%m-%d")
-        
+                event['created_at'] = event['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+
         return jsonify(events)
     else:
         return jsonify([])
+
 @app.route("/track_events/<key>")
 def track_events(key):
     event = db.execute("SELECT * FROM events JOIN users ON events.created_by = users.id WHERE url_key = ?", key)[0]
