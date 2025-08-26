@@ -329,6 +329,7 @@ def dashboard():
     events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
     
     for event in events:
+        event_datetime = event['date']
         
         # Check if the event date is in the past
         if datetime.now() >= event_datetime:
