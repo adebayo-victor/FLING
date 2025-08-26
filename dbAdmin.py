@@ -10,28 +10,10 @@ load_dotenv()
 db = SQL(os.environ.get("DATABASE_URL"))
 
 try:
-    # USERS TABLE (Updated with `img` column)
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT,
-            password TEXT NOT NULL,
-            bank_name VARCHAR(255) NOT NULL,
-            bank_code VARCHAR(50) NOT NULL,
-            account_number VARCHAR(20) NOT NULL,
-            account_name VARCHAR(255) NOT NULL,
-            subaccount_code VARCHAR(100) NOT NULL,
-            img TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    # EVENTS TABLE (Updated to accommodate three pictures and one video path)
+# EVENTS TABLE (Updated to accommodate three pictures and one video path)
     db.execute("""
         CREATE TABLE IF NOT EXISTS events (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             title TEXT NOT NULL,
             description TEXT,
             location TEXT,
@@ -53,7 +35,7 @@ try:
     # TICKETS TABLE
     db.execute("""
         CREATE TABLE IF NOT EXISTS tickets (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL,
             event_id INTEGER NOT NULL,
             ticket_code TEXT UNIQUE NOT NULL,
@@ -68,7 +50,7 @@ try:
     # PAYMENT TABLE (optional)
     db.execute("""
         CREATE TABLE IF NOT EXISTS payments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL,
             event_id INTEGER NOT NULL,
             amount REAL NOT NULL,
@@ -80,7 +62,7 @@ try:
         )
     """)
 
-    print("✅ All tables created with updated events table.")
+
 except Exception as e:
     # A general try-except block to catch any database-related errors
     print(f"❌ An error occurred during database setup: {e}")
