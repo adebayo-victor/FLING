@@ -439,7 +439,7 @@ def create_event(user_id):
                     "Do NOT use media assets with 'none'. "
                     "For images and video: use the provided static file paths (forward slashes only, no Jinja for paths). "
                     "If an image/video fails to load, include an external alt source in the 'alt' attribute. "
-                    "Remove Jinja from href tags but keep Jinja rings for the ticket purchase link. "
+                    "Remove Jinja from href tags including the ticket purchase link. "
                     "Hardcode all other event details. "
                     f"Current year (for footer): {datetime.now().year}. "
                     f"Event Title: {title}. "
