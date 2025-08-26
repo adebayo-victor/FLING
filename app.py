@@ -509,7 +509,7 @@ def sales_data(id):
         day_diff = (today - datetime_object).days
         for i in range(day_diff + 1):  # include today
             day = (datetime_object + timedelta(days=i)).date()
-            chart_data["x"].append(day.strftime("%Y-%m-%d"))
+            chart_data["x"].append(day.strptime("%Y-%m-%d"))
 
             # Count tickets created on this day
             sales_count = sum(
