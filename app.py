@@ -377,7 +377,7 @@ def create_event(user_id):
     if request.method == "POST":
         try:
             # Retrieve form data
-            format_string = "%Y-%m-%d %H:%M:%S"
+            format_string = "%Y-%m-%d"
             title = request.form.get("event-title")
             date = request.form.get("event-date")
             time = request.form.get("event-time")
