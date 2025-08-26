@@ -143,7 +143,7 @@
             async function validateCode(code) {
                 showMessage('Validating code...', 2000); // Show loading message
                 try {
-                    const response = await fetch('https://fling-fus0.onrender.comvalidation/' + document.querySelector(".event-id").value, {
+                    const response = await fetch('https://fling-2a4m.onrender.com/validation/' + document.querySelector(".event-id").value, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ code: code, key: key })

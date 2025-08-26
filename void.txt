@@ -227,7 +227,7 @@ def register_signup():
         user = db.execute("SELECT * FROM users WHERE email = ?", email)
         if user:
             print("signup successful")
-            return {"response":"successful", "url":f"https://fling-fus0.onrender.com{user[0]['id']}"}
+            return {"response":"successful", "url":f"https://fling-2a4m.onrender.com/{user[0]['id']}"}
     return render_template("signup.html")
 
 @app.route("/register_login", methods=["GET","POST"])
@@ -239,7 +239,7 @@ def register_login():
         user = db.execute("SELECT * FROM users WHERE email = ? AND password = ?", email, password)
         if user:
             print("signup successful")
-            return {"response":"successful", "url":f"https://fling-fus0.onrender.comdashboard/{user[0]['id']}"}
+            return {"response":"successful", "url":f"https://fling-2a4m.onrender.com/dashboard/{user[0]['id']}"}
         else:
             return {"response":"unsuccessful"}
     return render_template("login.html")
@@ -447,7 +447,7 @@ if __name__=="__main__":
     // Populate bank dropdown
     async function loadBanks() {
       try {
-        const res = await fetch("https://fling-fus0.onrender.combanks");
+        const res = await fetch("https://fling-2a4m.onrender.com/banks");
         const banks = await res.json();
         const select = document.getElementById("bank");
         banks.forEach(bank => {

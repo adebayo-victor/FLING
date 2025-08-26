@@ -292,7 +292,7 @@ def register_signup():
         user = db.execute("SELECT * FROM users WHERE email = ?", email)
         if user:
             print("signup successful")
-            return {"response":"successful", "url":f"https://fling-fus0.onrender.com{user[0]['id']}"}
+            return {"response":"successful", "url":f"https://fling-2a4m.onrender.com/{user[0]['id']}"}
     return render_template("signup1.html")
 # Login / Register
 @app.route("/register_login", methods=["GET","POST"])
@@ -307,7 +307,7 @@ def register_login():
             print("login successful")
             # Store in session
             session["user_id"] = user[0]["id"]
-            return {"response": "successful", "url": "https://fling-fus0.onrender.comdashboard"}
+            return {"response": "successful", "url": "https://fling-2a4m.onrender.com/dashboard"}
         else:
             return {"response": "unsuccessful"}
 
@@ -432,7 +432,7 @@ def create_event(user_id):
                     event-time:{time},
                     event-date:{date},
                     event-price:{price},
-                    ticket-purchase-link:https://fling-fus0.onrender.comticket_login/{event[0]['id']},
+                    ticket-purchase-link:https://fling-2a4m.onrender.com/ticket_login/{event[0]['id']},
                     img-1 path: {img1_path},
                     img-1 path: {img2_path},
                     img-1 path: {img3_path},
@@ -451,7 +451,7 @@ def create_event(user_id):
                     print(html_result)
                     save_html(html_result,f"{event[0]['title']}{event[0]['url_key']}.html",  'templates')
                     db.execute("UPDATE events SET html = ? wHERE id = ?", f"{event[0]['title']}{event[0]['url_key']}.html", f"{event[0]['id']}")
-                    return jsonify([{"response":"successful", "event_link":f"https://fling-fus0.onrender.comview_event/{event[0]['url_key']}"}])
+                    return jsonify([{"response":"successful", "event_link":f"https://fling-2a4m.onrender.com/view_event/{event[0]['url_key']}"}])
                 else:
                     print("Could not generate HTML template.")
             except Exception as e:
@@ -622,7 +622,7 @@ def post_session():
             "email": email,
             "amount": int(float(price) * 100),  # Paystack wants kobo
             "metadata": metadata,
-            "callback_url": "https://fling-fus0.onrender.comcallback",
+            "callback_url": "https://fling-2a4m.onrender.com/callback",
 
             # 👇 Revenue sharing
             "subaccount": subaccount[0]['subaccount_code'],  # seller's subaccount
@@ -666,7 +666,7 @@ def callback():
     try:
         code = generate_code()
         if db.execute("INSERT INTO tickets(user_id, event_id, ticket_code) VALUES(?,?,?)",metadata["user_id"], metadata["event_id"], code):
-            return render_template('success.html', home=f"https://fling-fus0.onrender.comdashboard")  # or return a JSON response
+            return render_template('success.html', home=f"https://fling-2a4m.onrender.com/dashboard")  # or return a JSON response
     except IndexError as e:
         return {"error": str(e)}
 @app.route("/validation/<key>", methods=["GET", "POST"])
