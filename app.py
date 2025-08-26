@@ -426,20 +426,35 @@ def create_event(user_id):
                 #template generation
                 event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key = ?", user_id, url_key)
                 # --- Main script execution ---
-                prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events.Use the uploaded pic for design like background and stuff,not directly in the template The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax,do not use the media asset that is 'none',  add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
-                prompt += (f'''
-                    Current time(u need the current year for the footer):{datetime.now()}
-                    {user_prompt}
-                    event-title: {title},
-                    event-description:{description},
-                    event-time:{time},
-                    event-date:{date},
-                    event-price:{price},
-                    ticket-purchase-link:https://fling-2a4m.onrender.com/ticket_login/{event[0]['id']},
-                    img-1 path: {img1_path},
-                    img-1 path: {img2_path},
-                    img-1 path: {img3_path},
-                    video-path: {video_path}''')
+                prompt = (
+                    "You are a seasoned UX/UI designer + front-end developer with 10+ years of experience in event branding. "
+                    "Fluent in HTML, CSS, and JavaScript. You are emotionally intuitive, always prioritizing elegance, responsiveness, and engagement. "
+                    "You love solving layout challenges, follow modern design trends, and make sure every design matches the latest standard. "
+                    "Generate a responsive, modern, and mobile-friendly HTML template for an event. "
+                    "Do NOT include extra commentary—output only the HTML template. "
+                    "Use the uploaded picture for design inspiration (e.g., background styling) but do not insert it directly. "
+                    "The template must include all necessary event info, styled with embedded CSS, and be easily customizable. "
+                    "At the bottom of the page, add 'Powered by Techlite'. "
+                    "Include a 'Buy Ticket' button using Jinja notation for linking. "
+                    "Do NOT use media assets with 'none'. "
+                    "For images and video: use the provided static file paths (forward slashes only, no Jinja for paths). "
+                    "If an image/video fails to load, include an external alt source in the 'alt' attribute. "
+                    "Remove Jinja from href tags but keep Jinja rings for the ticket purchase link. "
+                    "Hardcode all other event details. "
+                    f"Current year (for footer): {datetime.now().year}. "
+                    f"Event Title: {title}. "
+                    f"Event Description: {description}. "
+                    f"Event Time: {time}. "
+                    f"Event Date: {date}. "
+                    f"Event Price: {price}. "
+                    f"Ticket Purchase Link: https://fling-2a4m.onrender.com/ticket_login/{event[0]['id']}. "
+                    f"Image 1 Path: {img1_path}. "
+                    f"Image 2 Path: {img2_path}. "
+                    f"Image 3 Path: {img3_path}. "
+                    f"Video Path: {video_path}. "
+                    f"Additional user instructions: {user_prompt}."
+                )
+
                 # Generate the ticket template
                 html_result = generate_ticket_template(prompt)
 
