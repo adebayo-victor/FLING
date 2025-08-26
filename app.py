@@ -468,8 +468,11 @@ def create_event(user_id):
 def view_event(url_key):
     event = db.execute("SELECT * FROM events WHERE url_key = ?", url_key)
     if event:
+        html_content = event[0]['html']
+        # Return the raw HTML with the correct Content-Type header
+        response = make_response(html_content)
         response.headers['Content-Type'] = 'text/html'
-        return make_response(event[0]['html'])
+        return response
 @app.route("/get_user_events/<int:id>")
 def get_user_events(id):
     events = db.execute("SELECT * FROM events WHERE created_by = ?", id)
