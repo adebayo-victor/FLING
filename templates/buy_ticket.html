@@ -10,7 +10,7 @@
   <input type="hidden" value="{{event.id}}" class="event-id">
   <div class="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8">
     <h2 class="text-2xl font-bold text-green-400 text-center mb-6 alert-text">Login to Buy Ticket</h2>
-    <h3 class="text-1xl font-bold text-green-400 text-center mb-6">lack credentials?<a href="https://fling-jpfl.onrender.com/register" class="text-blue-400 underline"> Signup</a></h3>
+    <h3 class="text-1xl font-bold text-green-400 text-center mb-6">lack credentials?<a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/register" class="text-blue-400 underline"> Signup</a></h3>
 
     <!-- Login fields -->
     <div class="space-y-4 mb-6">
@@ -74,7 +74,7 @@
     }
 
     try {
-      const res = await fetch("https://fling-jpfl.onrender.com/ticket_login/"+ eventId, {
+      const res = await fetch("https://hhxsq4xb-1000.uks1.devtunnels.ms/ticket_login/"+ eventId, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ email, password })

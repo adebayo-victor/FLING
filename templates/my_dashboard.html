@@ -536,7 +536,7 @@
     <script>
         async function loadProfileBanks() {
         try {
-            const res = await fetch("https://fling-jpfl.onrender.com/banks");
+            const res = await fetch("https://hhxsq4xb-1000.uks1.devtunnels.ms/banks");
             const banks = await res.json();
             const select = document.getElementById("profile-bank");
             banks.forEach(bank => {
@@ -714,13 +714,13 @@
                                 <p class="text-sm text-zinc-400">${event.date} at ${event.time}</p>
                                 <p class="text-sm text-zinc-500">${event.location}</p>
                                 <a class="text-green-500 hover:text-green-300 underline" 
-                                href="https://fling-jpfl.onrender.com/view_event/${event.url_key}">|
+                                href="https://hhxsq4xb-1000.uks1.devtunnels.ms/view_event/${event.url_key}">|
                                 Visit website
                                 </a>
-                                <a href="https://fling-jpfl.onrender.com/track_events/${event.url_key}" class="track-event text-green-300 cursor-pointer hover:text-green-100" data-id="${event.id}">|
+                                <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/track_events/${event.url_key}" class="track-event text-green-300 cursor-pointer hover:text-green-100" data-id="${event.id}">|
                                 Track events
                                 </a>
-                                <a href="https://fling-jpfl.onrender.com/validation/${event.url_key}" class="track-event text-green-300 cursor-pointer hover:text-green-100" data-id="${event.id}">|
+                                <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/validation/${event.url_key}" class="track-event text-green-300 cursor-pointer hover:text-green-100" data-id="${event.id}">|
                                 Validate Tickets
                                 </a>
                             </div>
@@ -730,7 +730,7 @@
             };
 
             // Fetch events
-            fetch('https://fling-jpfl.onrender.com/get_user_events/' + document.getElementById("profile-id").value, {
+            fetch('https://hhxsq4xb-1000.uks1.devtunnels.ms/get_user_events/' + document.getElementById("profile-id").value, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
                 credentials: 'include'
@@ -807,7 +807,7 @@
                 const form = e.target;
                 const formData = new FormData(form);
                 try {
-                    const response = await fetch('https://fling-jpfl.onrender.com/create_event/' + document.querySelector('#profile-id').value, {
+                    const response = await fetch('https://hhxsq4xb-1000.uks1.devtunnels.ms/create_event/' + document.querySelector('#profile-id').value, {
                         method: 'POST',
                         body: formData
                     });
@@ -865,7 +865,7 @@
                 console.log("✅ Ready to send:", payload);
 
                 // Example fetch (replace with your backend route)
-                fetch("https://fling-jpfl.onrender.com/update_profile", {
+                fetch("https://hhxsq4xb-1000.uks1.devtunnels.ms/update_profile", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
