@@ -332,7 +332,7 @@ def dashboard():
         event_datetime = event['date']
         
         # Check if the event date is in the past
-        if datetime.now() >= event_datetime:
+        if datetime.now().date() >= event_datetime:
             # Construct a safe, full file path
             file_path = os.path.join(template_dir, event["html"])
             
