@@ -353,10 +353,13 @@ def dashboard():
                     except OSError as e:
                         print(f"Error deleting file {event['html']}: {e.strerror}")
                         db.execute("ROLLBACK")
+                        return e, 500
                 else:
                     print(f"Warning: File '{file_path}' does not exist.")
+                    return "Warning: File '{file_path}' does not exist.", 500
             else:
                 print(f"Security Alert: Attempted path traversal for file: {event['html']}")
+                return f"Security Alert: Attempted path traversal for file: {event['html']}", 500
                 
     # Re-fetch the updated event list after deletions
     events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
