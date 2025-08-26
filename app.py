@@ -392,7 +392,7 @@ def create_event(user_id):
             video_path = handle_file_upload("video").get("path")
 
             #ensuring the uploaded time is not a time from the past 
-            date_to_check = datetime.strpftime(date, format_string)
+            date_to_check = datetime.strptime(date, format_string)
             if datetime.now() >= date_to_check:
                 return jsonify({"response":"Date is less than today's date"})
 
