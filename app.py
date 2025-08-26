@@ -473,6 +473,13 @@ def view_event(url_key):
 def get_user_events(id):
     events = db.execute("SELECT * FROM events WHERE created_by = ?", id)
     if events:
+        # Iterate through the list of events to format the created_at key
+        for event in events:
+            # Check if 'created_at' exists and is a datetime object before converting
+            if 'created_at' in event and isinstance(event['created_at'], datetime):
+                # Convert the datetime object to a string
+                event['created_at'] = event['created_at'].strftime("%Y-%m-%d")
+        
         return jsonify(events)
     else:
         return jsonify([])

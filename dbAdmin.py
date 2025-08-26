@@ -3,14 +3,33 @@ from cs50 import SQL
 from datetime import datetime
 from google.cloud import storage
 from dotenv import load_dotenv
-#start virtual environment
+
+# Start virtual environment
 load_dotenv()
-# Make sure you are using an environment variable for security on Render
-# Replace this line with your Render DATABASE_URL environment variable
+
+# Use your Render DATABASE_URL with ?sslmode=require for PostgreSQL
 db = SQL(os.environ.get("DATABASE_URL"))
 
 try:
-# EVENTS TABLE (Updated to accommodate three pictures and one video path)
+    # USERS TABLE
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            phone TEXT,
+            password TEXT NOT NULL,
+            bank_name VARCHAR(255) NOT NULL,
+            bank_code VARCHAR(50) NOT NULL,
+            account_number VARCHAR(20) NOT NULL,
+            account_name VARCHAR(255) NOT NULL,
+            subaccount_code VARCHAR(100) NOT NULL,
+            img TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # EVENTS TABLE (with three pictures and one video path)
     db.execute("""
         CREATE TABLE IF NOT EXISTS events (
             id SERIAL PRIMARY KEY,
@@ -47,7 +66,7 @@ try:
         )
     """)
 
-    # PAYMENT TABLE (optional)
+    # PAYMENT TABLE
     db.execute("""
         CREATE TABLE IF NOT EXISTS payments (
             id SERIAL PRIMARY KEY,
@@ -62,7 +81,7 @@ try:
         )
     """)
 
+    print("✅ All tables created with updated PostgreSQL syntax.")
 
 except Exception as e:
-    # A general try-except block to catch any database-related errors
     print(f"❌ An error occurred during database setup: {e}")
