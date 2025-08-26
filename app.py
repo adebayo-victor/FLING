@@ -2,7 +2,7 @@ import random
 import csv
 import requests
 from datetime import datetime, timedelta
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify, send_file
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify, send_file, make_response
 import pandas as pd
 from flask_cors import CORS
 from cs50 import SQL
@@ -452,8 +452,8 @@ def create_event(user_id):
                     print("--- Just HTML Template ---")
                     html_result=html_result.replace('```', '')
                     print(html_result)
-                    save_html(html_result,f"{event[0]['title']}{event[0]['url_key']}.html",  'templates')
-                    db.execute("UPDATE events SET html = ? wHERE id = ?", f"{event[0]['title']}{event[0]['url_key']}.html", f"{event[0]['id']}")
+                    #save_html(html_result,f"{event[0]['title']}{event[0]['url_key']}.html",  'templates')
+                    db.execute("UPDATE events SET html = ? wHERE id = ?", f"{html_result}", f"{event[0]['id']}")
                     return jsonify([{"response":"successful", "event_link":f"https://fling-2a4m.onrender.com/view_event/{event[0]['url_key']}"}])
                 else:
                     print("Could not generate HTML template.")
@@ -468,7 +468,8 @@ def create_event(user_id):
 def view_event(url_key):
     event = db.execute("SELECT * FROM events WHERE url_key = ?", url_key)
     if event:
-        return render_template(event[0]['html'])
+        response.headers['Content-Type'] = 'text/html'
+        return make_response(event[0]['html'])
 @app.route("/get_user_events/<int:id>")
 def get_user_events(id):
     events = db.execute("SELECT * FROM events WHERE created_by = ?", id)
