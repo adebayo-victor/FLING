@@ -484,7 +484,7 @@ def sales_data(id):
     try:
         chart_data = {"x": [], "y": []}
         today = datetime.now()
-        format_string = "%Y-%m-%d %H:%M:%S"
+        format_string = "%Y-%m-%d"
 
         # Get event creation date
         event_created_date = db.execute(
