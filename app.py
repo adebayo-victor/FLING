@@ -14,6 +14,8 @@ import io
 import xlsxwriter
 from google.cloud import storage
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
 #configuring for upload and download to cache
 # Configure Cloudinary
 cloudinary.config(
