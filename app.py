@@ -14,6 +14,49 @@ import io
 import xlsxwriter
 from google.cloud import storage
 from dotenv import load_dotenv
+#configuring for upload and download to cache
+# Configure Cloudinary
+cloudinary.config(
+  cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+  api_key=os.environ.get('CLOUDINARY_API_KEY'),
+  api_secret=os.environ.get('CLOUDINARY_API_SECRET')
+)
+
+# Cloudinary Upload Helper (updated to accept a custom filename)
+def upload_file_to_cloudinary(file, folder_name=None, custom_filename=None):
+    """
+    Uploads a file to Cloudinary and returns the URL.
+    Optionally organizes the upload into a specified folder and uses a custom filename.
+    """
+    try:
+        # Save the file to a temporary path to be uploaded
+        temp_path = os.path.join("/tmp", secure_filename(file.filename))
+        file.save(temp_path)
+
+        # Create a dictionary for upload parameters
+        upload_params = {}
+
+        # If a folder is specified, add it to the parameters
+        if folder_name:
+            upload_params['folder'] = folder_name
+
+        # If a custom filename is specified, add it to the parameters.
+        # Cloudinary will use this as the public_id.
+        if custom_filename:
+            # We remove the file extension from the custom filename to let Cloudinary handle it correctly.
+            public_id = os.path.splitext(custom_filename)[0]
+            upload_params['public_id'] = public_id
+
+        # Upload the file from the temporary location with the specified parameters
+        result = cloudinary.uploader.upload(temp_path, **upload_params)
+
+        # Clean up the temporary file
+        os.remove(temp_path)
+
+        return result['url']
+    except Exception as e:
+        print(f"❌ Error uploading to Cloudinary: {e}")
+        return None
 #HTML file saving function, ahahahahahahahah, hell yeah
 def save_html(html_content: str, file_name: str, folder_path: str):
     """
@@ -389,10 +432,10 @@ def create_event(user_id):
             price = request.form.get("ticket-price") # <-- New: Retrieve price from form
             user_prompt = request.form.get("ai-template-prompt")
             # Handle file uploads using your existing function
-            img1_path = handle_file_upload("image-1").get("path")
-            img2_path = handle_file_upload("image-2").get("path")
-            img3_path = handle_file_upload("image-3").get("path")
-            video_path = handle_file_upload("video").get("path")
+            img1_path = upload_file_to_cloudinary("image-1").get("path")
+            img2_path = upload_file_to_cloudinary("image-2").get("path")
+            img3_path = upload_file_to_cloudinary("image-3").get("path")
+            video_path = upload_file_to_cloudinary("video").get("path")
 
             #ensuring the uploaded time is not a time from the past 
             date_to_check = datetime.strptime(date, format_string)
