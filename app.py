@@ -434,10 +434,26 @@ def create_event(user_id):
             price = request.form.get("ticket-price") # <-- New: Retrieve price from form
             user_prompt = request.form.get("ai-template-prompt")
             # Handle file uploads using your existing function
-            img1_path = upload_file_to_cloudinary("image-1")
-            img2_path = upload_file_to_cloudinary("image-2")
-            img3_path = upload_file_to_cloudinary("image-3")
-            video_path = upload_file_to_cloudinary("video")
+            img1_file = request.files.get("image-1")
+            img2_file = request.files.get("image-2")
+            img3_file = request.files.get("image-3")
+            video_file = request.files.get("video")
+
+            # Initialize paths as None
+            img1_path = None
+            img2_path = None
+            img3_path = None
+            video_path = None
+
+            # Upload the files using the helper function if they exist
+            if img1_file:
+                img1_path = upload_file_to_cloudinary(img1_file)
+            if img2_file:
+                img2_path = upload_file_to_cloudinary(img2_file)
+            if img3_file:
+                img3_path = upload_file_to_cloudinary(img3_file)
+            if video_file:
+                video_path = upload_file_to_cloudinary(video_file)
 
             #ensuring the uploaded time is not a time from the past 
             date_to_check = datetime.strptime(date, format_string)
