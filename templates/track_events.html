@@ -127,7 +127,7 @@
         const response = await fetch("/ask_ai", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt, event_id })
+          body: JSON.stringify({ prompt, event_id, key })
         });
 
         const data = await response.json(); // { response: "..." }
