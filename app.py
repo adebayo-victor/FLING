@@ -643,7 +643,7 @@ def search_attendees():
     filtered = []
     attendees = db.execute("SELECT * \
                             FROM tickets JOIN users ON users.id = tickets.user_id \
-                            JOIN events ON events.id = tickets.event_id")
+                            JOIN events ON events.id = tickets.event_id WHERE events.url_key =?", data['key'])
                             
 
     for attendee in attendees:
