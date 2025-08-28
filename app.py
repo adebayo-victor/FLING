@@ -643,6 +643,7 @@ def search_attendees():
     attendees = db.execute("SELECT users.name, users.email, events.price \
                             FROM tickets JOIN users ON users.id = tickets.user_id \
                             JOIN events ON events.id = tickets.event_id")
+                            
 
     for attendee in attendees:
         if (query in attendee["name"].lower() 
@@ -671,11 +672,13 @@ def ask_ai():
         """
 
         #tickets
-        data = db.execute("SELECT users.name, users.email, events.price, tickets.created_at  FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id = users.id WHERE events.id = ?", event_id)
+        
+        tickets = db.execute("SELECT * FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id=users.id WHERE tickets.event_id =?", event_id)
         print(data)
         info = ""
         for row in data:
             info+=(f"{row['name']}-{row['email']}-{row['price']}-{row['created_at']}")
+            print(info)
         # Combine with base instructions
         full_prompt = BASE_PROMPT + "\nprompt: " + user_prompt + "\nevent purchase data/ticket sales: " + info
         #full_prompt = full_prompt.join(info)
