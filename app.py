@@ -642,7 +642,7 @@ def search_attendees():
     filtered = []
     attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created \
                             FROM tickets JOIN users ON users.id = tickets.user_id \
-                            JOIN events ON events.id = tickets.event_id")
+                            JOIN events ON events.id = tickets.event_id WHERE events.url_key = ?", data['key'])
                             
 
     for attendee in attendees:
@@ -663,6 +663,7 @@ def ask_ai():
         print(data)
         user_prompt = data.get("prompt")
         event_id = data.get("event_id")
+        key = data.get("key")
         BASE_PROMPT = """
         You are an event sales assistant. you engage the user provide advice and insight based on the event data and talk about other things 
         Answer ONLY based on the provided database data. 
@@ -675,7 +676,7 @@ def ask_ai():
         
         attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created_at \
                             FROM tickets JOIN users ON users.id = tickets.user_id \
-                            JOIN events ON events.id = tickets.event_id WHERE tickets.event_id = ?", event_id)
+                            JOIN events ON events.id = tickets.event_id WHERE event.url_key = ?", key)
         print(data)
         print(attendees)
         info = ""
