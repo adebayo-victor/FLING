@@ -609,10 +609,10 @@ def sales_data(id):
         # to correctly parse it as a date.
         try:
             # Try parsing with time information
-            event_created_date = datetime.strptime(event_created_at_str, "%Y-%m-%d %H:%M:%S").date()
+            event_created_date = event_created_at_str
         except ValueError:
             # Fallback to parsing without time information
-            event_created_date = datetime.strptime(event_created_at_str, "%Y-%m-%d").date()
+            event_created_date = event_created_at_str
 
         # 2. Loop from the event's creation date up to today.
         delta = today - event_created_date
