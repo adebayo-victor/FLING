@@ -580,7 +580,7 @@ def get_user_events(id):
 @app.route("/track_events/<key>")
 def track_events(key):
     event = db.execute("SELECT * FROM events JOIN users ON events.created_by = users.id WHERE url_key = ?", key)[0]
-    tickets = db.execute("SELECT * FROM tickets JOIN events ON tickets.users_id = events.created_by JOIN users ON users.id=tickets.user_id WHERE url_key =?", key)
+    tickets = db.execute("SELECT * FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id=users.id WHERE url_key =?", key)
     return render_template("track_events.html", tickets=tickets, event=event)
 
 @app.route("/sales_data/<id>")
