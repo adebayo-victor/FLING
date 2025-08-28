@@ -613,7 +613,7 @@ def sales_data(id):
         for ticket in tickets:
             ticket_date = ticket['created_at']
             date_str = ticket_date.strftime("%Y-%m-%d")
-            daily_sales[date_str] = daily_sales.get(date_str, 0) + 1
+            daily_sales[date_str] = daily_sales.get(date_str, 1) + 1
 
         # Populate the final chart data with all dates since creation
         for i in range(day_diff + 1):
