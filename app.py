@@ -16,6 +16,8 @@ from google.cloud import storage
 from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
+#loading virtual environment
+load_dotenv()
 #configuring for upload and download to cache
 # Configure Cloudinary
 cloudinary.config(
@@ -86,7 +88,7 @@ def save_html(html_content: str, file_name: str, folder_path: str):
         print(f"❌ Error saving HTML: {e}")
 
 #loading virtual environment
-load_dotenv()
+
 #Initiating app ...
 app = Flask(__name__)
 CORS(app)
