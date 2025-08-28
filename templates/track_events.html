@@ -76,6 +76,8 @@
       let query = this.value.trim();
       const attendeeList = document.getElementById("attendeeList");
       let key = document.querySelector(".event-key").value
+      console.log(query)
+      console.log(key)
 
       try {
         const response = await fetch("/search_attendees", {
