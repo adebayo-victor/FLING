@@ -448,12 +448,16 @@ def create_event(user_id):
             # Upload the files using the helper function if they exist
             if img1_file:
                 img1_path = upload_file_to_cloudinary(img1_file)
+                print(img1_path)
             if img2_file:
                 img2_path = upload_file_to_cloudinary(img2_file)
+                print(img2_path)
             if img3_file:
                 img3_path = upload_file_to_cloudinary(img3_file)
+                print(img3_path)
             if video_file:
                 video_path = upload_file_to_cloudinary(video_file)
+
 
             #ensuring the uploaded time is not a time from the past 
             date_to_check = datetime.strptime(date, format_string)
