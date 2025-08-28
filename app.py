@@ -641,7 +641,7 @@ def search_attendees():
     print(data)
 
     filtered = []
-    attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created \
+    attendees = db.execute("SELECT * \
                             FROM tickets JOIN users ON users.id = tickets.user_id \
                             JOIN events ON events.id = tickets.event_id")
                             
