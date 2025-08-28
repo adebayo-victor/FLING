@@ -600,7 +600,7 @@ def sales_data(id):
             return jsonify({"x": [], "y": []})
 
         event_created_date_str = event[0]['created_at']
-        datetime_object = datetime.strptime(event_created_date_str, "%Y-%m-%d %H:%M:%S")
+        datetime_object = event_created_date_str
 
         # 2. Get all tickets for the event in a single query.
         tickets = db.execute("SELECT created_at FROM tickets WHERE event_id = ?", id)
