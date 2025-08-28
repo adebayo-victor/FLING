@@ -587,52 +587,51 @@ def track_events(key):
 def sales_data(id):
     """
     Retrieves and calculates daily ticket sales data for a given event ID.
-    
-    This version simplifies the logic by not counting actual tickets,
-    but instead generates a daily count that increases by one each day,
-    starting from the event's creation date. This is useful for testing
-    or creating a placeholder visual representation.
     """
     try:
         chart_data = {"x": [], "y": []}
-        today = datetime.now().date()
+        today = datetime.now()
 
-        # 1. Get the event's creation date.
+        # 1. Get the event's creation date directly from the events table.
+        # This will work even if there are no tickets yet.
         event = db.execute("SELECT created_at FROM events WHERE id = ?", id)
         if not event:
-            # Return empty data if event is not found
-            return {"x": [], "y": []}
+            # If the event itself doesn't exist, return empty data.
+            return jsonify({"x": [], "y": []})
 
-        event_created_at_str = event[0]['created_at']
+        event_created_date_str = event[0]['created_at']
+        datetime_object = event_created_date_str
+
+        # 2. Get all tickets for the event in a single query.
+        tickets = db.execute("SELECT created_at FROM tickets WHERE event_id = ?", id)
         
-        # Determine the correct format for the created_at timestamp
-        # to correctly parse it as a date.
-        try:
-            # Try parsing with time information
-            event_created_date = event_created_at_str
-        except ValueError:
-            # Fallback to parsing without time information
-            event_created_date = event_created_at_str
+        # Build daily sales counts
+        day_diff = (today - datetime_object).days
+        
+        # Create a dictionary to store sales counts by date for efficient lookup
+        daily_sales = {}
+        for ticket in tickets:
+            ticket_date = ticket['created_at']
+            date_str = ticket_date.strftime("%Y-%m-%d")
+            daily_sales[date_str] = daily_sales.get(date_str, 0) + 1
 
-        # 2. Loop from the event's creation date up to today.
-        delta = today - event_created_date
-        for i in range(delta.days + 1):
-            day = event_created_date + timedelta(days=i)
+        # Populate the final chart data with all dates since creation
+        for i in range(day_diff + 1):
+            day = (datetime_object + timedelta(days=i)).date()
             day_str = day.strftime("%Y-%m-%d")
             
-            # 3. Add the date to the x-axis and the simple count (i+1) to the y-axis.
             chart_data["x"].append(day_str)
-            chart_data["y"].append(i + 1)
+            # Use the dictionary to get the count, defaulting to 0 if no sales
+            chart_data["y"].append(daily_sales.get(day_str, 0))
             
-        return chart_data
+        return jsonify(chart_data)
         
     except IndexError:
-        # Catch cases where the event doesn't exist
-        print("Error: Event not found.")
-        return {"x": [], "y": []}
+        # This catches if the event doesn't exist.
+        return jsonify({"x": [], "y": []})
     except Exception as e:
         print(f"Error in sales_data route: {e}")
-        return {"error": "An internal error occurred"}, 500
+        return jsonify({"error": "An internal error occurred"}), 500
 
 
 @app.route("/search_attendees", methods=["POST"])
