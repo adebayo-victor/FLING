@@ -640,7 +640,7 @@ def search_attendees():
     query = data.get("query", "").lower()
 
     filtered = []
-    attendees = db.execute("SELECT users.name, users.email, events.price \
+    attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created \
                             FROM tickets JOIN users ON users.id = tickets.user_id \
                             JOIN events ON events.id = tickets.event_id")
                             
@@ -673,11 +673,13 @@ def ask_ai():
 
         #tickets
         
-        tickets = db.execute("SELECT * FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id=users.id WHERE tickets.event_id =?", event_id)
+        attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created \
+                            FROM tickets JOIN users ON users.id = tickets.user_id \
+                            JOIN events ON events.id = tickets.event_id")
         print(data)
-        print(tickets)
+        print(attendees)
         info = ""
-        for row in tickets:
+        for row in attendees:
             info+=(f"{row['name']}-{row['email']}-{row['price']}-{row['created_at']}")
             print(info)
         # Combine with base instructions
