@@ -676,7 +676,7 @@ def ask_ai():
         tickets = db.execute("SELECT * FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id=users.id WHERE tickets.event_id =?", event_id)
         print(data)
         info = ""
-        for row in data:
+        for row in tickets:
             info+=(f"{row['name']}-{row['email']}-{row['price']}-{row['created_at']}")
             print(info)
         # Combine with base instructions
