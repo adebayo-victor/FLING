@@ -638,6 +638,7 @@ def sales_data(id):
 def search_attendees():
     data = request.get_json()
     query = data.get("query", "").lower()
+    print(data)
 
     filtered = []
     attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created \
