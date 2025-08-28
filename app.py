@@ -611,7 +611,7 @@ def sales_data(id):
         # Create a dictionary to store sales counts by date for efficient lookup
         daily_sales = {}
         for ticket in tickets:
-            ticket_date = datetime.strptime(ticket['created_at'], "%Y-%m-%d %H:%M:%S").date()
+            ticket_date = ticket['created_at']
             date_str = ticket_date.strftime("%Y-%m-%d")
             daily_sales[date_str] = daily_sales.get(date_str, 0) + 1
 
