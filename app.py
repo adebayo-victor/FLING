@@ -655,7 +655,6 @@ def search_attendees():
                 "email": attendee["email"],
                 "price": attendee["price"]
             })
-
     return jsonify({"attendees": filtered})
 @app.route("/ask_ai", methods=["POST"])
 def ask_ai():
