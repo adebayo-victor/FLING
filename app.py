@@ -673,9 +673,9 @@ def ask_ai():
 
         #tickets
         
-        attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created \
+        attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created_at \
                             FROM tickets JOIN users ON users.id = tickets.user_id \
-                            JOIN events ON events.id = tickets.event_id")
+                            JOIN events ON events.id = tickets.event_id WHERE tickets.event_id = ?", event_id)
         print(data)
         print(attendees)
         info = ""
