@@ -645,6 +645,7 @@ def search_attendees():
                             FROM tickets JOIN users ON users.id = tickets.user_id \
                             JOIN events ON events.id = tickets.event_id WHERE events.url_key =?", data['key'])
     print(attendees)
+    print(len(attendees))
                             
 
     for attendee in attendees:
