@@ -12,6 +12,6 @@ db = SQL(os.environ.get("DATABASE_URL"))
 
 try:
     # USERS TABLE
-    print(db.execute("SELECT * FROM events")[0]['html'])
+    print(db.execute("SELECT * FROM users"))
 except Exception as e:
     print(f"❌ An error occurred during database setup: {e}")
