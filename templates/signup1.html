@@ -183,7 +183,7 @@
     loadBanks();
 
     // Handle signup form
-    const trustHost = document.querySelector("#trustHost").checked
+    
     document.getElementById("signup-form").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -196,6 +196,7 @@
         bank_code: formData.get("bank"),
         account_number: formData.get("account_number")
       };
+      const trustHost = document.querySelector("#trustHost").checked
       if (!trustHost){
         document.querySelector('.alert-text').style.color = "yellow";
         document.querySelector('.alert-text').textContent = "Agree to terms and conditions.";
