@@ -55,7 +55,6 @@
         <input type="hidden" name="event_id" id="eventIdInput">
         <input type="hidden" name="event_price" id="eventIdprice" value="{{event.price}}">
         <input type="hidden" name="user_email" id="userEmail">
-        <input type="checkbox" placeholder="By clicking this box, you agree that you trust this host" id="trustHost">
         <button type="submit" 
           id="buyBtn"
           class="w-full py-3 bg-green-500 hover:bg-green-400 rounded-lg text-gray-900 font-semibold shadow-md transition hidden">
@@ -70,14 +69,11 @@
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const eventId = document.querySelector(".event-id").value.trim()
-    const trustHost = document.querySelector("#trustHost").value.trim()
     if (!email || !password) {
       alert("Please enter email and password first!");
       return;
     }
-    if (!trustHost){
-      alert("Agreee to the terms at the page'bottom")
-    }
+
     try {
       const res = await fetch("https://fling-2a4m.onrender.com/ticket_login/"+ eventId, {
         method: "POST",
