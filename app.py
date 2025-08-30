@@ -84,7 +84,31 @@ def upload_file_to_cloudinary(file, folder_name=None, custom_filename=None):
         return None
 
 
-#loading virtual environment
+#HTML file saving function, ahahahahahahahah, hell yeah
+def save_html(html_content: str, file_name: str, folder_path: str):
+    """
+    Saves HTML content to a file.
+    
+    Args:
+        html_content (str): The HTML content as a string.
+        file_name (str): The file name (e.g., "index.html").
+        folder_path (str): The folder path to save into.
+    """
+    try:
+        # Ensure folder exists
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Full file path
+        file_path = os.path.join(folder_path, file_name)
+
+        # Write the HTML content
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(html_content)
+
+        print(f"✅ HTML file saved: {file_path}")
+
+    except Exception as e:
+        print(f"❌ Error saving HTML: {e}")
 
 #Initiating app ...
 app = Flask(__name__)
@@ -377,33 +401,12 @@ def dashboard():
         
         # Check if the event date is in the past
         if datetime.now().date() >= event_datetime:
-            # Construct a safe, full file path
-            file_path = os.path.join(template_dir, event["html"])
-            
-            # Crucial security check: Ensure the path is a subdirectory of the templates folder
             # This prevents directory traversal attacks
-            if os.path.abspath(file_path).startswith(os.path.abspath(template_dir) + os.sep):
-                if os.path.exists(file_path):
-                    try:
-                        os.remove(file_path)
-                        print(f"File '{file_path}' has been successfully deleted.")
-                        
-                        # Use a single database transaction for the deletions
-                        db.execute("BEGIN TRANSACTION")
-                        db.execute("DELETE FROM tickets WHERE event_id = ?", event['id'])
-                        db.execute("DELETE FROM events WHERE id = ?", event['id'])
-                        db.execute("COMMIT")
-                        
-                    except OSError as e:
-                        print(f"Error deleting file {event['html']}: {e.strerror}")
-                        db.execute("ROLLBACK")
-                        return e, 500
-                else:
-                    print(f"Warning: File '{file_path}' does not exist.")
-                    return "Warning: File '{file_path}' does not exist.", 500
-            else:
-                print(f"Security Alert: Attempted path traversal for file: {event['html']}")
-                return f"Security Alert: Attempted path traversal for file: {event['html']}", 500
+            # Use a single database transaction for the deletions
+            db.execute("BEGIN TRANSACTION")
+            db.execute("DELETE FROM tickets WHERE event_id = ?", event['id'])
+            db.execute("DELETE FROM events WHERE id = ?", event['id'])
+            db.execute("COMMIT")
                 
     # Re-fetch the updated event list after deletions
     events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
