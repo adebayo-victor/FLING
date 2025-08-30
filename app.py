@@ -851,7 +851,7 @@ def request_otp():
         otps[email] = otp_code
 
         # Send the email with the OTP
-        if send_email(to_email=email,subject="TECHLITE INNOVATIONS",message_body=f"OTP => {otp}. Share your otp with no one.")
+        if send_email(to_email=email,subject="TECHLITE INNOVATIONS",message_body=f"OTP => {otp}. Share your otp with no one."):
             return jsonify({"response": "sent", "message": "OTP sent successfully"}), 200
         else:
             return jsonify({"response": "error", "message": "Failed to send OTP"}), 500
