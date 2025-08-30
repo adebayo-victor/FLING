@@ -393,9 +393,14 @@ def dashboard():
     template_dir = os.path.join(os.getcwd(), "templates")
     
     user = db.execute("SELECT * FROM users WHERE id = ?", user_id)[0]
-    
-    events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
-    
+    #this block checks all the events in search of events with no tickets, then delete it
+    tickets = db.execute("SELECT * FROM tickets")
+    all_events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
+    events = []
+    for event in all_events:
+        for ticket in tickets:
+            if event['id'] == ticket['event_id']:
+                events.append(event)
     for event in events:
         event_datetime = event['date']
         
