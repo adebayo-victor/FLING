@@ -409,7 +409,6 @@ def dashboard():
             # This prevents directory traversal attacks
             # Use a single database transaction for the deletions
             db.execute("BEGIN TRANSACTION")
-            db.execute("DELETE FROM tickets WHERE event_id = ?", event['id'])
             db.execute("DELETE FROM events WHERE id = ?", event['id'])
             db.execute("COMMIT")
                 
