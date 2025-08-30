@@ -82,31 +82,7 @@ def upload_file_to_cloudinary(file, folder_name=None, custom_filename=None):
     except Exception as e:
         print(f"❌ Error uploading to Cloudinary: {e}")
         return None
-#HTML file saving function, ahahahahahahahah, hell yeah
-def save_html(html_content: str, file_name: str, folder_path: str):
-    """
-    Saves HTML content to a file.
-    
-    Args:
-        html_content (str): The HTML content as a string.
-        file_name (str): The file name (e.g., "index.html").
-        folder_path (str): The folder path to save into.
-    """
-    try:
-        # Ensure folder exists
-        os.makedirs(folder_path, exist_ok=True)
 
-        # Full file path
-        file_path = os.path.join(folder_path, file_name)
-
-        # Write the HTML content
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.write(html_content)
-
-        print(f"✅ HTML file saved: {file_path}")
-
-    except Exception as e:
-        print(f"❌ Error saving HTML: {e}")
 
 #loading virtual environment
 
