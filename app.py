@@ -872,10 +872,10 @@ def update_profile():
 
         # Extract form fields
         user_id = data.get("id") or session.get("user_id")  # fallback to session
-        name = data.get("name")
-        email = data.get("email")
-        password = data.get("password")
-        phone = data.get("phone")
+        name = data.get("profile_name")
+        email = data.get("profile_email")
+        password = data.get("profile_password")
+        phone = data.get("profile_phone")
         bank_code = data.get("bank_code")
         account_number = data.get("account_number")
         account_name = data.get("account_name")
@@ -892,7 +892,7 @@ def update_profile():
             WHERE id = ?
         """, name, email, password, phone, bank_code, account_number, account_name, user_id)
 
-        return jsonify({"status": "success", "message": "Profile updated successfully!"})
+        return redirect("dashboard")
 
     except Exception as e:
         print("❌ Error updating profile:", e)
