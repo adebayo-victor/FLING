@@ -18,6 +18,27 @@ import cloudinary
 import cloudinary.uploader
 #loading virtual environment
 load_dotenv()
+#second email alternative
+POSTMAIL_URL = "https://postmail.invotes.com/send"
+ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN")
+#mail function
+def send_email(to_email, subject, message_body, reply_to="adebayovictorvicade@gmail.com"):
+    payload = {
+        "access_token": ACCESS_TOKEN,
+        "subject": subject,
+        "text": message_body,
+        "reply_to": reply_to,
+        "recipient": to_email
+    }
+
+    try:
+        response = requests.post(POSTMAIL_URL, data=payload)
+        print("✅ Status Code:", response.status_code)
+        print("📨 Response:", response.text)
+        return response.status_code == 200
+    except Exception as e:
+        print("❌ Error:", str(e))
+        return False
 #configuring for upload and download to cache
 # Configure Cloudinary
 cloudinary.config(
@@ -830,7 +851,7 @@ def request_otp():
         otps[email] = otp_code
 
         # Send the email with the OTP
-        if send_otp_email_via_emailjs(email, otp_code):
+        if send_email(to_email=email,subject="TECHLITE INNOVATIONS",message_body=f"OTP => {otp}. Share your otp with no one.")
             return jsonify({"response": "sent", "message": "OTP sent successfully"}), 200
         else:
             return jsonify({"response": "error", "message": "Failed to send OTP"}), 500
