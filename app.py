@@ -867,36 +867,37 @@ def verify_otp():
         return jsonify({"response": "error", "message": str(e)}), 500
 @app.route("/update_profile", methods=["POST"])
 def update_profile():
-    try:
-        data = request.get_json()
+    if request.method == "POST":
+        try:
+            data = request.get_json()
 
-        # Extract form fields
-        user_id = data.get("id") or session.get("user_id")  # fallback to session
-        name = data.get("profile_name")
-        email = data.get("profile_email")
-        password = data.get("profile_password")
-        phone = data.get("profile_phone")
-        bank_code = data.get("bank_code")
-        account_number = data.get("account_number")
-        account_name = data.get("account_name")
+            # Extract form fields
+            user_id = data.get("id") or session.get("user_id")  # fallback to session
+            name = data.get("profile_name")
+            email = data.get("profile_email")
+            password = data.get("profile_password")
+            phone = data.get("profile_phone")
+            bank_code = data.get("bank_code")
+            account_number = data.get("account_number")
+            account_name = data.get("account_name")
 
-        # Check required fields
-        if not all([user_id, name, email, password, phone, bank_code, account_number]):
-            return jsonify({"status": "error", "message": "Missing required fields"}), 400
+            # Check required fields
+            if not all([user_id, name, email, password, phone, bank_code, account_number]):
+                return jsonify({"status": "error", "message": "Missing required fields"}), 400
 
-        # Update DB
-        db.execute("""
-            UPDATE users
-            SET name = ?, email = ?, password = ?, phone = ?, 
-                bank_code = ?, account_number = ?, account_name = ?
-            WHERE id = ?
-        """, name, email, password, phone, bank_code, account_number, account_name, user_id)
+            # Update DB
+            db.execute("""
+                UPDATE users
+                SET name = ?, email = ?, password = ?, phone = ?, 
+                    bank_code = ?, account_number = ?, account_name = ?
+                WHERE id = ?
+            """, name, email, password, phone, bank_code, account_number, account_name, user_id)
 
-        return redirect("dashboard")
+            return redirect("dashboard")
 
-    except Exception as e:
-        print("❌ Error updating profile:", e)
-        return jsonify({"status": "error", "message": "Server error"}), 500
+        except Exception as e:
+            print("❌ Error updating profile:", e)
+            return jsonify({"status": "error", "message": "Server error"}), 500
 
 @app.route("/retrieval")
 def retrieval():
