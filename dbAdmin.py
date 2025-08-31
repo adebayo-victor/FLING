@@ -12,9 +12,9 @@ db = SQL(os.environ.get("DATABASE_URL"))
 
 try:
     # USERS TABLE
-    events = db.execute("SELECT * \
-                            FROM tickets JOIN users ON users.id = tickets.user_id \
-                            JOIN events ON events.id = tickets.event_id WHERE events.url_key =?", "QERURF8SV")
-    print(len(events))
+    db.execute("DELETE FROM users WHERE name = ?", 'Adebayo Oluseyi')
+    events = db.execute("SELECT name FROM users")
+
+    print(events, len(events))
 except Exception as e:
     print(f"❌ An error occurred during database setup: {e}")
