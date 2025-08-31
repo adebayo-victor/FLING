@@ -196,7 +196,7 @@
         bank_code: formData.get("bank"),
         account_number: formData.get("account_number")
       };
-      if (!trustHost.ariaChecked){
+      if (!trustHost.checked){
         document.querySelector('.alert-text').style.color = "yellow";
         document.querySelector('.alert-text').textContent = "Agree to terms and conditions.";
         return;
