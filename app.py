@@ -856,7 +856,7 @@ def verify_otp():
             if email in otps and otps[email] == otp:
                 del otps[email] # Delete the OTP after successful verification
                 # Store in session
-                session["user_id"] = user[0]["id"]
+                session["user_id"] = exist[0]["id"]
                 return jsonify({"response": "verified", "url": "/dashboard"}), 200
             else:
                 return jsonify({"response": "error", "message": "Invalid OTP"}), 401
