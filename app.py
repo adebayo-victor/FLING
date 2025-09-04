@@ -21,11 +21,7 @@ from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
 
-limiter = Limiter(
-    app,
-    key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
-)
+limiter = Limiter(app, key_func=get_remote_address, default_limits=["200 per day", "50 per hour"])
 #loading virtual environment
 load_dotenv()
 #second email alternative
