@@ -914,5 +914,15 @@ def retrieval():
 @app.route("/terms")
 def terms():
     return render_template("terms.html")
+# Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
+    target_url = "https://fling-2a4m.onrender.com"  # Example URL
+    request_interval = 5  # 5 minutes
+    
+    requester_thread = threading.Thread(
+        target=send_periodic_request,
+        args=(target_url, request_interval),
+        daemon=True
+    )
+    requester_thread.start()
     app.run(debug=True, port=1000 )
