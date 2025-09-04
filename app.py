@@ -751,7 +751,7 @@ def post_session():
             # 👇 Revenue sharing
             "subaccount": subaccount[0]['subaccount_code'],  # seller's subaccount
             "bearer": "subaccount",  # who bears Paystack fees (main or subaccount)
-            "transaction_charge": int(float(price) * 100 * 0.05)  # 5% cut for you
+            "transaction_charge": int(float(price) * 100 * 0.035)  # 5% cut for you
         }
 
 
