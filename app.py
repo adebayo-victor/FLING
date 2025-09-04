@@ -16,6 +16,16 @@ from google.cloud import storage
 from dotenv import load_dotenv
 import cloudinary
 import cloudinary.uploader
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+app = Flask(__name__)
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 #loading virtual environment
 load_dotenv()
 #second email alternative
@@ -111,7 +121,6 @@ def save_html(html_content: str, file_name: str, folder_path: str):
         print(f"❌ Error saving HTML: {e}")
 
 #Initiating app ...
-app = Flask(__name__)
 CORS(app)
 app.secret_key = os.environ.get("app_secret_key")
 db = SQL(os.environ.get("DATABASE_URL"))
