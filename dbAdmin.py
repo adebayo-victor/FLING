@@ -12,8 +12,9 @@ db = SQL(os.environ.get("DATABASE_URL"))
 
 try:
     # USERS TABLE
-    db.execute("DELETE FROM users WHERE name = ?", 'Adebayo Oluseyi')
-    events = db.execute("SELECT name FROM users")
+    db.execute("DELETE FROM tickets")
+    db.execute("DELETE FROM events")
+    db.execute("DELETE FROM users")
 
     print(events, len(events))
 except Exception as e:
