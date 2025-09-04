@@ -749,7 +749,9 @@ def post_session():
             "callback_url": "https://fling-2a4m.onrender.com/callback",
 
             # 👇 Revenue sharing
-            "split_code": "SPL_mHIgKuWipp"
+            "subaccount": subaccount[0]['subaccount_code'],  # seller's subaccount
+            "bearer": "subaccount",  # who bears Paystack fees (main or subaccount)
+            "transaction_charge": int(float(price) * 100 * 0.05)  # 5% cut for you
         }
 
 
