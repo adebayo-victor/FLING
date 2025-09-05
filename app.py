@@ -946,12 +946,12 @@ def send_periodic_request(url, minute):
         print("PREVENTING SLEEP BY TAPPING SHOUTING AND STUFF, AAAAAAAAAAAAH")
         make_http_request(url, method="GET")
         print("FLING IS AWAKE")
-        time.sleep(minute)
+        time.sleep(minute * 60)
 
 # Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
     target_url = "https://fling-2a4m.onrender.com"  # Example URL
-    request_interval = 1 # 5 minutes
+    request_interval = 1 # in minutes
     
     requester_thread = threading.Thread(
         target=send_periodic_request,
