@@ -942,11 +942,11 @@ def make_http_request(url, method="GET", data=None, headers=None):
 def send_periodic_request(url, minute):
     while True:
         make_http_request(url, method="GET")
-        time.sleep(minute)
+        time.sleep(minute * 60)
 # Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
     target_url = "https://fling-2a4m.onrender.com"  # Example URL
-    request_interval = 1  # 5 minutes
+    request_interval = 5 # 5 minutes
     
     requester_thread = threading.Thread(
         target=send_periodic_request,
