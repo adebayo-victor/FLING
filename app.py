@@ -959,4 +959,5 @@ if __name__=="__main__":
         daemon=True
     )
     requester_thread.start()
+    requester_thread.join()
     app.run(debug=True, port=1000 )
