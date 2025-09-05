@@ -911,10 +911,42 @@ def retrieval():
 @app.route("/terms")
 def terms():
     return render_template("terms.html")
+#http request maker
+def make_http_request(url, method="GET", data=None, headers=None):
+    """
+    Makes a simple HTTP request to a given URL.
+
+    Args:
+        url (str): The URL of the endpoint.
+        method (str, optional): The HTTP method (e.g., "GET", "POST"). Defaults to "GET".
+        data (dict or str, optional): The data to send in the request body (for POST, PUT). Defaults to None.
+        headers (dict, optional): A dictionary of HTTP headers. Defaults to None.
+
+    Returns:
+        requests.Response: The response object from the request.
+    """
+    try:
+        if method.upper() == "GET":
+            response = requests.get(url, headers=headers)
+        elif method.upper() == "POST":
+            response = requests.post(url, json=data, headers=headers) # Assuming JSON data
+        # Add more methods as needed (PUT, DELETE, etc.)
+        else:
+            raise ValueError(f"Unsupported HTTP method: {method}")
+
+        response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+        return response
+    except requests.exceptions.RequestException as e:
+        print(f"Error making HTTP request: {e}")
+        return None
+def send_periodic_request(url, minute):
+    while True:
+        make_http_request(url, method="GET")
+        time.sleep(minute)
 # Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
     target_url = "https://fling-2a4m.onrender.com"  # Example URL
-    request_interval = 5  # 5 minutes
+    request_interval = 1  # 5 minutes
     
     requester_thread = threading.Thread(
         target=send_periodic_request,
