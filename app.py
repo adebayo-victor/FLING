@@ -1,4 +1,6 @@
 import random
+import threading
+import time
 import csv
 import requests
 from datetime import datetime, timedelta, date, time
@@ -941,12 +943,15 @@ def make_http_request(url, method="GET", data=None, headers=None):
         return None
 def send_periodic_request(url, minute):
     while True:
+        print("PREVENTING SLEEP BY TAPPING SHOUTING AND STUFF, AAAAAAAAAAAAH")
         make_http_request(url, method="GET")
-        time.sleep(minute * 60)
+        print("FLING IS AWAKE")
+        time.sleep(minute)
+
 # Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
     target_url = "https://fling-2a4m.onrender.com"  # Example URL
-    request_interval = 5 # 5 minutes
+    request_interval = 1 # 5 minutes
     
     requester_thread = threading.Thread(
         target=send_periodic_request,
