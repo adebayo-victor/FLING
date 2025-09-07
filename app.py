@@ -525,7 +525,7 @@ def create_event(user_id):
                     f"Event Description: {description}. "
                     f"Event Time: {time}. "
                     f"Event Date: {date}. "
-                    f"Event Price: {price}. "
+                    f"Event Price: NGN{price}. "
                     f"Ticket Purchase Link: https://fling-2a4m.onrender.com/ticket_login/{event[0]['id']}. "
                     f"Image 1 Path: {img1_path}. "
                     f"Image 2 Path: {img2_path}. "
