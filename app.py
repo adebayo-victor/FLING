@@ -413,7 +413,8 @@ def dashboard():
         event_datetime = event['date']
         
         # Check if the event date is in the past
-        if datetime.now().date() >= event_datetime:
+        diff = datetime.now().date() >= event_datetime
+        if int(diff.days) >= 2:
             # This prevents directory traversal attacks
             # Use a single database transaction for the deletions
             db.execute("BEGIN TRANSACTION")
