@@ -878,14 +878,14 @@ def verify_otp():
 def update_profile():
     if request.method == "POST":
         try:
-            data = request.get_json()
-
+            data = request.form
+            print(data)
             # Extract form fields
             user_id = data.get("id") or session.get("user_id")  # fallback to session
-            name = data.get("profile_name")
-            email = data.get("profile_email")
-            password = data.get("profile_password")
-            phone = data.get("profile_phone")
+            name = data.get("name")
+            email = data.get("email")
+            password = data.get("password")
+            phone = data.get("phone")
             bank_code = data.get("bank_code")
             account_number = data.get("account_number")
             account_name = data.get("account_name")
@@ -906,8 +906,7 @@ def update_profile():
 
         except Exception as e:
             print("❌ Error updating profile:", e)
-            return jsonify({"status": "error", "message": "Server error"}), 500
-
+            return jsonify({"status": "error", "message": f"{e}"}), 500
 @app.route("/retrieval")
 def retrieval():
     return render_template("retrieval.html")
