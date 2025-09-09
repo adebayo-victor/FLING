@@ -1,6 +1,6 @@
 import random
 import threading
-import time
+import time as clock
 import csv
 import requests
 from datetime import datetime, timedelta, date, time
@@ -946,7 +946,7 @@ def send_periodic_request(url, minute):
         print("PREVENTING SLEEP BY TAPPING SHOUTING AND STUFF, AAAAAAAAAAAAH")
         make_http_request(url, method="GET")
         print("FLING IS AWAKE")
-        time.sleep(minute * 60)
+        clock.sleep(minute * 60)
 
 # Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
