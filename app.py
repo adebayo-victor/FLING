@@ -950,7 +950,7 @@ def send_periodic_request(url, minute):
 
 # Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
-    target_url = "https://fling-2a4m.onrender.com"  # Example URL
+    target_url = "https://events-and-appointments-manager.onrender.com"  # Example URL
     request_interval = 1 # in minutes
     
     requester_thread = threading.Thread(
