@@ -13,6 +13,8 @@ import os
 from werkzeug.utils import secure_filename
 import string
 import io
+from io import BytesIO
+import qrcode
 import xlsxwriter
 from google.cloud import storage
 from dotenv import load_dotenv
@@ -91,8 +93,110 @@ def upload_file_to_cloudinary(file, folder_name=None, custom_filename=None):
     except Exception as e:
         print(f"❌ Error uploading to Cloudinary: {e}")
         return None
+#this function upload pics that are not from the web form to the cloud
+def upload_file_to_cloudinary1(file_buffer, folder_name=None, custom_filename=None):
+    """
+    Uploads a file buffer to Cloudinary and returns the URL.
+    Optionally organizes the upload into a specified folder and uses a custom filename.
 
+    Args:
+        file_buffer (io.BytesIO): The in-memory file buffer to be uploaded.
+        folder_name (str): The name of the folder in Cloudinary to upload the file to.
+        custom_filename (str): A custom filename (public_id) for the uploaded file.
 
+    Returns:
+        str: The URL of the uploaded file, or None if the upload fails.
+    """
+    try:
+        # Create a dictionary for upload parameters
+        upload_params = {}
+
+        # If a folder is specified, add it to the parameters
+        if folder_name:
+            upload_params['folder'] = folder_name
+
+        # If a custom filename is specified, add it to the parameters.
+        if custom_filename:
+            # We remove the file extension to let Cloudinary handle it
+            public_id = os.path.splitext(custom_filename)[0]
+            upload_params['public_id'] = public_id
+
+        # Upload the file from the in-memory buffer with the specified parameters
+        # `resource_type` is set to 'auto' to handle various file types correctly.
+        result = cloudinary.uploader.upload(file_buffer, resource_type='auto', **upload_params)
+
+        return result.get('url')
+    except Exception as e:
+        print(f"❌ Error uploading to Cloudinary: {e}")
+        return None
+
+#i call her the qr cook
+def qr_cook(data, filename='qrcode.png', save_path='.'):
+    """
+    Creates a QR code from a given string and saves it as an image file.
+
+    Args:
+        data (str): The string data to encode in the QR code.
+        filename (str): The name of the file to save the QR code as.
+                        Defaults to 'qrcode.png'.
+        save_path (str): The directory where the QR code will be saved.
+                         Defaults to the current directory ('.').
+    """
+    # Create the QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    # Create an image from the QR code
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Ensure the save path exists
+    os.makedirs(save_path, exist_ok=True)
+
+    # Construct the full file path
+    full_path = os.path.join(save_path, filename)
+
+    # Save the image
+    img.save(full_path)
+    print(f"QR code successfully saved to: {full_path}")
+#this function makes the qr and saves it to the cloud
+def cloud_qr_cook(data, filename='qrcode.png'):
+    """
+    Creates a QR code from a given string and saves it as an image file.
+
+    Args:
+        data (str): The string data to encode in the QR code.
+        filename (str): The name of the file to save the QR code as.
+                        Defaults to 'qrcode.png'.
+        save_path (str): The directory where the QR code will be saved.
+                         Defaults to the current directory ('.').
+    """
+    # Create the QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    # Create an image from the QR code
+    img = qr.make_image(fill_color="black", back_color="white")
+    # Save the image to an in-memory byte buffer
+    img_buffer = BytesIO()
+    img.save(img_buffer, format='PNG')
+    img_buffer.seek(0)  # Rewind the buffer to the beginning
+    #saves to the cloud
+    url = upload_file_to_cloudinary1(img_buffer, custom_filename=filename )
+    print(url)
+    print(f"QR pic saved to the cloud as {url}")
+    return url
 #HTML file saving function, ahahahahahahahah, hell yeah
 def save_html(html_content: str, file_name: str, folder_path: str):
     """
@@ -784,7 +888,7 @@ def callback():
     reference = request.args.get('reference')
 
     headers = {
-        "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}"
+        "Authorization": f"Bearer {ALT_PAYSTACK_SECRET_KEY}"
     }
 
     res = requests.get(f"https://api.paystack.co/transaction/verify/{reference}", headers=headers)
@@ -797,9 +901,12 @@ def callback():
     metadata = payment_data['metadata']
 
     try:
+        #ticket code
         code = generate_code()
-        if db.execute("INSERT INTO tickets(user_id, event_id, ticket_code) VALUES(?,?,?)",metadata["user_id"], metadata["event_id"], code):
-            return render_template('success.html', home=f"https://fling-2a4m.onrender.com/dashboard")  # or return a JSON response
+        #qr making time woooohoooh, it saves it to the cloud
+        qr_path = cloud_qr_cook(f"{str(code)}", filename=f"{str(code)}")
+        if db.execute("INSERT INTO tickets(user_id, event_id, ticket_code, qr_code) VALUES(?,?,?,?)",metadata["user_id"], metadata["event_id"], code, qr_path):
+            return render_template('success.html', home=f"https://hhxsq4xb-1000.uks1.devtunnels.ms/dashboard")  # or return a JSON response
     except IndexError as e:
         return {"error": str(e)}
 @app.route("/validation/<key>", methods=["GET", "POST"])
@@ -913,6 +1020,10 @@ def retrieval():
 @app.route("/terms")
 def terms():
     return render_template("terms.html")
+@app.route("/scanner/<key>")
+def scanner(key):
+    event = db.execute("SELECT * FROM events WHERE url_key = ?", key)[0]
+    return render_template("scanner.html", event=event)
 #http request maker
 def make_http_request(url, method="GET", data=None, headers=None):
     """
