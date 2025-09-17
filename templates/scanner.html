@@ -253,11 +253,14 @@
                     rearCameraBtn.classList.add('active');
                 }
 
+                // Determine qrbox size dynamically based on window width
+                const qrboxSize = Math.min(600, window.innerWidth * 0.8);
+
                 html5QrCode.start(
                     { deviceId: { exact: cameraIdToUse } }, 
                     { 
                         fps: 10,
-                        qrbox: { width: 900, height: 900 }
+                        qrbox: { width: qrboxSize, height: qrboxSize }
                     },
                     onScanSuccess,
                     onScanFailure
@@ -357,5 +360,3 @@
     </script>
 </body>
 </html>
-
-
