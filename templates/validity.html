@@ -136,7 +136,7 @@
     <!--Switching to qr-->
     <!-- From Uiverse.io by Matilemak --> 
     <div class="flex float-left">
-        <a href="https://hhxsq4xb-1000.uks1.devtunnels.ms/scanner/{{event.url_key}}">
+        <a href="https://fling-2a4m.onrender.com/scanner/{{event.url_key}}">
             <button class="float-left animated-button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
                 <path
@@ -256,7 +256,7 @@
             async function validateCode(code) {
                 showMessage('Validating code...', 2000); // Show loading message
                 try {
-                    const response = await fetch('https://hhxsq4xb-1000.uks1.devtunnels.ms/validation/' + document.querySelector(".event-id").value, {
+                    const response = await fetch('https://fling-2a4m.onrender.com/validation/' + document.querySelector(".event-id").value, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ code: code, key: key })
