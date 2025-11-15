@@ -888,7 +888,7 @@ def callback():
     reference = request.args.get('reference')
 
     headers = {
-        "Authorization": f"Bearer {ALT_PAYSTACK_SECRET_KEY}"
+        "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}"
     }
 
     res = requests.get(f"https://api.paystack.co/transaction/verify/{reference}", headers=headers)
