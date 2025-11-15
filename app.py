@@ -800,7 +800,7 @@ def ask_ai():
         print(attendees)
         info = ""
         for row in attendees:
-            info+=(f"{row['name']}-{row['email']}-{row['price']}-{row['created_at']}")
+            info+=(f"{row['name']}-{row['email']}-₦{row['price']}-{row['created_at']}")
             print(info)
         # Combine with base instructions
         full_prompt = BASE_PROMPT + "\nprompt: " + user_prompt + "\nevent purchase data/ticket sales: " + info
