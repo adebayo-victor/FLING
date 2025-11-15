@@ -44,7 +44,7 @@
         {% if tickets %}
             {% for ticket in tickets %}
             <div class="p-3 bg-gray-700/60 rounded-lg shadow-sm border border-gray-600 hover:bg-gray-600/60 transition">
-              {{ticket.name}} - {{ticket.email}} - ${{ticket.price}}
+              {{ticket.name}} - {{ticket.email}} - ₦{{ticket.price}}
             </div>
             {% endfor %}
         {% else %}
