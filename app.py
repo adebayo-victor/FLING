@@ -906,7 +906,7 @@ def callback():
         #qr making time woooohoooh, it saves it to the cloud
         qr_path = cloud_qr_cook(f"{str(code)}", filename=f"{str(code)}")
         if db.execute("INSERT INTO tickets(user_id, event_id, ticket_code, qr_code) VALUES(?,?,?,?)",metadata["user_id"], metadata["event_id"], code, qr_path):
-            return render_template('success.html', home=f"https://hhxsq4xb-1000.uks1.devtunnels.ms/dashboard")  # or return a JSON response
+            return render_template('success.html', home=f"https://fling-2a4m.onrender.com/dashboard")  # or return a JSON response
     except IndexError as e:
         return {"error": str(e)}
 @app.route("/validation/<key>", methods=["GET", "POST"])
