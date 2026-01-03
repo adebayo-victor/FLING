@@ -226,7 +226,7 @@ def save_html(html_content: str, file_name: str, folder_path: str):
 #Initiating app ...
 CORS(app)
 app.secret_key = os.environ.get("app_secret_key")
-db = SQL(os.environ.get("DATABASE_URL"))
+db = SQL(os.environ.get("info.db"))
 #gemini prompt functions
 API_KEY = os.environ.get("gemini_key")
 if not API_KEY:
