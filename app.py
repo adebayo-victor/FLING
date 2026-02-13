@@ -517,6 +517,8 @@ def dashboard():
         event_datetime = event['date']
         
         # Check if the event date is in the past
+        format_of_input = "%Y-%m-%d %H:%M:%S"
+        event_datetime = datetime.strptime(event_datetime, format_of_input)
         diff = datetime.now().date() - event_datetime
         if int(diff.days) >= 2:
             # This prevents directory traversal attacks
