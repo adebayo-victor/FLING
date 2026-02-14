@@ -505,7 +505,7 @@ def dashboard():
     # Define a safe directory for deletion
     template_dir = os.path.join(os.getcwd(), "templates")
     
-    user = db.execute("SELECT * FROM users WHERE id = ?", user_id)[0]
+    user = db.execute("SELECT * FROM users WHERE id = ?", user_id)
     print(user)
     print(user)
     #this block checks all the events in search of events with no tickets, then delete it
