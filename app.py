@@ -507,6 +507,7 @@ def dashboard():
     
     user = db.execute("SELECT * FROM users WHERE id = ?", user_id)[0]
     print(user)
+    print(user)
     #this block checks all the events in search of events with no tickets, then delete it
     tickets = db.execute("SELECT * FROM tickets")
     all_events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
