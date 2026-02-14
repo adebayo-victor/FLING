@@ -518,8 +518,14 @@ def dashboard():
         
         # Check if the event date is in the past
         format_of_input = "%Y-%m-%d %H:%M:%S:%r"
-        event_datetime = datetime.strptime(event_datetime, format_string)
-        diff = datetime.strptime(datetime.now().date(), format_string) - event_datetime
+        event_datetime = datetime.strptime(event_datetime, format_string).date()
+        
+        # Get today's date
+        today = datetime.now().date()
+        
+        # Calculate difference
+        diff = today - event_datetime
+        #diff = datetime.strptime(datetime.now().date(), format_string) - event_datetime
         if int(diff.days) >= 2:
             # This prevents directory traversal attacks
             # Use a single database transaction for the deletions
