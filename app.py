@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 '''import random
+=======
+import random
+import threading
+import time as clock
+>>>>>>> e896eb3e5376e3e7b6caed4b35ff0bc0df2f0ec7
 import csv
 import requests
-from datetime import datetime, timedelta
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify, send_file
+from datetime import datetime, timedelta, date, time
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify, send_file, make_response
 import pandas as pd
 from flask_cors import CORS
 from cs50 import SQL
@@ -11,8 +17,190 @@ import os
 from werkzeug.utils import secure_filename
 import string
 import io
+from io import BytesIO
+import qrcode
 import xlsxwriter
+from google.cloud import storage
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+from flask import Flask
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+app = Flask(__name__)
+
+
+#loading virtual environment
+load_dotenv()
+#second email alternative
+POSTMAIL_URL = "https://postmail.invotes.com/send"
+ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN")
+#mail function
+def send_email(to_email, subject, message_body, reply_to="adebayovictorvicade@gmail.com"):
+    payload = {
+        "access_token": ACCESS_TOKEN,
+        "subject": subject,
+        "text": message_body,
+        "reply_to": reply_to,
+        "recipient": to_email
+    }
+
+    try:
+        response = requests.post(POSTMAIL_URL, data=payload)
+        print("✅ Status Code:", response.status_code)
+        print("📨 Response:", response.text)
+        return response.status_code == 200
+    except Exception as e:
+        print("❌ Error:", str(e))
+        return False
+#configuring for upload and download to cache
+# Configure Cloudinary
+cloudinary.config(
+  cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+  api_key=os.environ.get('CLOUDINARY_API_KEY'),
+  api_secret=os.environ.get('CLOUDINARY_API_SECRET')
+)
+
+# Cloudinary Upload Helper (updated to accept a custom filename)
+def upload_file_to_cloudinary(file, folder_name=None, custom_filename=None):
+    """
+    Uploads a file to Cloudinary and returns the URL.
+    Optionally organizes the upload into a specified folder and uses a custom filename.
+    """
+    try:
+        # Save the file to a temporary path to be uploaded
+        temp_path = os.path.join("/tmp", secure_filename(file.filename))
+        file.save(temp_path)
+
+        # Create a dictionary for upload parameters
+        upload_params = {}
+
+        # If a folder is specified, add it to the parameters
+        if folder_name:
+            upload_params['folder'] = folder_name
+
+        # If a custom filename is specified, add it to the parameters.
+        # Cloudinary will use this as the public_id.
+        if custom_filename:
+            # We remove the file extension from the custom filename to let Cloudinary handle it correctly.
+            public_id = os.path.splitext(custom_filename)[0]
+            upload_params['public_id'] = public_id
+
+        # Upload the file from the temporary location with the specified parameters
+        result = cloudinary.uploader.upload(temp_path, **upload_params)
+
+        # Clean up the temporary file
+        os.remove(temp_path)
+
+        return result['url']
+    except Exception as e:
+        print(f"❌ Error uploading to Cloudinary: {e}")
+        return None
+#this function upload pics that are not from the web form to the cloud
+def upload_file_to_cloudinary1(file_buffer, folder_name=None, custom_filename=None):
+    """
+    Uploads a file buffer to Cloudinary and returns the URL.
+    Optionally organizes the upload into a specified folder and uses a custom filename.
+
+    Args:
+        file_buffer (io.BytesIO): The in-memory file buffer to be uploaded.
+        folder_name (str): The name of the folder in Cloudinary to upload the file to.
+        custom_filename (str): A custom filename (public_id) for the uploaded file.
+
+    Returns:
+        str: The URL of the uploaded file, or None if the upload fails.
+    """
+    try:
+        # Create a dictionary for upload parameters
+        upload_params = {}
+
+        # If a folder is specified, add it to the parameters
+        if folder_name:
+            upload_params['folder'] = folder_name
+
+        # If a custom filename is specified, add it to the parameters.
+        if custom_filename:
+            # We remove the file extension to let Cloudinary handle it
+            public_id = os.path.splitext(custom_filename)[0]
+            upload_params['public_id'] = public_id
+
+        # Upload the file from the in-memory buffer with the specified parameters
+        # `resource_type` is set to 'auto' to handle various file types correctly.
+        result = cloudinary.uploader.upload(file_buffer, resource_type='auto', **upload_params)
+
+        return result.get('url')
+    except Exception as e:
+        print(f"❌ Error uploading to Cloudinary: {e}")
+        return None
+
+#i call her the qr cook
+def qr_cook(data, filename='qrcode.png', save_path='.'):
+    """
+    Creates a QR code from a given string and saves it as an image file.
+
+    Args:
+        data (str): The string data to encode in the QR code.
+        filename (str): The name of the file to save the QR code as.
+                        Defaults to 'qrcode.png'.
+        save_path (str): The directory where the QR code will be saved.
+                         Defaults to the current directory ('.').
+    """
+    # Create the QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    # Create an image from the QR code
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Ensure the save path exists
+    os.makedirs(save_path, exist_ok=True)
+
+    # Construct the full file path
+    full_path = os.path.join(save_path, filename)
+
+    # Save the image
+    img.save(full_path)
+    print(f"QR code successfully saved to: {full_path}")
+#this function makes the qr and saves it to the cloud
+def cloud_qr_cook(data, filename='qrcode.png'):
+    """
+    Creates a QR code from a given string and saves it as an image file.
+
+    Args:
+        data (str): The string data to encode in the QR code.
+        filename (str): The name of the file to save the QR code as.
+                        Defaults to 'qrcode.png'.
+        save_path (str): The directory where the QR code will be saved.
+                         Defaults to the current directory ('.').
+    """
+    # Create the QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    # Create an image from the QR code
+    img = qr.make_image(fill_color="black", back_color="white")
+    # Save the image to an in-memory byte buffer
+    img_buffer = BytesIO()
+    img.save(img_buffer, format='PNG')
+    img_buffer.seek(0)  # Rewind the buffer to the beginning
+    #saves to the cloud
+    url = upload_file_to_cloudinary1(img_buffer, custom_filename=filename )
+    print(url)
+    print(f"QR pic saved to the cloud as {url}")
+    return url
 #HTML file saving function, ahahahahahahahah, hell yeah
 def save_html(html_content: str, file_name: str, folder_path: str):
     """
@@ -39,20 +227,17 @@ def save_html(html_content: str, file_name: str, folder_path: str):
     except Exception as e:
         print(f"❌ Error saving HTML: {e}")
 
-#loading virtual environment
-load_dotenv()
 #Initiating app ...
-app = Flask(__name__)
 CORS(app)
 app.secret_key = os.environ.get("app_secret_key")
-db = SQL('sqlite:///info.db')
+db = SQL("sqlite:///info.db")
 #gemini prompt functions
 API_KEY = os.environ.get("gemini_key")
 if not API_KEY:
     print("Error: Gemini API key not found. Please set 'gemini_key' in your .env file.")
     exit()
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent"
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 #this function can also be used to generate other based on the prompt
 def generate_ticket_template(prompt):
     """
@@ -291,7 +476,7 @@ def register_signup():
         user = db.execute("SELECT * FROM users WHERE email = ?", email)
         if user:
             print("signup successful")
-            return {"response":"successful", "url":f"https://fling-jpfl.onrender.com/{user[0]['id']}"}
+            return {"response":"successful", "url":f"https://fling-2a4m.onrender.com/{user[0]['id']}"}
     return render_template("signup1.html")
 # Login / Register
 @app.route("/register_login", methods=["GET","POST"])
@@ -306,7 +491,7 @@ def register_login():
             print("login successful")
             # Store in session
             session["user_id"] = user[0]["id"]
-            return {"response": "successful", "url": "https://fling-jpfl.onrender.com/dashboard"}
+            return {"response": "successful", "url": "https://fling-2a4m.onrender.com/dashboard"}
         else:
             return {"response": "unsuccessful"}
 
@@ -318,12 +503,48 @@ def dashboard():
         return redirect("/register_login")
 
     user_id = session["user_id"]
+    format_string = "%Y-%m-%d"
+    
+    # Define a safe directory for deletion
+    template_dir = os.path.join(os.getcwd(), "templates")
+    
     user = db.execute("SELECT * FROM users WHERE id = ?", user_id)[0]
+    #this block checks all the events in search of events with no tickets, then delete it
+    tickets = db.execute("SELECT * FROM tickets")
+    all_events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
+    events = []
+    for event in all_events:
+        for ticket in tickets:
+            if event['id'] == ticket['event_id']:
+                events.append(event)
+    for event in events:
+        event_datetime = event['date']
+        
+        # Check if the event date is in the past
+        format_of_input = "%Y-%m-%d %H:%M:%S:%r"
+        event_datetime = datetime.strptime(event_datetime, format_string).date()
+        
+        # Get today's date
+        today = datetime.now().date()
+        
+        # Calculate difference
+        diff = today - event_datetime
+        #diff = datetime.strptime(datetime.now().date(), format_string) - event_datetime
+        if int(diff.days) >= 2:
+            # This prevents directory traversal attacks
+            # Use a single database transaction for the deletions
+            db.execute("BEGIN TRANSACTION")
+            db.execute("DELETE FROM events WHERE id = ?", event['id'])
+            db.execute("COMMIT")
+                
+    # Re-fetch the updated event list after deletions
     events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
+    
     tickets = db.execute(
-        "SELECT * FROM tickets JOIN events ON events.id = tickets.event_id WHERE user_id = ?", 
+        "SELECT * FROM tickets JOIN events ON events.id = tickets.event_id WHERE user_id = ?",
         user_id
     )
+    
     return render_template("my_dashboard.html", user=user, events=events, tickets=tickets)
 # --- New Route for Event Creation ---
 @app.route("/create_event/<int:user_id>", methods=["POST"])
@@ -335,6 +556,7 @@ def create_event(user_id):
     if request.method == "POST":
         try:
             # Retrieve form data
+            format_string = "%Y-%m-%d"
             title = request.form.get("event-title")
             date = request.form.get("event-date")
             time = request.form.get("event-time")
@@ -343,14 +565,35 @@ def create_event(user_id):
             price = request.form.get("ticket-price") # <-- New: Retrieve price from form
             user_prompt = request.form.get("ai-template-prompt")
             # Handle file uploads using your existing function
-            img1_path = handle_file_upload("image-1").get("path")
-            img2_path = handle_file_upload("image-2").get("path")
-            img3_path = handle_file_upload("image-3").get("path")
-            video_path = handle_file_upload("video").get("path")
+            img1_file = request.files.get("image-1")
+            img2_file = request.files.get("image-2")
+            img3_file = request.files.get("image-3")
+            video_file = request.files.get("video")
 
-            # Note: The `aiTemplatePrompt` and `status` keys from your description
-            # are not being stored in the `events` table because your provided schema
-            # does not include columns for them.
+            # Initialize paths as None
+            img1_path = None
+            img2_path = None
+            img3_path = None
+            video_path = None
+
+            # Upload the files using the helper function if they exist
+            if img1_file:
+                img1_path = upload_file_to_cloudinary(img1_file)
+                print(img1_path)
+            if img2_file:
+                img2_path = upload_file_to_cloudinary(img2_file)
+                print(img2_path)
+            if img3_file:
+                img3_path = upload_file_to_cloudinary(img3_file)
+                print(img3_path)
+            if video_file:
+                video_path = upload_file_to_cloudinary(video_file)
+
+
+            #ensuring the uploaded time is not a time from the past 
+            date_to_check = datetime.strptime(date, format_string)
+            if datetime.now() >= date_to_check:
+                return jsonify({"response":"Date is less than today's date"})
 
             # Ensure required fields are not empty
             if not all([title, date, time, location, description]):
@@ -379,20 +622,35 @@ def create_event(user_id):
                 #template generation
                 event = db.execute("SELECT * FROM events WHERE created_by = ? and url_key = ?", user_id, url_key)
                 # --- Main script execution ---
-                prompt = "You are seasoned UX/UI designer + front-end dev with 10+ years in event branding. Fluent in HTML/CSS & JS, emotionally intuitive, always priotizing elegance, responsiveness, and engagement. Loves solving layout challenges and follows modern design trends and tends to lean toward improving and making sure it matches the latest trend.Generate a responsive, modern and mobile-friendly HTML template for events.Use the uploaded pic for design like background and stuff,not directly in the template The template must include all necessary info for the event, styled with embedded CSS and easily customizable, generate just the requested template, nothing else and at the bottom of every website u design add a 'Powered by Techlite' at the end of every website you generate and add a button for buying the ticket for the event, by using jinja notation/syntax, add the file paths for the image and the video and add a alt argument link from an external source to complement it if it dosen't show via the src argument which are in the server's static folder, use jinja notation for the image and video paths only,change the backward slash to forward slashes , hard code the rest the info to be added are as follows:"
-                prompt += (f'''
-                    Current time(u need the current year for the footer):{datetime.now()}
-                    {user_prompt}
-                    event-title: {title},
-                    event-description:{description},
-                    event-time:{time},
-                    event-date:{date},
-                    event-price:{price},
-                    ticket-purchase-link:https://fling-jpfl.onrender.com/ticket_login/{event[0]['id']},
-                    img-1 path: {img1_path},
-                    img-1 path: {img2_path},
-                    img-1 path: {img3_path},
-                    video-path: {video_path}''')
+                prompt = (
+                    "You are a seasoned UX/UI designer + front-end developer with 10+ years of experience in event branding. "
+                    "Fluent in HTML, CSS, and JavaScript. You are emotionally intuitive, always prioritizing elegance, responsiveness, and engagement. "
+                    "You love solving layout challenges, follow modern design trends, and make sure every design matches the latest standard. "
+                    "Generate a responsive, modern, and mobile-friendly HTML template for an event. "
+                    "Do NOT include extra commentary—output only the HTML template. "
+                    "Use the uploaded picture for design inspiration (e.g., background styling) but do not insert it directly. "
+                    "The template must include all necessary event info, styled with embedded CSS, and be easily customizable. "
+                    "At the bottom of the page, add 'Powered by Techlite'. "
+                    "Include a 'Buy Ticket' button using Jinja notation for linking. "
+                    "Do NOT use media assets with 'none'. "
+                    "For images and video: use the provided static file paths (forward slashes only, no Jinja for paths). "
+                    "If an image/video fails to load, include an external alt source in the 'alt' attribute. "
+                    "Remove Jinja from href tags including the ticket purchase link. "
+                    "Hardcode all other event details. "
+                    f"Current year (for footer): {datetime.now().year}. "
+                    f"Event Title: {title}. "
+                    f"Event Description: {description}. "
+                    f"Event Time: {time}. "
+                    f"Event Date: {date}. "
+                    f"Event Price: NGN{price}. "
+                    f"Ticket Purchase Link: https://fling-2a4m.onrender.com/ticket_login/{event[0]['id']}. "
+                    f"Image 1 Path: {img1_path}. "
+                    f"Image 2 Path: {img2_path}. "
+                    f"Image 3 Path: {img3_path}. "
+                    f"Video Path: {video_path}. "
+                    f"Additional user instructions: {user_prompt}."
+                )
+
                 # Generate the ticket template
                 html_result = generate_ticket_template(prompt)
 
@@ -405,9 +663,9 @@ def create_event(user_id):
                     print("--- Just HTML Template ---")
                     html_result=html_result.replace('```', '')
                     print(html_result)
-                    save_html(html_result,f"{event[0]['title']}{event[0]['url_key']}.html",  'templates')
-                    db.execute("UPDATE events SET html = ? wHERE id = ?", f"{event[0]['title']}{event[0]['url_key']}.html", f"{event[0]['id']}")
-                    return jsonify([{"response":"successful", "event_link":f"https://fling-jpfl.onrender.com/view_event/{event[0]['url_key']}"}])
+                    #save_html(html_result,f"{event[0]['title']}{event[0]['url_key']}.html",  'templates')
+                    db.execute("UPDATE events SET html = ? wHERE id = ?", f"{html_result}", f"{event[0]['id']}")
+                    return jsonify([{"response":"successful", "event_link":f"https://fling-2a4m.onrender.com/view_event/{event[0]['url_key']}"}])
                 else:
                     print("Could not generate HTML template.")
             except Exception as e:
@@ -421,73 +679,103 @@ def create_event(user_id):
 def view_event(url_key):
     event = db.execute("SELECT * FROM events WHERE url_key = ?", url_key)
     if event:
-        return render_template(event[0]['html'])
+        html_content = event[0]['html']
+        # Return the raw HTML with the correct Content-Type header
+        response = make_response(html_content)
+        response.headers['Content-Type'] = 'text/html'
+        return response
 @app.route("/get_user_events/<int:id>")
 def get_user_events(id):
     events = db.execute("SELECT * FROM events WHERE created_by = ?", id)
     if events:
+        # Iterate through the list of events to format the date and time keys
+        for event in events:
+            # Convert the 'date' key to a string
+            if 'date' in event and isinstance(event['date'], date):
+                event['date'] = event['date'].strftime("%Y-%m-%d")
+
+            # Convert the 'time' key to a string
+            if 'time' in event and isinstance(event['time'], time):
+                event['time'] = event['time'].strftime("%H:%M:%S")
+
+            # Convert the 'created_at' key to a string
+            if 'created_at' in event and isinstance(event['created_at'], datetime):
+                event['created_at'] = event['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+
         return jsonify(events)
     else:
         return jsonify([])
+
 @app.route("/track_events/<key>")
 def track_events(key):
     event = db.execute("SELECT * FROM events JOIN users ON events.created_by = users.id WHERE url_key = ?", key)[0]
-    tickets = db.execute("SELECT * FROM users JOIN events ON users.id = events.created_by JOIN tickets ON users.id=tickets.user_id WHERE url_key =?", key)
+    tickets = db.execute("SELECT * FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id=users.id WHERE url_key =?", key)
     return render_template("track_events.html", tickets=tickets, event=event)
 
-@app.route("/sales_data/<id>")
+@app.route("/sales_data/<int:id>")
 def sales_data(id):
+    """
+    Retrieves and calculates daily ticket sales data for a given event ID.
+    """
     try:
         chart_data = {"x": [], "y": []}
         today = datetime.now()
-        format_string = "%Y-%m-%d %H:%M:%S"
 
-        # Get event creation date
-        event_created_date = db.execute(
-            """SELECT events.created_at 
-            FROM tickets 
-            JOIN events ON events.id = tickets.event_id 
-            JOIN users ON users.id = tickets.user_id 
-            WHERE events.id = ?""", id
-        )[0]['created_at']
-        datetime_object = datetime.strptime(event_created_date, format_string)
+        # 1. Get the event's creation date directly from the events table.
+        # This will work even if there are no tickets yet.
+        event = db.execute("SELECT created_at FROM events WHERE id = ?", id)
+        if not event:
+            # If the event itself doesn't exist, return empty data.
+            return jsonify({"x": [], "y": []})
 
-        # Get tickets
-        tickets = db.execute(
-            """SELECT events.created_at 
-            FROM tickets 
-            JOIN events ON events.id = tickets.event_id 
-            JOIN users ON users.id = tickets.user_id 
-            WHERE events.id = ?""",
-        id)
+        event_created_date_str = event[0]['created_at']
+        datetime_object = event_created_date_str
 
+        # 2. Get all tickets for the event in a single query.
+        tickets = db.execute("SELECT created_at FROM tickets WHERE event_id = ?", id)
+        
         # Build daily sales counts
         day_diff = (today - datetime_object).days
-        for i in range(day_diff + 1):  # include today
-            day = (datetime_object + timedelta(days=i)).date()
-            chart_data["x"].append(day.strftime("%Y-%m-%d"))
+        
+        # Create a dictionary to store sales counts by date for efficient lookup
+        daily_sales = {}
+        for ticket in tickets:
+            ticket_date = ticket['created_at']
+            date_str = ticket_date.strftime("%Y-%m-%d")
+            daily_sales[date_str] = daily_sales.get(date_str, 1) + 1
 
-            # Count tickets created on this day
-            sales_count = sum(
-                1 for ticket in tickets
-                if datetime.strptime(ticket['created_at'], format_string).date() == day
-            )
-            chart_data["y"].append(sales_count)
-        print(chart_data)
-        return chart_data
+        # Populate the final chart data with all dates since creation
+        for i in range(day_diff + 1):
+            day = (datetime_object + timedelta(days=i)).date()
+            day_str = day.strftime("%Y-%m-%d")
+            
+            chart_data["x"].append(day_str)
+            # Use the dictionary to get the count, defaulting to 0 if no sales
+            chart_data["y"].append(daily_sales.get(day_str, 0))
+            
+        return jsonify(chart_data)
+        
     except IndexError:
-        return {"x": [], "y": []}
+        # This catches if the event doesn't exist.
+        return jsonify({"x": [], "y": []})
+    except Exception as e:
+        print(f"Error in sales_data route: {e}")
+        return jsonify({"error": "An internal error occurred"}), 500
 
 
 @app.route("/search_attendees", methods=["POST"])
 def search_attendees():
     data = request.get_json()
     query = data.get("query", "").lower()
+    print(data)
 
     filtered = []
-    attendees = db.execute("SELECT users.name, users.email, events.price \
+    attendees = db.execute("SELECT * \
                             FROM tickets JOIN users ON users.id = tickets.user_id \
-                            JOIN events ON events.id = tickets.event_id")
+                            JOIN events ON events.id = tickets.event_id WHERE events.url_key =?", data['key'])
+    print(attendees)
+    print(len(attendees))
+                            
 
     for attendee in attendees:
         if (query in attendee["name"].lower() 
@@ -498,7 +786,6 @@ def search_attendees():
                 "email": attendee["email"],
                 "price": attendee["price"]
             })
-
     return jsonify({"attendees": filtered})
 @app.route("/ask_ai", methods=["POST"])
 def ask_ai():
@@ -507,6 +794,7 @@ def ask_ai():
         print(data)
         user_prompt = data.get("prompt")
         event_id = data.get("event_id")
+        key = data.get("key")
         BASE_PROMPT = """
         You are an event sales assistant. you engage the user provide advice and insight based on the event data and talk about other things 
         Answer ONLY based on the provided database data. 
@@ -516,11 +804,16 @@ def ask_ai():
         """
 
         #tickets
-        data = db.execute("SELECT users.name, users.email, events.price, tickets.created_at  FROM tickets JOIN events ON tickets.event_id = events.id JOIN users ON tickets.user_id = users.id WHERE events.id = ?", event_id)
+        
+        attendees = db.execute("SELECT users.name, users.email, events.price, tickets.created_at \
+            FROM tickets JOIN users ON users.id = tickets.user_id \
+            JOIN events ON events.id = tickets.event_id WHERE events.url_key = ?", key)
         print(data)
+        print(attendees)
         info = ""
-        for row in data:
-            info+=(f"{row['name']}-{row['email']}-{row['price']}-{row['created_at']}")
+        for row in attendees:
+            info+=(f"{row['name']}-{row['email']}-₦{row['price']}-{row['created_at']}")
+            print(info)
         # Combine with base instructions
         full_prompt = BASE_PROMPT + "\nprompt: " + user_prompt + "\nevent purchase data/ticket sales: " + info
         #full_prompt = full_prompt.join(info)
@@ -578,12 +871,12 @@ def post_session():
             "email": email,
             "amount": int(float(price) * 100),  # Paystack wants kobo
             "metadata": metadata,
-            "callback_url": "https://fling-jpfl.onrender.com/callback",
+            "callback_url": "https://fling-2a4m.onrender.com/callback",
 
             # 👇 Revenue sharing
             "subaccount": subaccount[0]['subaccount_code'],  # seller's subaccount
             "bearer": "subaccount",  # who bears Paystack fees (main or subaccount)
-            "transaction_charge": int(float(price) * 100 * 0.05)  # 5% cut for you
+            "transaction_charge": int(float(price) * 100 * 0.035)  # 5% cut for you
         }
 
 
@@ -620,9 +913,12 @@ def callback():
     metadata = payment_data['metadata']
 
     try:
+        #ticket code
         code = generate_code()
-        if db.execute("INSERT INTO tickets(user_id, event_id, ticket_code) VALUES(?,?,?)",metadata["user_id"], metadata["event_id"], code):
-            return render_template('success.html', home=f"https://fling-jpfl.onrender.com/dashboard")  # or return a JSON response
+        #qr making time woooohoooh, it saves it to the cloud
+        qr_path = cloud_qr_cook(f"{str(code)}", filename=f"{str(code)}")
+        if db.execute("INSERT INTO tickets(user_id, event_id, ticket_code, qr_code) VALUES(?,?,?,?)",metadata["user_id"], metadata["event_id"], code, qr_path):
+            return render_template('success.html', home=f"https://fling-2a4m.onrender.com/dashboard")  # or return a JSON response
     except IndexError as e:
         return {"error": str(e)}
 @app.route("/validation/<key>", methods=["GET", "POST"])
@@ -666,7 +962,7 @@ def request_otp():
         otps[email] = otp_code
 
         # Send the email with the OTP
-        if send_otp_email_via_emailjs(email, otp_code):
+        if send_email(to_email=email,subject="TECHLITE INNOVATIONS",message_body=f"OTP => {otp_code}. Share your otp with no one."):
             return jsonify({"response": "sent", "message": "OTP sent successfully"}), 200
         else:
             return jsonify({"response": "error", "message": "Failed to send OTP"}), 500
@@ -688,7 +984,7 @@ def verify_otp():
             if email in otps and otps[email] == otp:
                 del otps[email] # Delete the OTP after successful verification
                 # Store in session
-                session["user_id"] = user[0]["id"]
+                session["user_id"] = exist[0]["id"]
                 return jsonify({"response": "verified", "url": "/dashboard"}), 200
             else:
                 return jsonify({"response": "error", "message": "Invalid OTP"}), 401
@@ -699,41 +995,85 @@ def verify_otp():
         return jsonify({"response": "error", "message": str(e)}), 500
 @app.route("/update_profile", methods=["POST"])
 def update_profile():
-    try:
-        data = request.get_json()
+    if request.method == "POST":
+        try:
+            data = request.form
+            print(data)
+            # Extract form fields
+            user_id = data.get("id") or session.get("user_id")  # fallback to session
+            name = data.get("name")
+            email = data.get("email")
+            password = data.get("password")
+            phone = data.get("phone")
+            bank_code = data.get("bank_code")
+            account_number = data.get("account_number")
+            account_name = data.get("account_name")
 
-        # Extract form fields
-        user_id = data.get("id") or session.get("user_id")  # fallback to session
-        name = data.get("name")
-        email = data.get("email")
-        password = data.get("password")
-        phone = data.get("phone")
-        bank_code = data.get("bank_code")
-        account_number = data.get("account_number")
-        account_name = data.get("account_name")
+            # Check required fields
+            if not all([user_id, name, email, password, phone, bank_code, account_number]):
+                return jsonify({"status": "error", "message": "Missing required fields"}), 400
 
-        # Check required fields
-        if not all([user_id, name, email, password, phone, bank_code, account_number]):
-            return jsonify({"status": "error", "message": "Missing required fields"}), 400
+            # Update DB
+            db.execute("""
+                UPDATE users
+                SET name = ?, email = ?, password = ?, phone = ?, 
+                    bank_code = ?, account_number = ?, account_name = ?
+                WHERE id = ?
+            """, name, email, password, phone, bank_code, account_number, account_name, user_id)
 
-        # Update DB
-        db.execute("""
-            UPDATE users
-            SET name = ?, email = ?, password = ?, phone = ?, 
-                bank_code = ?, account_number = ?, account_name = ?
-            WHERE id = ?
-        """, name, email, password, phone, bank_code, account_number, account_name, user_id)
+            return redirect("dashboard")
 
-        return jsonify({"status": "success", "message": "Profile updated successfully!"})
-
-    except Exception as e:
-        print("❌ Error updating profile:", e)
-        return jsonify({"status": "error", "message": "Server error"}), 500
-
+        except Exception as e:
+            print("❌ Error updating profile:", e)
+            return jsonify({"status": "error", "message": f"{e}"}), 500
 @app.route("/retrieval")
 def retrieval():
     return render_template("retrieval.html")
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+@app.route("/scanner/<key>")
+def scanner(key):
+    event = db.execute("SELECT * FROM events WHERE url_key = ?", key)[0]
+    return render_template("scanner.html", event=event)
+#http request maker
+def make_http_request(url, method="GET", data=None, headers=None):
+    """
+    Makes a simple HTTP request to a given URL.
+
+    Args:
+        url (str): The URL of the endpoint.
+        method (str, optional): The HTTP method (e.g., "GET", "POST"). Defaults to "GET".
+        data (dict or str, optional): The data to send in the request body (for POST, PUT). Defaults to None.
+        headers (dict, optional): A dictionary of HTTP headers. Defaults to None.
+
+    Returns:
+        requests.Response: The response object from the request.
+    """
+    try:
+        if method.upper() == "GET":
+            response = requests.get(url, headers=headers)
+        elif method.upper() == "POST":
+            response = requests.post(url, json=data, headers=headers) # Assuming JSON data
+        # Add more methods as needed (PUT, DELETE, etc.)
+        else:
+            raise ValueError(f"Unsupported HTTP method: {method}")
+
+        response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+        return response
+    except requests.exceptions.RequestException as e:
+        print(f"Error making HTTP request: {e}")
+        return None
+def send_periodic_request(url, minute):
+    while True:
+        print("PREVENTING SLEEP BY TAPPING SHOUTING AND STUFF, AAAAAAAAAAAAH")
+        make_http_request(url, method="GET")
+        print("FLING IS AWAKE")
+        clock.sleep(minute * 60)
+
+# Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
+<<<<<<< HEAD
     app.run(debug=True, port=1000 )'''
 
 
@@ -1808,6 +2148,8 @@ def send_periodic_request(url, minute):
 
 # Start the periodic task in a separate thread when the app starts
 if __name__=="__main__":
+=======
+>>>>>>> e896eb3e5376e3e7b6caed4b35ff0bc0df2f0ec7
     target_url = "https://events-and-appointments-manager.onrender.com"  # Example URL
     request_interval = 1 # in minutes
     
@@ -1817,4 +2159,8 @@ if __name__=="__main__":
         daemon=True
     )
     requester_thread.start()
+<<<<<<< HEAD
     app.run(debug=True, port=1000 )
+=======
+    app.run(debug=True, port=1000 )
+>>>>>>> e896eb3e5376e3e7b6caed4b35ff0bc0df2f0ec7

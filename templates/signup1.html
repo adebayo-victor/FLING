@@ -6,6 +6,7 @@
   <title>Fling - Sign Up</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="{{ url_for('static', filename='assets/img/fling_icon.png') }}" sizes="32x32" type="image/png">
   <style>
     :root {
       --rich-black: #000F0B;
@@ -134,6 +135,18 @@
         <input type="text" id="account_number" name="account_number" maxlength="10" class="fling-input" required>
       </div>
 
+      <div class="flex items-center space-x-2 mt-4">
+        <input type="checkbox" id="trustHost" name="trustHost"
+          class="w-4 h-4 text-green-500 bg-gray-800 border-gray-600 rounded focus:ring-green-500">
+        <label for="trustHost" class="text-sm text-gray-300">
+          I agree to the 
+          <a href="https://fling-2a4m.onrender.com/terms" target="_blank" class="text-blue-400 underline hover:text-blue-300">
+            Terms & Conditions
+          </a>
+        </label>
+      </div>
+      
+
       <button type="submit" class="fling-btn">Sign Up</button>
     </form>
 
@@ -143,7 +156,7 @@
     <!-- Link -->
     <div class="mt-8 text-center text-sm text-[var(--pistachio)]">
       Already have an account? 
-      <a href="https://fling-jpfl.onrender.com/register_login"
+      <a href="https://fling-2a4m.onrender.com/register_login"
          class="text-caribbean-green hover:underline font-semibold">Log In</a>
     </div>
   </div>
@@ -152,7 +165,7 @@
     // Populate bank dropdown
     async function loadBanks() {
       try {
-        const res = await fetch("https://fling-jpfl.onrender.com/banks");
+        const res = await fetch("https://fling-2a4m.onrender.com/banks");
         const banks = await res.json();
         const select = document.getElementById("bank");
 
@@ -170,6 +183,7 @@
     loadBanks();
 
     // Handle signup form
+    const trustHost = document.querySelector("#trustHost")
     document.getElementById("signup-form").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -182,7 +196,11 @@
         bank_code: formData.get("bank"),
         account_number: formData.get("account_number")
       };
-
+      if (!trustHost.checked){
+        document.querySelector('.alert-text').style.color = "yellow";
+        document.querySelector('.alert-text').textContent = "Agree to terms and conditions.";
+        return;
+      }
       document.querySelector('.alert-text').style.color = "yellow";
       document.querySelector('.alert-text').textContent = "Loading ...";
 

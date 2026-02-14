@@ -1,0 +1,547 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BattleOmega [Game Launch] - The Ultimate Arena Awaits</title>
+    <!-- Google Fonts for Typography: Ornate serif for titles, clean serif for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Merriweather:wght@300;400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for a customizable and cohesive color palette */
+        :root {
+            --color-deep-indigo: #1a1a2e; /* Base dark background, inspired by mystery/night */
+            --color-dark-terracotta: #6b2e2a; /* Deep, rich red for accents and buttons */
+            --color-warm-desert-sand: #e0d8b0; /* Light, warm color for main body text */
+            --color-elegant-gold: #b8860b; /* Golden accents for titles and highlights */
+            --color-sapphire-blue: #2a52be; /* Complementary blue for section headers */
+            --color-emerald-green: #0a714a; /* Accent green for dividers/active states */
+            --color-text-light: #fdfaf6; /* Pure white-ish for high contrast */
+            --color-text-muted: #c0b283; /* Slightly muted text for less emphasis */
+
+            --font-title: 'Playfair Display', 'Cinzel', serif; /* Elegant serif for headings */
+            --font-body: 'Merriweather', serif; /* Readable serif for paragraphs */
+            --font-button: 'Merriweather', sans-serif; /* Cleaner sans-serif for interactive elements */
+        }
+
+        /* Base Body Styles */
+        body {
+            margin: 0;
+            font-family: var(--font-body);
+            color: var(--color-text-light);
+            background: var(--color-deep-indigo);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            overflow-x: hidden; /* Prevents horizontal scroll from subtle animations */
+            -webkit-font-smoothing: antialiased; /* Better font rendering */
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Subtle Background Animation: Evokes shifting sand dunes or epic vastness */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(50, 20, 30, 0.9) 50%, rgba(26, 26, 46, 0.9) 100%), /* Dark gradient overlay */
+                url('{{ url_for("static", filename="images/event_background_texture.jpg") }}') no-repeat center center / cover; /* Example background texture (worn parchment/desert patterns) */
+            opacity: 0.8; /* Subtle transparency */
+            z-index: -1; /* Puts it behind content */
+            animation: backgroundShift 20s infinite alternate ease-in-out;
+            will-change: transform, background-position; /* Optimize animation performance */
+        }
+
+        @keyframes backgroundShift {
+            0% {
+                transform: translateX(0) translateY(0);
+                background-position: 0% 0%;
+            }
+            100% {
+                transform: translateX(5%) translateY(5%); /* Gentle, slow movement */
+                background-position: 100% 100%;
+            }
+        }
+
+        /* General Container for Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1; /* Ensures content is above the animated background */
+        }
+
+        /* Header Section: Hero Area */
+        header {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(0, 0, 0, 0.3); /* Semi-transparent overlay for text readability */
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            border-radius: 10px; /* Soft edges */
+            position: relative;
+            overflow: hidden;
+        }
+
+        header h1 {
+            font-family: var(--font-title);
+            font-size: 4em;
+            color: var(--color-elegant-gold);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7);
+            letter-spacing: 3px;
+            animation: fadeInScale 1.8s ease-out forwards; /* Elegant fade-in and scale */
+            opacity: 0;
+        }
+
+        header p {
+            font-family: var(--font-body);
+            font-size: 1.8em;
+            color: var(--color-warm-desert-sand);
+            margin-top: 0;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 2.2s ease-out forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+        }
+
+        /* Ticket Purchase Button */
+        .btn-ticket {
+            display: inline-block;
+            background: var(--color-dark-terracotta);
+            color: var(--color-text-light);
+            padding: 20px 40px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: var(--font-button);
+            font-size: 1.3em;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth, springy transition */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--color-dark-terracotta);
+            animation: fadeInMoveUp 1.8s ease-out forwards;
+            animation-delay: 1s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .btn-ticket:hover {
+            background: var(--color-elegant-gold);
+            color: var(--color-deep-indigo);
+            border-color: var(--color-elegant-gold);
+            transform: translateY(-5px) scale(1.05); /* Lifts and slightly enlarges */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            cursor: pointer;
+        }
+
+        /* Generic Section Styling */
+        section {
+            padding: 60px 30px;
+            margin-bottom: 50px;
+            background: rgba(10, 10, 20, 0.7); /* Darker, slightly transparent background for content */
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.35);
+            position: relative;
+            overflow: hidden;
+            opacity: 0; /* Start hidden for scroll-triggered animation */
+            transform: translateY(40px);
+            transition: opacity 1s ease-out, transform 1s ease-out; /* Smooth fade-in on scroll */
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-family: var(--font-title);
+            font-size: 3.2em;
+            color: var(--color-sapphire-blue);
+            text-align: center;
+            margin-bottom: 50px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+            position: relative;
+            padding-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--color-emerald-green);
+            border-radius: 2px;
+        }
+
+        /* Event Details Section */
+        .event-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .detail-item {
+            background: rgba(50, 20, 30, 0.85); /* Hint of dark terracotta */
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            flex: 1 1 auto; /* Allows items to grow/shrink */
+            min-width: 280px;
+            max-width: 380px;
+            transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+            border: 1px solid rgba(184, 134, 11, 0.3); /* Subtle gold border */
+        }
+
+        .detail-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(70, 30, 40, 0.95);
+        }
+
+        .detail-item strong {
+            display: block;
+            font-size: 1.8em;
+            color: var(--color-elegant-gold);
+            margin-bottom: 15px;
+            font-family: var(--font-title);
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item span {
+            font-size: 1.2em;
+            color: var(--color-warm-desert-sand);
+        }
+
+        /* About Event Section */
+        .about-event p {
+            font-size: 1.15em;
+            color: var(--color-text-muted);
+            margin-bottom: 25px;
+            text-align: justify;
+            max-width: 900px; /* Constrain width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        /* Media Gallery Section */
+        .media-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .media-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(184, 134, 11, 0.25);
+            background: rgba(0,0,0,0.5); /* Placeholder background */
+        }
+
+        .media-item img,
+        .media-item video {
+            width: 100%;
+            height: 280px; /* Consistent height for media items */
+            object-fit: cover; /* Ensures images/videos fill the space without distortion */
+            display: block;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .media-item:hover img,
+        .media-item:hover video {
+            transform: scale(1.08); /* Subtle zoom effect on hover */
+        }
+
+        .media-item .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(var(--color-dark-terracotta-rgb), 0.7); /* Use RGB for transparency */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            font-family: var(--font-button);
+            font-weight: bold;
+            color: var(--color-text-light);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            font-size: 1.3em;
+            pointer-events: none; /* Allows clicks to pass through to underlying media */
+        }
+
+        /* Define RGB for transparent usage */
+        :root {
+            --color-dark-terracotta-rgb: 107, 46, 42;
+        }
+
+        .media-item:hover .overlay {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 50px 20px;
+            margin-top: 80px;
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--color-text-muted);
+            font-size: 0.95em;
+            border-top: 1px solid rgba(184, 134, 11, 0.15); /* Subtle border with gold tint */
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        footer a {
+            color: var(--color-elegant-gold);
+            text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+
+        footer a:hover {
+            color: var(--color-sapphire-blue);
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInMoveUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design: Adapt for smaller screens */
+        @media (max-width: 992px) {
+            header h1 {
+                font-size: 3.2em;
+            }
+
+            header p {
+                font-size: 1.5em;
+            }
+
+            .btn-ticket {
+                padding: 18px 35px;
+                font-size: 1.1em;
+            }
+
+            h2 {
+                font-size: 2.5em;
+            }
+
+            .detail-item {
+                min-width: 220px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.8em;
+                letter-spacing: 2px;
+            }
+
+            header p {
+                font-size: 1.3em;
+                margin-bottom: 30px;
+            }
+
+            .btn-ticket {
+                padding: 16px 30px;
+                font-size: 1em;
+            }
+
+            h2 {
+                font-size: 2.2em;
+                margin-bottom: 40px;
+            }
+
+            .detail-item {
+                flex-basis: 100%; /* Stack items vertically */
+                max-width: none;
+            }
+
+            .media-gallery {
+                grid-template-columns: 1fr; /* Single column layout */
+            }
+
+            .media-item img,
+            .media-item video {
+                height: 250px;
+            }
+
+            section {
+                padding: 40px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2.2em;
+                letter-spacing: 1px;
+            }
+
+            header p {
+                font-size: 1.1em;
+            }
+
+            .btn-ticket {
+                padding: 14px 25px;
+                font-size: 0.9em;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .detail-item strong {
+                font-size: 1.6em;
+            }
+
+            .detail-item span {
+                font-size: 1.05em;
+            }
+
+            .media-item img,
+            .media-item video {
+                height: 200px;
+            }
+
+            footer {
+                padding: 30px 15px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="container">
+        <h1>BattleOmega [Game Launch]</h1>
+        <p>The Ultimate Arena Awaits.</p>
+        <a href="{{ 'https://fling-2a4m.onrender.com/ticket_login/3' }}" class="btn-ticket">Secure Your Place - {{ 1000 }}$</a>
+    </header>
+
+    <main class="container">
+        <section id="event-details">
+            <h2>Event Essentials</h2>
+            <div class="event-details">
+                <div class="detail-item">
+                    <strong>Date</strong>
+                    <span>2025-08-30</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Time</strong>
+                    <span>02:01 <small>(UTC)</small></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Price</strong>
+                    <span>{{ 1000 }}$</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="about-event">
+            <h2>About BattleOmega</h2>
+            <div class="about-event">
+                <p>Step into a futuristic world where chaos reigns and only the strongest survive. In BattleOmega, you are not just a player—you are a contender in the universe's most brutal and celebrated combat sport. Pit your skills against other elite fighters in a high-stakes, real-time arena where victory is earned through strategy, speed, and sheer will.</p>
+                <p>Choose your hero from a roster of diverse warriors, each with unique abilities and a backstory that drives their ambition. Customize your gear, upgrade your weapons, and master a combat style that’s all your own. Whether you prefer to strike from the shadows, unleash a storm of elemental fury, or stand your ground as an unbreakable juggernaut, the path to glory is yours to forge.</p>
+                <p>Engage in a variety of game modes, from intense one-on-one duels to chaotic team-based brawls. Climb the global leaderboards, earn legendary loot, and prove that you have what it takes to be crowned the BattleOmega champion. The roar of the crowd is your soundtrack, and the fate of the arena rests in your hands.</p>
+                <p>Are you ready to fight for your legacy?</p>
+            </div>
+        </section>
+
+        <section id="media-showcase">
+            <h2>Glimpse the Arena</h2>
+            <div class="media-gallery">
+                <div class="media-item">
+                    <img src="{{ url_for('static', filename='images/event_hero.jpg') }}" 
+                         alt="A futuristic warrior in dynamic pose, ready for battle. If this image fails to load, please visit our official BattleOmega website for visuals.">
+                    <div class="overlay">Hero Concept</div>
+                </div>
+                <div class="media-item">
+                    <video controls poster="{{ url_for('static', filename='images/video_poster.jpg') }}">
+                        <source src="{{ url_for('static', filename='videos/event_trailer.mp4') }}" type="video/mp4">
+                        Your browser does not support the video tag. Please visit our official website to watch the full game trailer.
+                    </video>
+                    <div class="overlay">Game Trailer</div>
+                </div>
+                <div class="media-item">
+                    <img src="{{ url_for('static', filename='images/event_gallery_1.jpg') }}" 
+                         alt="An intense in-game screenshot showcasing BattleOmega's vibrant combat. If this image fails to load, please visit our official BattleOmega website for more screenshots.">
+                    <div class="overlay">Action Shot</div>
+                </div>
+                <div class="media-item">
+                    <img src="{{ url_for('static', filename='images/event_gallery_2.jpg') }}" 
+                         alt="Detailed view of BattleOmega's character customization screen. If this image fails to load, please visit our official BattleOmega website for character details.">
+                    <div class="overlay">Character Roster</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 BattleOmega. All rights reserved.</p>
+        <p>Powered by <a href="#" target="_blank" rel="noopener noreferrer">Techlite</a></p>
+    </footer>
+
+    <script>
+        // JavaScript for subtle fade-in animation on scroll for sections
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+
+            const observerOptions = {
+                root: null, /* relative to the viewport */
+                rootMargin: '0px',
+                threshold: 0.2 /* Trigger when 20% of the section is visible */
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Stop observing once visible
+                    }
+                });
+            }, observerOptions);
+
+            // Observe each section
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Immediately show the first section if it's already in view on load
+            // This prevents a delay for content already above the fold.
+            const firstSection = document.querySelector('section');
+            if (firstSection && firstSection.getBoundingClientRect().top < window.innerHeight) {
+                firstSection.classList.add('visible');
+            }
+        });
+    </script>
+</body>
+</html>
