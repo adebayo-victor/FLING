@@ -533,9 +533,8 @@ def dashboard():
         if int(diff.days) >= 2:
             # This prevents directory traversal attacks
             # Use a single database transaction for the deletions
-            db.execute("BEGIN TRANSACTION")
             db.execute("DELETE FROM events WHERE id = ?", event['id'])
-            db.execute("COMMIT")
+
                 
     # Re-fetch the updated event list after deletions
     events = db.execute("SELECT * FROM events WHERE created_by = ?", user_id)
