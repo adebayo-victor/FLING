@@ -485,6 +485,7 @@ def register_login():
 
         if user:
             print("login successful")
+            print(user)
             # Store in session
             session["user_id"] = user[0]["id"]
             return {"response": "successful", "url": "https://fling-2a4m.onrender.com/dashboard"}
