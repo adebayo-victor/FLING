@@ -233,7 +233,7 @@ if not API_KEY:
     print("Error: Gemini API key not found. Please set 'gemini_key' in your .env file.")
     exit()
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent"
 #this function can also be used to generate other based on the prompt
 def generate_ticket_template(prompt):
     """
